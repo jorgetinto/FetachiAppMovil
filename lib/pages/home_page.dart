@@ -62,6 +62,28 @@ class _HomePageState extends State<HomePage> {
       );
     }
   
+    Widget _crearImagen(AsyncSnapshot<UserPerfilModel> snapshot) {
+      return Container(
+        width: double.infinity,
+        height: 250,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(bottomRight: Radius.circular(100)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.black,
+            radius: 18,
+            child: ClipOval(
+              child: 
+              
+              (snapshot.data.imagen != null)?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))): Container(height: 0, width: 0,) ,
+            ),
+          ),
+        ),
+      );
+    }
+
     Widget _iconoEstrellas(AsyncSnapshot<UserPerfilModel> snapshot) {
       return Container(
         child: Row(
@@ -132,6 +154,7 @@ class _HomePageState extends State<HomePage> {
 
               ListView.builder(
               shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: snapshot.data.escuelas.length,
               itemBuilder: (context, i) {
               return snapshot.data.escuelas[i] != null
@@ -180,6 +203,7 @@ class _HomePageState extends State<HomePage> {
 
               ListView.builder(
               shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: snapshot.data.pupilos.length,
               itemBuilder: (context, i) {
               return snapshot.data.pupilos[i] != null
@@ -274,6 +298,7 @@ class _HomePageState extends State<HomePage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                     _crearImagen(snapshot),
                     SizedBox(height: 10.0,),
                     utils.buildHeader(context, snapshot, true),
                     utils.division(),

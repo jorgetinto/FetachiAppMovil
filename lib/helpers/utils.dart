@@ -83,18 +83,52 @@ import 'package:toast/toast.dart';
     children: [
         SizedBox(width: 20.0,),
 
-        Container(
-          width: 80.0,
-          height: 80.0,
-          child: CircleAvatar(
-            radius: 30.0,
-            child: (tipoFoto) ? Image.asset('assets/img/FETACHI.png') 
-                              :  (snapshot.data.imagen != null)?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))): Container(height: 0, width: 0,) ,
-            backgroundColor: Colors.white,
-          ),
+        Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              Container(
+                  width: 80.0,
+                  height: 80.0,
+                  child: CircleAvatar(
+                    radius: 30.0,
+                    child: (tipoFoto) ? Image.asset('assets/img/FETACHI.png') 
+                                      :  (snapshot.data.imagen != null)?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))): Container(height: 0, width: 0,) ,
+                    backgroundColor: Colors.white,
+                  ),
+                  
+                ),         
+
+                Positioned(
+                  left: 50.0,
+                  right: 0.0,
+                  bottom: 0.0, 
+                  top: 50.0,
+                  child: (!tipoFoto)? 
+
+
+                                  MaterialButton(
+                                        onPressed: () {
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => EditarEstudiantePage(),
+                                        //     settings: RouteSettings(
+                                        //       arguments: snapshot.data,
+                                        //     ),
+                                        //   ),
+                                        // );      
+                                      },
+                                    color: Colors.blue,
+                                    textColor: Colors.white,
+                                    child: Icon(Icons.edit, size: 20.0),
+                                    padding: EdgeInsets.all(5),
+                                    shape: CircleBorder(),
+                                  ): Container(width: 0,height: 0,)
+              ),
+            ]
         ),
 
-        SizedBox(width: 20.0,),
+       SizedBox(width: 10.0,),
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,8 +150,6 @@ import 'package:toast/toast.dart';
                       )
                     ],
         ),
-        
-        //_iconoEditar(tipoFoto, context, snapshot),
       ],
     );
   }
