@@ -15,16 +15,15 @@ class UserPerfilModel {
         this.nombres,
         this.apellidoPaterno,
         this.apellidoMaterno,
-        this.fechaDeNacimiento,
+        this.fechaDeNacimiento,        
         this.direccion,
         this.comuna,
         this.statusCard,
         this.folio,
         this.imagen,
-
+        this.imagenOriginal,
         this.fono,
         this.email,
-
         this.idInfoContacto,
         this.idApoderado,
         this.idGradoActual,
@@ -47,10 +46,9 @@ class UserPerfilModel {
     int statusCard;
     int folio;
     String imagen;
-
+    String imagenOriginal;
     String fono;
     String email;
-
     int idInfoContacto;
     int idApoderado;
     int idGradoActual;
@@ -73,10 +71,9 @@ class UserPerfilModel {
         statusCard: json["statusCard"],
         folio: json["folio"],
         imagen: json["imagen"],
-
+        imagenOriginal: json["imagen"],
         fono: json["fono"],
         email: json["email"],
-
         idInfoContacto: json["idInfoContacto"],
         idApoderado: json["idApoderado"],
         idGradoActual: json["idGradoActual"],
@@ -100,19 +97,17 @@ class UserPerfilModel {
         "statusCard": statusCard,
         "folio": folio,
         "imagen": imagen,
-
+        "imagenOriginal": imagenOriginal,
         "fono": fono,
         "email": email,
-
-
         "idInfoContacto": idInfoContacto,
         "idApoderado": idApoderado,
         "idGradoActual": idGradoActual,
-        "escuelas": List<dynamic>.from(escuelas.map((x) => x.toJson())),
-        "grado": grado.toJson(),
-        "apoderado": apoderado.toJson(),
-        "pupilos": List<dynamic>.from(pupilos.map((x) => x.toJson())),
-        "informacionContacto": informacionContacto.toJson(),
+        "escuelas": (escuelas != null)? List<dynamic>.from(escuelas.map((x) => x.toJson())) : null,
+        "grado": (grado != null)? grado.toJson(): null,
+        "apoderado": (apoderado != null)? apoderado.toJson(): null,
+        "pupilos": (pupilos != null)?  List<dynamic>.from(pupilos.map((x) => x.toJson())): null,
+        "informacionContacto": (informacionContacto != null)? informacionContacto.toJson(): null,
         "estado": estado,
     };
 }

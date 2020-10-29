@@ -1,13 +1,13 @@
 import 'package:rxdart/rxdart.dart';
 
 import 'package:fetachiappmovil/helpers/validators/validators_login_form.dart';
-import 'package:fetachiappmovil/services/usuario_service.dart';
+import 'package:fetachiappmovil/services/auth_service.dart';
 
 class LoginBloc with ValidatorsLoginForm {
 
   final _userNameController       = BehaviorSubject<String>();
   final _passController           = BehaviorSubject<String>();
-  final _usuarioProvider          = UsuarioServices();
+  final _authProvider          = AuthServices();
 
   // Recuperar los datos del stream
   Stream<String> get userNameStream          => _userNameController.stream.transform(validarUserName);
@@ -23,12 +23,12 @@ class LoginBloc with ValidatorsLoginForm {
   String get password        => _passController.value;
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final resultado = await _usuarioProvider.login(email, password);
+    final resultado = await _authProvider.login(email, password);
     return resultado;
   }
   
   Future<Map<String, dynamic>> signOut() async {
-    final resultado = await _usuarioProvider.signOut();
+    final resultado = await _authProvider.signOut();
     changeUserName('');
     changePassword('');
     return resultado;

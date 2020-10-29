@@ -1,3 +1,4 @@
+import 'package:fetachiappmovil/pages/resetPassword_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -5,6 +6,7 @@ import 'package:fetachiappmovil/pages/home_page.dart';
 
 final pageRoutes = <_Route>[
       _Route(FontAwesomeIcons.userCircle, 'Perfil', HomePage()),
+      _Route(FontAwesomeIcons.lock, 'Cambiar Contraseña', Resetpassword()),
   ];
 
   class _Route {

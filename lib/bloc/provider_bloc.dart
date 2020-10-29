@@ -1,5 +1,6 @@
 
 
+import 'package:fetachiappmovil/bloc/changePass_bloc.dart';
 import 'package:fetachiappmovil/bloc/userPerfil_bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class ProviderBloc extends InheritedWidget {
 
   final loginBloc         = new LoginBloc();
   final _userPerfilBloc   = new UserPerfilBloc();
+  final _changePassBloc   = new ChangePasswordBloc();
 
   static ProviderBloc _instancia;
 
@@ -30,6 +32,10 @@ class ProviderBloc extends InheritedWidget {
 
   static UserPerfilBloc userPefilBloc ( BuildContext context ){
     return context.dependOnInheritedWidgetOfExactType<ProviderBloc>()._userPerfilBloc;
+  }
+
+  static ChangePasswordBloc cambiarPassBloc ( BuildContext context ){
+    return context.dependOnInheritedWidgetOfExactType<ProviderBloc>()._changePassBloc;
   }
 
 }

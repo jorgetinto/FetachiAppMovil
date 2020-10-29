@@ -5,7 +5,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 
-class UsuarioServices {
+class AuthServices {
 
   final String urlBase    = Constants.API_URL;
   final _prefs            = new PreferenciasUsuario();
@@ -24,7 +24,7 @@ class UsuarioServices {
     );  
 
     Map<String, dynamic> decodedResp = json.decode(resp.body);
-
+   
     if (decodedResp.containsKey('token')) {
 
         Map<String, dynamic> decodedToken = JwtDecoder.decode(decodedResp['token']);

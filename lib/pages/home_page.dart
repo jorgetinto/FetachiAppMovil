@@ -77,7 +77,10 @@ class _HomePageState extends State<HomePage> {
             child: ClipOval(
               child: 
               
-              (snapshot.data.imagen != null)?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))): Container(height: 0, width: 0,) ,
+              (snapshot.data.imagen != null)?  Container(child: Image.network(
+                                                                                snapshot.data.imagen,
+                                                                                fit: BoxFit.scaleDown,
+                                                                              )): Container(height: 0, width: 0,) ,
             ),
           ),
         ),

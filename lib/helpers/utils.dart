@@ -1,7 +1,7 @@
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
+import 'package:fetachiappmovil/pages/editarPerfil_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:toast/toast.dart';
 
 
@@ -55,8 +55,7 @@ import 'package:toast/toast.dart';
 
   calculateAge(String strDt) {
     if (strDt != null || strDt != "null") {
-      var birth = Jiffy(strDt, "dd-MM-yyyy").format("yyyy-MM-dd"); // 2019-08-18
-      DateTime birthDate = DateTime.parse(birth);
+      DateTime birthDate = DateTime.parse(strDt);
       DateTime currentDate = DateTime.now();
       int age = currentDate.year - birthDate.year;
       int month1 = currentDate.month;
@@ -104,19 +103,17 @@ import 'package:toast/toast.dart';
                   bottom: 0.0, 
                   top: 50.0,
                   child: (!tipoFoto)? 
-
-
                                   MaterialButton(
                                         onPressed: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) => EditarEstudiantePage(),
-                                        //     settings: RouteSettings(
-                                        //       arguments: snapshot.data,
-                                        //     ),
-                                        //   ),
-                                        // );      
+                                         Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditarPerfilPage(),
+                                              settings: RouteSettings(
+                                                arguments: snapshot.data,
+                                              ),
+                                            ),
+                                          );    
                                       },
                                     color: Colors.blue,
                                     textColor: Colors.white,
