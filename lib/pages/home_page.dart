@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
+import 'package:fetachiappmovil/helpers/validators/validaciones_varias.dart' as validar;
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -148,7 +149,7 @@ class _HomePageState extends State<HomePage> {
 
     Widget _dojang(AsyncSnapshot<UserPerfilModel> snapshot) {
 
-      return utils.isEmptyList(snapshot.data.escuelas)? 
+      return validar.isEmptyList(snapshot.data.escuelas)? 
       Column(
         children: [
               SizedBox(height: 20.0),
@@ -196,7 +197,7 @@ class _HomePageState extends State<HomePage> {
 
    Widget _pupilos(AsyncSnapshot<UserPerfilModel> snapshot) {
 
-      return utils.isEmptyList(snapshot.data.pupilos) ?
+      return validar.isEmptyList(snapshot.data.pupilos) ?
       
       Column(
         children: [

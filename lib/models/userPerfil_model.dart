@@ -15,15 +15,19 @@ class UserPerfilModel {
         this.nombres,
         this.apellidoPaterno,
         this.apellidoMaterno,
-        this.fechaDeNacimiento,        
+        this.fechaDeNacimiento,   
+
         this.direccion,
         this.comuna,
         this.statusCard,
+
         this.folio,
         this.imagen,
         this.imagenOriginal,
+
         this.fono,
         this.email,
+        
         this.idInfoContacto,
         this.idApoderado,
         this.idGradoActual,
@@ -98,8 +102,8 @@ class UserPerfilModel {
         "folio": folio,
         "imagen": imagen,
         "imagenOriginal": imagenOriginal,
-        "fono": fono,
-        "email": email,
+        "PhoneNumber": fono,
+        "Email": email,
         "idInfoContacto": idInfoContacto,
         "idApoderado": idApoderado,
         "idGradoActual": idGradoActual,

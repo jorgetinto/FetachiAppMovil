@@ -5,18 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:toast/toast.dart';
 
 
-  bool isEmptyList(Object object) {
-    if (object is List) {
-      if (object.length > 0){
-        return true; // <-- OK!
-      }else{
-        return false;
-      }
-    } else {
-      return false;
-    }
-}
-
   Widget division() {
     return Padding(
           padding: const EdgeInsets.only(left: 16.0),
@@ -130,7 +118,7 @@ import 'package:toast/toast.dart';
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                      Text("${snapshot.data.nombres} ${snapshot.data.apellidoPaterno} ${snapshot.data.apellidoMaterno}", style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),),
+                      Text("${snapshot.data.nombres} \n${snapshot.data.apellidoPaterno}  ${snapshot.data.apellidoMaterno}", maxLines: 20, style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),),
                       SizedBox(height: 5.0,),
                       Text("Rut: ${snapshot.data.rut}", style: TextStyle(fontSize: 13.0),),
                       SizedBox(height: 5.0,),
@@ -149,4 +137,11 @@ import 'package:toast/toast.dart';
         ),
       ],
     );
+  }
+
+  class ListItem {
+    int value;
+    String name;
+
+    ListItem(this.value, this.name);
   }
