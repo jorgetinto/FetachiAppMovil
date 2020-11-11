@@ -1,19 +1,43 @@
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
+import 'package:fetachiappmovil/pages/Escuela/escuela_page.dart';
 import 'package:fetachiappmovil/pages/resetPassword_page.dart';
+import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:fetachiappmovil/pages/home_page.dart';
 
-final pageRoutes = <_Route>[
-      _Route(FontAwesomeIcons.userCircle, 'Perfil', HomePage()),
-      _Route(FontAwesomeIcons.lock, 'Cambiar Contraseña', Resetpassword()),
-  ];
+  final pageRoutes = listaRuta();
 
   class _Route {
     final IconData icon;
     final String titulo;
     final Widget page;
     _Route(this.icon, this.titulo, this.page);  
+  }
+
+  List<_Route> listaRuta(){
+
+    final _prefs         = new PreferenciasUsuario();
+
+    if (_prefs.perfil == "Apoderado" || _prefs.perfil == "Estudiante") {
+        return <_Route>[
+            _Route(FontAwesomeIcons.userCircle, 'Perfil',               HomePage()),
+            _Route(FontAwesomeIcons.school,     'Escuela',              EscuelaPage()),
+        ];          
+    }
+
+    else if (_prefs.perfil == "Instructor" || _prefs.perfil == "Maestro" || _prefs.perfil == "Admin") {
+        return <_Route>[
+            _Route(FontAwesomeIcons.userCircle, 'Perfil',               HomePage()),
+            _Route(FontAwesomeIcons.school,     'Escuela',              EscuelaPage()),
+            _Route(FontAwesomeIcons.userCog,    'Usuarios',             UsuariosPage()),
+            _Route(FontAwesomeIcons.lock,       'Cambiar Contraseña',   Resetpassword()),
+        ];          
+    }
+    else {
+      return new List();
+    }
   }
 
   class SlideRightRoute extends PageRouteBuilder {

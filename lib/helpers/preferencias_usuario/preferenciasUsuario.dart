@@ -34,6 +34,14 @@ class PreferenciasUsuario {
     _prefs.setString('Id', value);
   } 
 
+  get perfil {
+    return _prefs.getString('role') ?? '';
+  }
+
+  set perfil( String value ) {
+    _prefs.setString('role', value);
+  } 
+
   // GET y SET de la última página
   get ultimaPagina {
     return _prefs.getString('ultimaPagina') ?? 'login';

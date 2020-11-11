@@ -61,7 +61,7 @@ class HeaderWaveGradient extends StatelessWidget {
       height: double.infinity,
       width: double.infinity,
       child: CustomPaint(
-        painter: _HeaderWaveGradientPainter(),
+       painter: _HeaderWaveGradientPainter(),
       ),
     );
   }
@@ -81,6 +81,7 @@ class _HeaderWaveGradientPainter extends CustomPainter{
       final Gradient gradiente = new LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
+        
         colors: <Color>[
                         Color(0xfff0000cc),
                         Color(0xff0a0a96)

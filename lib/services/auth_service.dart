@@ -30,6 +30,7 @@ class AuthServices {
         Map<String, dynamic> decodedToken = JwtDecoder.decode(decodedResp['token']);
         _prefs.token                      =  decodedResp['token'];
         _prefs.uid                        =  decodedToken["nameid"];
+        _prefs.perfil                     =  decodedToken["role"];
         
         return {'ok': true};
     } else {

@@ -15,12 +15,15 @@ class UserPerfilModel {
         this.nombres,
         this.apellidoPaterno,
         this.apellidoMaterno,
-        this.fechaDeNacimiento,   
-
+        this.fechaDeNacimiento, 
         this.direccion,
-        this.comuna,
-        this.statusCard,
 
+        this.idComuna,
+        this.comuna,
+        this.idRegion,
+        this.region,
+
+        this.statusCard,
         this.folio,
         this.imagen,
         this.imagenOriginal,
@@ -46,7 +49,10 @@ class UserPerfilModel {
     String apellidoMaterno;
     String fechaDeNacimiento;
     String direccion;
+    String idComuna;
     String comuna;
+    String idRegion;
+    String region;
     int statusCard;
     int folio;
     String imagen;
@@ -71,7 +77,12 @@ class UserPerfilModel {
         apellidoMaterno: json["apellidoMaterno"],
         fechaDeNacimiento: json["fechaDeNacimiento"],
         direccion: json["direccion"],
+
+        idComuna: json["idComuna"],
         comuna: json["comuna"],
+        idRegion: json["idRegion"],
+        region: json["region"],
+
         statusCard: json["statusCard"],
         folio: json["folio"],
         imagen: json["imagen"],
@@ -97,7 +108,10 @@ class UserPerfilModel {
         "apellidoMaterno": apellidoMaterno,
         "fechaDeNacimiento": fechaDeNacimiento,
         "direccion": direccion,
+        "idComuna": idComuna,
         "comuna": comuna,
+        "idRegion": idRegion,
+        "region": region,
         "statusCard": statusCard,
         "folio": folio,
         "imagen": imagen,
@@ -207,6 +221,8 @@ class Escuela {
         this.direccion,
         this.idComuna,
         this.comuna,
+        this.idRegion,
+        this.region,
         this.idZona,
         this.zona,
         this.idInstructor,
@@ -221,6 +237,8 @@ class Escuela {
     String direccion;
     String idComuna;
     String comuna;
+    String idRegion;
+    String region;
     int idZona;
     String zona;
     int idInstructor;
@@ -235,6 +253,8 @@ class Escuela {
         direccion: json["direccion"],
         idComuna: json["idComuna"],
         comuna: json["comuna"],
+        idRegion: json["idRegion"],
+        region: json["region"],
         idZona: json["idZona"],
         zona: json["zona"],
         idInstructor: json["idInstructor"],
@@ -250,6 +270,8 @@ class Escuela {
         "direccion": direccion,
         "idComuna": idComuna,
         "comuna": comuna,
+        "idRegion": idRegion,
+        "region": region,
         "idZona": idZona,
         "zona": zona,
         "idInstructor": idInstructor,
@@ -298,6 +320,8 @@ class InformacionContacto {
         this.fono,
         this.direccion,
         this.idComuna,
+        this.idRegion,
+        this.region,
         this.comuna,
         this.estado,
     });
@@ -308,9 +332,11 @@ class InformacionContacto {
     String apellidoMaterno;
     String email;
     String fono;
-    dynamic direccion;
+    String direccion;
     String idComuna;
     String comuna;
+    String idRegion;
+    String region;
     bool estado;
 
     factory InformacionContacto.fromJson(Map<String, dynamic> json) => InformacionContacto(
@@ -323,6 +349,8 @@ class InformacionContacto {
         direccion: json["direccion"],
         idComuna: json["idComuna"],
         comuna: json["comuna"],
+        idRegion: json["idRegion"],
+        region: json["region"],
         estado: json["estado"],
     );
 
@@ -336,6 +364,8 @@ class InformacionContacto {
         "direccion": direccion,
         "idComuna": idComuna,
         "comuna": comuna,
+        "idRegion": idRegion,
+        "region": region,
         "estado": estado,
     };
 }

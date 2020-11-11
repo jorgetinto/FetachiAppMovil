@@ -8,7 +8,10 @@ import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/helpers/validators/RutHelper_widget.dart';
 import 'package:fetachiappmovil/helpers/validators/validaciones_varias.dart' as validar;
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
+import 'package:fetachiappmovil/models/comuna_model.dart';
+import 'package:fetachiappmovil/models/region_model.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
+import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -26,40 +29,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
   File foto;
   UserPerfilBloc userPerfilBloc;
-  UserPerfilModel usePerfilModel = new UserPerfilModel();
+  UserPerfilModel usePerfilModel    = new UserPerfilModel();
+  ComunaRegionServices comunaRegion = new ComunaRegionServices();
+  Future<List<RegionModel>> region;
+  Future<List<ComunaModel>> comuna;
   final formKey                     = GlobalKey<FormState>();
   final scaffoldKey                 = GlobalKey<ScaffoldState>();
-
-  // List<utils.ListItem> _dropdownItems = [
-  //   utils.ListItem(1, "First Value"),
-  //   utils.ListItem(2, "Second Item"),
-  //   utils.ListItem(3, "Third Item"),
-  //   utils.ListItem(4, "Fourth Item")
-  // ];
-
-  // List<DropdownMenuItem<utils.ListItem>> _dropdownMenuItems;
-  // utils.ListItem _selectedItem;
-
-  // void initState() {
-  //   super.initState();
-  //   _dropdownMenuItems = buildDropDownMenuItems(_dropdownItems);
-  //   _selectedItem = _dropdownMenuItems[0].value;
-
-  // }
-
-  // List<DropdownMenuItem<utils.ListItem>> buildDropDownMenuItems(List listItems) {
-  //   List<DropdownMenuItem<utils.ListItem>> items = List();
-  //   for (utils.ListItem listItem in listItems) {
-  //     items.add(
-  //       DropdownMenuItem(
-  //         child: Text(listItem.name),
-  //         value: listItem,
-  //       ),
-  //     );
-  //   }
-  //   return items;
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +42,14 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
     userPerfilBloc = ProviderBloc.userPefilBloc(context);
     final UserPerfilModel userData = ModalRoute.of(context).settings.arguments;
 
-    if (userData != null) {
-        usePerfilModel = userData;
-    }
+    setState(() {
+        if (userData != null) {
+            usePerfilModel = userData;
+        } 
+
+        region = comunaRegion.getAllRegiones();
+        comuna = comunaRegion.getAllComunaByIdRegion(usePerfilModel.idRegion);
+    });
 
     return Scaffold(
      key: scaffoldKey,
@@ -84,7 +64,6 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                   Center(
                     child: _mostrarFoto()                    
                   ),
-
                   SizedBox(height: 20.0),
                   utils.buildTitle("Información personal"),
                   SizedBox(height: 5.0),
@@ -93,20 +72,23 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                   _inputApellidoMaterno(),
                   _inputRut(),
                   _inputFechaNacimiento(),
+                  _inputstatusCard(),
                   _inputFono(),
                   _inputEmail(),
+                  _inputDireccion(),
+                  _dropdrownRegion(comunaRegion),       
+                  _dropdrownComuna(comunaRegion, comuna),  
+                  
 
-                  // Container(
-                  //     padding: EdgeInsets.all(20.0),
-                  //     child: DropdownButton<utils.ListItem>(
-                  //         value: _selectedItem,
-                  //         items: _dropdownMenuItems,
-                  //         onChanged: (value) {
-                  //           setState(() {
-                  //             _selectedItem = value;
-                  //           });
-                  //         })),
-
+                  SizedBox(height: 20.0),
+                  utils.buildTitle("Contacto de emergencia"),
+                  SizedBox(height: 5.0),
+                   _inputNombreContactoEmergencia(),
+                  _inputApellidoPaternoContactoEmergencia(),
+                  _inputApellidoMaternoContactoEmergencia(),
+                  _inputDireccionContactoEmergencia(),
+                  _inputFonoContactoEmergencia(),
+                  _inputEmailContactoEmergencia(),
 
                   _crearBoton(usePerfilModel),
                 ],
@@ -140,6 +122,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
     );
   }
 
+  // INFORMACION USUARIO
   _seleccionarFoto() async {
     _procesarImagen(ImageSource.gallery);
   }
@@ -193,8 +176,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           labelText: 'Nombres',
-          border: OutlineInputBorder(),
-                        
+          border: OutlineInputBorder(),                        
         ),
         onSaved: (value) => usePerfilModel.nombres = value,
         validator: (value){
@@ -342,6 +324,283 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => usePerfilModel.email = value,
         validator: (value) => validar.isEmail(value) ? null : "Campo requerido",
+      ),
+    );
+  }
+
+  Widget _inputDireccion() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: usePerfilModel.direccion,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Dirección',
+          border: OutlineInputBorder(),
+        ),
+        onSaved: (value) => usePerfilModel.direccion = value,
+        validator: (value){
+          if (value == null) {
+            return 'Campo requerido';
+          } else {
+            return null;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _inputstatusCard() {
+
+     return ( usePerfilModel.idGradoActual != null && usePerfilModel.idGradoActual > 10) ?
+        Padding(
+          padding: EdgeInsets.only(top: 10.0),
+          child: TextFormField(
+            initialValue: (usePerfilModel.statusCard != null)? usePerfilModel.statusCard.toString(): "",
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              labelText: 'Status Card',
+              border: OutlineInputBorder(),
+            ),
+            onSaved: (value) => usePerfilModel.statusCard = int.parse(value),
+            validator: (value){
+              if (value == null) {
+                return 'Campo requerido';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ): Container(height: 0, width: 0,);
+  }
+
+  Widget _dropdrownRegion(ComunaRegionServices comunaRegion) {
+     return Container(
+        child: Padding(
+            padding: EdgeInsets.only(top: 10.0),
+          child: FutureBuilder<List<RegionModel>>(
+            future: region,
+
+            builder: (BuildContext context,  AsyncSnapshot<List<RegionModel>> snapshot) {
+
+              if (!snapshot.hasData)
+                return CircularProgressIndicator();
+
+              return DropdownButtonFormField<String>(
+                value: usePerfilModel.idRegion,
+                decoration: InputDecoration(
+                  labelText: 'Region',
+                  border: OutlineInputBorder(),                                      
+                ),
+                isDense: true,
+                isExpanded: true,
+                items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                    child: Text(countyState.nombre),
+                    value: countyState.codRegion,                          
+                  )
+                ).toList(),
+                onChanged:(value) {
+                  setState(() {
+                    usePerfilModel.idComuna = null;
+                    usePerfilModel.idRegion = value;
+                    comuna = comunaRegion.getAllComunaByIdRegion(value);                    
+                  });
+                },
+              );
+            }),
+        ),
+      );
+  }
+
+  Widget _dropdrownComuna(ComunaRegionServices comunaRegion, Future<List<ComunaModel>> comuna) {
+     return 
+     (comuna != null)?
+
+     Container(
+        child: Padding(
+            padding: EdgeInsets.only(top: 10.0),
+          child: FutureBuilder<List<ComunaModel>>(
+            future: comuna,
+
+            builder: (BuildContext context,  AsyncSnapshot<List<ComunaModel>> snapshot) {
+
+              if (!snapshot.hasData)
+                return CircularProgressIndicator();
+
+              if (usePerfilModel.idComuna != null) {
+                return DropdownButtonFormField<String>(
+                  value: usePerfilModel.idComuna,
+                  decoration: InputDecoration(
+                    labelText: 'Comuna',
+                    border: OutlineInputBorder(),                                      
+                  ),
+                  isDense: true,
+                  isExpanded: true,
+                  items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                      child: Text(countyState.nombre),
+                      value: countyState.codComuna,                                  
+                    )
+                  ).toList(),
+                  onChanged:(value) {
+                    setState(() {
+                      usePerfilModel.idComuna = value;                     
+                    });
+                  },
+                );
+              } else {
+                 return DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Comuna',
+                    border: OutlineInputBorder(),                                      
+                  ),
+                  isDense: true,
+                  isExpanded: true,
+                  items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                      child: Text(countyState.nombre),
+                      value: countyState.codComuna,                                  
+                    )
+                  ).toList(),
+                  onChanged:(value) {
+                    setState(() {
+                      usePerfilModel.idComuna = value;                     
+                    });
+                  },
+                );
+              }              
+            }),
+        ),
+      ): Container(height: 0, width: 0,);
+  }
+
+  // INFORMACION DE EMERGENCIA
+  Widget _inputNombreContactoEmergencia() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: (usePerfilModel.informacionContacto!= null)? usePerfilModel.informacionContacto.nombre : "",
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Nombres',
+          border: OutlineInputBorder(),                        
+        ),
+        onSaved: (value) => usePerfilModel.informacionContacto.nombre,
+        validator: (value){
+          if (value == null || value.trim() == "") {
+            return 'Campo requerido';
+          } else {
+            return null;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _inputApellidoPaternoContactoEmergencia() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: (usePerfilModel.informacionContacto!= null)? usePerfilModel.informacionContacto.apellidoPaterno : "",
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Apellido Paterno',
+          border: OutlineInputBorder(),                        
+        ),
+        onSaved: (value) => usePerfilModel.informacionContacto.apellidoPaterno,
+        validator: (value){
+          if (value == null || value.trim() == "") {
+            return 'Campo requerido';
+          } else {
+            return null;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _inputApellidoMaternoContactoEmergencia() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: (usePerfilModel.informacionContacto!= null)? usePerfilModel.informacionContacto.apellidoMaterno : "",
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Apellido Materno',
+          border: OutlineInputBorder(),                        
+        ),
+        onSaved: (value) => usePerfilModel.informacionContacto.apellidoMaterno,
+        validator: (value){
+          if (value == null || value.trim() == "") {
+            return 'Campo requerido';
+          } else {
+            return null;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _inputDireccionContactoEmergencia() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: (usePerfilModel.informacionContacto!= null)? usePerfilModel.informacionContacto.direccion: "",
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Direccion',
+          border: OutlineInputBorder(),                        
+        ),
+        onSaved: (value) => usePerfilModel.informacionContacto.direccion,
+        validator: (value){
+          if (value == null || value.trim() == "") {
+            return 'Campo requerido';
+          } else {
+            return null;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _inputFonoContactoEmergencia() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: (usePerfilModel.informacionContacto!= null)? usePerfilModel.informacionContacto.fono: "",
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Teléfono',
+          border: OutlineInputBorder(),
+        ),
+        onSaved: (value) => usePerfilModel.informacionContacto.fono = value,
+        validator: (value){
+          if (value == null || value.trim() == "") {
+            return 'Campo requerido';
+          } else {
+            return null;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _inputEmailContactoEmergencia() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextFormField(
+        initialValue: (usePerfilModel.informacionContacto!= null)? usePerfilModel.informacionContacto.email: "",
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: 'Email',
+          border: OutlineInputBorder(),
+        ),
+        onSaved: (value) => usePerfilModel.informacionContacto.email = value,
+        validator: (value) {
+          if (value == null || value.trim() == "") {
+            return 'Campo requerido';
+          } else {
+           return  validar.isEmail(value) ? null : "Campo requerido";
+          }
+        }
       ),
     );
   }
