@@ -90,10 +90,6 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
 }
 
 class _ListOpciones extends StatelessWidget {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -105,7 +101,7 @@ class _ListOpciones extends StatelessWidget {
           title:          Text(pageRoutes[i].titulo),
           trailing:       Icon(Icons.chevron_right, color: Colors.black54),
           onTap: () {
-                          Navigator.push(context, SlideRightRoute(widget:  pageRoutes[i].page)); 
+                          Navigator.push(context,SlideRightRoute(widget:  pageRoutes[i].page));
           },
       ),        
     );

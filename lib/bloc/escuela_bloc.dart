@@ -11,7 +11,7 @@ class EscuelaBloc {
 
   Stream<EscuelaModel> get userPerfilStream => _escuelaController.stream;
 
-  void buscarUserPerfil(int id) async {
+  void getEscuelaById(int id) async {
     final user = await _escuelaService.getEscuelaById(id);
     _escuelaController.add(user);    
   }
