@@ -30,11 +30,6 @@ class EscuelaBloc {
     final user = await _escuelaService.updateEscuela(escuelaModel);
     _escuelaController.add(user);    
   }
-
-  void deleteEscuela(int id) async {
-    final user = await _escuelaService.deleteEscuela(id);
-    _escuelaController.add(user);    
-  }
     
   Future<String> subirFoto(File foto, String logoOriginal) async {
     final fotoUrl = await _escuelaService.subirImagen(foto, logoOriginal);

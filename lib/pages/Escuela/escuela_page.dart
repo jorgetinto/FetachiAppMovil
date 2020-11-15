@@ -76,7 +76,10 @@ class _EscuelaPageState extends State<EscuelaPage> {
                   content: const Text("Esta seguro que desea eliminar esta escuela?"),
                   actions: <Widget>[
                     FlatButton(
-                      onPressed: () => Navigator.of(context).pop(true),
+                      onPressed: () {
+                          escuelaProvider.deleteEscuela(escuela.idEscuela);
+                          return Navigator.of(context).pop(true);
+                        },
                       child: const Text("ELIMINAR")
                     ),
                     FlatButton(
@@ -114,7 +117,8 @@ class _EscuelaPageState extends State<EscuelaPage> {
     Widget _featuredListHorizontal()  {   
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 20.0),
-        height: 300.0,
+        padding: EdgeInsets.all(8.0),
+        height: MediaQuery.of(context).copyWith().size.height / 1.4,
         child: FutureBuilder(
           future: escuelasLista,
           builder: (BuildContext context, AsyncSnapshot<List<EscuelaPorIdInstructorModel>> listData) {
@@ -128,7 +132,8 @@ class _EscuelaPageState extends State<EscuelaPage> {
                 itemBuilder: (BuildContext context, int position) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[                     
                       _crearItem(context, listData.data[position] )
                     ],
@@ -147,16 +152,18 @@ class _EscuelaPageState extends State<EscuelaPage> {
       key: scaffoldKey,
       appBar: _appBar(context),
       body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
+        child: Stack(
+          children: <Widget>[
+          Column(
+              children: [
 
-               SizedBox(height: 20.0),
-                utils.buildTitle("Mis Escuelas"),
-                SizedBox(height: 5.0),
-                _featuredListHorizontal()
-            ],
-          ),
+                SizedBox(height: 20.0),
+                  utils.buildTitle("Mis Escuelas"),
+                  SizedBox(height: 5.0),
+                  _featuredListHorizontal()
+              ],
+            ),
+          ]
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -42,6 +42,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
   Future<List<InstructorMaestroModel>>   maestros;
   final formKey                     = GlobalKey<FormState>();
   final scaffoldKey                 = GlobalKey<ScaffoldState>();
+  FocusNode _node                   = new FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -212,25 +213,36 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               if (!snapshot.hasData)
                 return CircularProgressIndicator();
 
-              return DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Region',
-                  border: OutlineInputBorder(),                                      
-                ),
-                isDense: true,
-                isExpanded: true,
-                items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
-                    child: Text(countyState.nombre),
-                    value: countyState.codRegion,                          
-                  )
-                ).toList(),
-                onChanged:(value) {
-                  setState(() {
-                    escuelaModel.idComuna = null;
-                    comuna = comunaRegion.getAllComunaByIdRegion(value);                    
-                  });
-                },
-              );
+              return Focus(
+                      focusNode: _node,
+                      onFocusChange: (bool focus) {
+                        setState((){});
+                      },
+                        child: Listener(
+                            onPointerDown: (_) {
+                              FocusScope.of(context).requestFocus(_node);
+                            },
+                              child: DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                labelText: 'Region',
+                                border: OutlineInputBorder(),                                      
+                              ),
+                              isDense: true,
+                              isExpanded: true,
+                              items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                                  child: Text(countyState.nombre),
+                                  value: countyState.codRegion,                          
+                                )
+                              ).toList(),
+                              onChanged:(value) {
+                                setState(() {
+                                  escuelaModel.idComuna = null;
+                                  comuna = comunaRegion.getAllComunaByIdRegion(value);                    
+                                });
+                              },
+                          ),
+                  ),
+                );
             }),
         ),
       );
@@ -252,44 +264,66 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                 return CircularProgressIndicator();
 
               if (escuelaModel.idComuna != null) {
-                return DropdownButtonFormField<String>(
-                  value: escuelaModel.idComuna,
-                  decoration: InputDecoration(
-                    labelText: 'Comuna',
-                    border: OutlineInputBorder(),                                      
-                  ),
-                  isDense: true,
-                  isExpanded: true,
-                  items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
-                      child: Text(countyState.nombre),
-                      value: countyState.codComuna,                                  
-                    )
-                  ).toList(),
-                  onChanged:(value) {
-                    setState(() {
-                      escuelaModel.idComuna = value;                     
-                    });
-                  },
+                return Focus(
+                          focusNode: _node,
+                          onFocusChange: (bool focus) {
+                            setState((){});
+                          },
+                          child: Listener(
+                          onPointerDown: (_) {
+                            FocusScope.of(context).requestFocus(_node);
+                          },
+                          child: DropdownButtonFormField<String>(
+                          value: escuelaModel.idComuna,
+                          decoration: InputDecoration(
+                            labelText: 'Comuna',
+                            border: OutlineInputBorder(),                                      
+                          ),
+                          isDense: true,
+                          isExpanded: true,
+                          items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                              child: Text(countyState.nombre),
+                              value: countyState.codComuna,                                  
+                            )
+                          ).toList(),
+                          onChanged:(value) {
+                            setState(() {
+                              escuelaModel.idComuna = value;                     
+                            });
+                          },
+                        ),
+                    ),
                 );
               } else {
-                 return DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'Comuna',
-                    border: OutlineInputBorder(),                                      
-                  ),
-                  isDense: true,
-                  isExpanded: true,
-                  items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
-                      child: Text(countyState.nombre),
-                      value: countyState.codComuna,                                  
-                    )
-                  ).toList(),
-                  onChanged:(value) {
-                    setState(() {
-                      escuelaModel.idComuna = value;                     
-                    });
-                  },
-                );
+                 return Focus(
+                            focusNode: _node,
+                            onFocusChange: (bool focus) {
+                              setState((){});
+                            },
+                              child: Listener(
+                              onPointerDown: (_) {
+                                FocusScope.of(context).requestFocus(_node);
+                              },
+                            child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              labelText: 'Comuna',
+                              border: OutlineInputBorder(),                                      
+                            ),
+                            isDense: true,
+                            isExpanded: true,
+                            items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                                child: Text(countyState.nombre),
+                                value: countyState.codComuna,                                  
+                              )
+                            ).toList(),
+                            onChanged:(value) {
+                              setState(() {
+                                escuelaModel.idComuna = value;                     
+                              });
+                            },
+                          ),
+                        ),
+                 );
               }              
             }),
         ),
@@ -307,23 +341,34 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               if (!snapshot.hasData)
                 return CircularProgressIndicator();
 
-              return DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Zona',
-                  border: OutlineInputBorder(),                                      
+              return Focus(
+                      focusNode: _node,
+                      onFocusChange: (bool focus) {
+                        setState((){});
+                      },
+                    child: Listener(
+                    onPointerDown: (_) {
+                      FocusScope.of(context).requestFocus(_node);
+                    },
+                    child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Zona',
+                      border: OutlineInputBorder(),                                      
+                    ),
+                    isDense: true,
+                    isExpanded: true,
+                    items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
+                        child: Text(countyState.nombre),
+                        value: countyState.idZona.toString(),                          
+                      )
+                    ).toList(),
+                    onChanged:(value) {
+                      setState(() {
+                          escuelaModel.idZona = int.parse(value);             
+                      });
+                    },
+                  ),
                 ),
-                isDense: true,
-                isExpanded: true,
-                items: snapshot.data.map((countyState) => DropdownMenuItem<String>(
-                    child: Text(countyState.nombre),
-                    value: countyState.idZona.toString(),                          
-                  )
-                ).toList(),
-                onChanged:(value) {
-                  setState(() {
-                      escuelaModel.idZona = int.parse(value);             
-                  });
-                },
               );
             }),
         ),
@@ -341,23 +386,34 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               if (!snapshot.hasData)
                 return CircularProgressIndicator();
 
-              return DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Instructor',
-                  border: OutlineInputBorder(),                                      
+              return Focus(
+                      focusNode: _node,
+                      onFocusChange: (bool focus) {
+                        setState((){});
+                      },
+                    child: Listener(
+                      onPointerDown: (_) {
+                        FocusScope.of(context).requestFocus(_node);
+                      },
+                    child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Instructor',
+                      border: OutlineInputBorder(),                                      
+                    ),
+                    isDense: true,
+                    isExpanded: true,
+                    items: snapshot.data.map((instructores) => DropdownMenuItem<String>(
+                        child: Text(instructores.nombre),
+                        value: instructores.id.toString(),                          
+                      )
+                    ).toList(),
+                    onChanged:(value) {
+                      setState(() {
+                          escuelaModel.idInstructor = int.parse(value);             
+                      });
+                    },
+                  ),
                 ),
-                isDense: true,
-                isExpanded: true,
-                items: snapshot.data.map((instructores) => DropdownMenuItem<String>(
-                    child: Text(instructores.nombre),
-                    value: instructores.id.toString(),                          
-                  )
-                ).toList(),
-                onChanged:(value) {
-                  setState(() {
-                      escuelaModel.idInstructor = int.parse(value);             
-                  });
-                },
               );
             }),
         ),
@@ -375,23 +431,34 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               if (!snapshot.hasData)
                 return CircularProgressIndicator();
 
-              return DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Maestro',
-                  border: OutlineInputBorder(),                                      
+              return Focus(
+                      focusNode: _node,
+                      onFocusChange: (bool focus) {
+                        setState((){});
+                      },
+                    child: Listener(
+                        onPointerDown: (_) {
+                          FocusScope.of(context).requestFocus(_node);
+                        },
+                    child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Maestro',
+                      border: OutlineInputBorder(),                                      
+                    ),
+                    isDense: true,
+                    isExpanded: true,
+                    items: snapshot.data.map((maestro) => DropdownMenuItem<String>(
+                        child: Text(maestro.nombre),
+                        value: maestro.id.toString(),                          
+                      )
+                    ).toList(),
+                    onChanged:(value) {
+                      setState(() {
+                          escuelaModel.idMaestro = int.parse(value);             
+                      });
+                    },
+                  ),
                 ),
-                isDense: true,
-                isExpanded: true,
-                items: snapshot.data.map((maestro) => DropdownMenuItem<String>(
-                    child: Text(maestro.nombre),
-                    value: maestro.id.toString(),                          
-                  )
-                ).toList(),
-                onChanged:(value) {
-                  setState(() {
-                      escuelaModel.idMaestro = int.parse(value);             
-                  });
-                },
               );
             }),
         ),

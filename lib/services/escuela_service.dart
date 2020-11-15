@@ -88,8 +88,9 @@ class EscuelaServices {
     return respModel;
   }
 
-  Future<EscuelaModel> deleteEscuela(int id) async { 
+  Future<bool> deleteEscuela(int id) async { 
     final url       = '$urlBase/Escuela/$id';
+    bool respuesta  = false;
 
     final response  = await http.delete(url, headers: {
       'Content-Type': 'application/json',
@@ -97,8 +98,11 @@ class EscuelaServices {
       'Authorization': 'Bearer ${_prefs.token}',
     });
 
-    final respModel = escuelaModelFromJson(response.body.toString());
-    return respModel;
+     if (response.statusCode == 204) {
+       respuesta = true;
+     }
+
+    return respuesta;
   }
 
   Future<String> subirImagen(File imagen, String logoOriginal ) async {
