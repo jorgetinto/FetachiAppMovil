@@ -78,4 +78,21 @@ class EscuelaPorIdInstructorModel {
         "logo": logo,
         "estado": estado,
     };
+
+    EscuelaPorIdInstructorModel.copy(EscuelaPorIdInstructorModel other)
+      : this.idEscuela = other.idEscuela,
+        this.nombre = other.nombre,
+        this.direccion = other.direccion,
+        this.idComuna = other.idComuna,
+        this.comuna = other.comuna,
+        this.idRegion = other.idRegion,
+        this.region = other.region,
+        this.idZona = other.idZona,
+        this.zona = other.zona,
+        this.idInstructor = other.idInstructor,
+        this.nombreInstructor = other.nombreInstructor,
+        this.idMaestro = other.idMaestro,
+        this.nombreMaestro = other.nombreMaestro,
+        this.logo = other.logo,
+        this.estado = other.estado;
 }

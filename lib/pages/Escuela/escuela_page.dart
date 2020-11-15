@@ -45,30 +45,66 @@ class _EscuelaPageState extends State<EscuelaPage> {
 
     Widget _crearItem(BuildContext context, EscuelaPorIdInstructorModel escuela ) {
 
-        return Dismissible(
+      return Dismissible(
           key: UniqueKey(),
           background: Container(
-            color: Colors.red,
-          ),
-          onDismissed: ( direccion ){
-            //productosProvider.borrarProducto(producto.id);
-          },
+              color: Colors.blueAccent,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              alignment: AlignmentDirectional.centerStart,
+              child: Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
+            ),
+          secondaryBackground: Container(
+              color: Colors.red,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              alignment: AlignmentDirectional.centerEnd,
+              child: Icon(
+                Icons.delete_sharp,
+                color: Colors.white,
+              ),
+            ),
+
+        confirmDismiss: (DismissDirection direction) async {
+          if (direction == DismissDirection.endToStart) {
+            return await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Atención!"),
+                  content: const Text("Esta seguro que desea eliminar esta escuela?"),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text("ELIMINAR")
+                    ),
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text("CANCEL"),
+                    ),
+                  ],
+                );
+              },
+            );
+          }else{
+            return false;
+          }
+        },          
           child: Card(
             child: Column(
               children: <Widget>[
                  ListTile(
-                        //leading: FlutterLogo(size: 72.0),
                         leading: CircleAvatar(
-                          radius: 45.0,
+                          radius: 25.0,
                           backgroundImage: escuela.logo !=null? NetworkImage(escuela.logo): AssetImage('assets/img/FETACHI50.png'),// escuela.logo?? NetworkImage(escuela.logo),
                           backgroundColor: Colors.black,
                         ),
                         title: Text('${ escuela.nombre }'),
-                        subtitle: Text( '${ escuela.nombreInstructor }  n\ ${ escuela.direccion }'),
+                        subtitle: Text( '${ escuela.nombreInstructor }  /n ${ escuela.direccion }'),
                         trailing: Icon(Icons.more_vert),
                         isThreeLine: true,
                       ),
-
               ],
             ),
           )
@@ -83,11 +119,8 @@ class _EscuelaPageState extends State<EscuelaPage> {
           future: escuelasLista,
           builder: (BuildContext context, AsyncSnapshot<List<EscuelaPorIdInstructorModel>> listData) {
             if (!listData.hasData) {
-
               new Future.delayed(const Duration(seconds : 2));
               return Center(child: CircularProgressIndicator());
-
-
             } else {
               return ListView.builder(
                 shrinkWrap: true,
@@ -107,6 +140,8 @@ class _EscuelaPageState extends State<EscuelaPage> {
         ),   
       ); 
     }
+
+
 
     return Scaffold(
       key: scaffoldKey,
@@ -132,7 +167,5 @@ class _EscuelaPageState extends State<EscuelaPage> {
         backgroundColor: Colors.redAccent,
       ),
    );
- }
-
-
+  }
 }
