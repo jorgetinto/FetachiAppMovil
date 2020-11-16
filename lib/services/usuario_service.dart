@@ -56,4 +56,29 @@ class UsuarioServices {
       }
   }
 
+
+  Future<List<InstructorMaestroModel>>  getTipoUsuarioPorIdUsuario()  async {  
+
+      final url = '$urlBase/Usuario/GetTipoUsuarioPorIdUsuario/${_prefs.uid}';
+
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${_prefs.token}',
+      });
+
+      if (response.statusCode == 200) {
+        final items = json.decode(response.body).cast<Map<String, dynamic>>();
+
+        List<InstructorMaestroModel> listOfUsers = items.map<InstructorMaestroModel>((json) {
+          return InstructorMaestroModel.fromJson(json);
+        }).toList();
+
+        return listOfUsers;
+      } else {
+        throw Exception('Failed to load internet');
+      }
+  }
+
+
 }

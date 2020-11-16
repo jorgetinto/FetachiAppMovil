@@ -15,7 +15,7 @@ class EscuelaServices {
   final _prefs            = new PreferenciasUsuario();
 
   Future<EscuelaModel>  getEscuelaById(int id)  async {    
-    final url = '$urlBase/Escuela/$id';
+    final url = '$urlBase/Escuela/GetEscuelaById/$id';
 
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',
@@ -75,7 +75,8 @@ class EscuelaServices {
     return respModel;
   }
 
-  Future<EscuelaModel> updateEscuela(EscuelaModel escuelaModel) async { 
+  Future<bool> updateEscuela(EscuelaModel escuelaModel) async { 
+    bool respuesta  = false;
     final url       = '$urlBase/Escuela/${escuelaModel.idEscuela}';
     final response  = await http.put(url, headers: {
       'Content-Type': 'application/json',
@@ -84,8 +85,11 @@ class EscuelaServices {
     },
     body: escuelaModelToJson(escuelaModel));  
 
-    final respModel = escuelaModelFromJson(response.body.toString());
-    return respModel;
+   if (response.statusCode == 204) {
+       respuesta = true;
+     }
+
+    return respuesta;
   }
 
   Future<bool> deleteEscuela(int id) async { 
@@ -132,6 +136,27 @@ class EscuelaServices {
     return response.secureUrl;
   }
 
- 
+
+  Future<List<EscuelaPorIdInstructorModel>>  getEscuelaPorIdUsuario()  async {    
+
+    final url = '$urlBase/Escuela/GetEscuelaPorIdUsuario/${_prefs.uid}';
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    });    
+
+    if (response.statusCode == 200) {
+        final items = json.decode(response.body).cast<Map<String, dynamic>>();
+        List<EscuelaPorIdInstructorModel> listOfUsers = items.map<EscuelaPorIdInstructorModel>((json) {
+          return EscuelaPorIdInstructorModel.fromJson(json);
+        }).toList();
+
+        return listOfUsers;
+      } else {
+        throw Exception('Failed to load internet');
+      }
+  }
 
 }

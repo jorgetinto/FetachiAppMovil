@@ -16,6 +16,7 @@ class EscuelaModel {
         this.nombre,
         this.direccion,
         this.idComuna,
+        this.idRegion,
         this.idZona,
         this.idInstructor,
         this.idMaestro,
@@ -28,22 +29,24 @@ class EscuelaModel {
     String nombre;
     String direccion;
     String idComuna;
+    String idRegion;
     int idZona;
     int idInstructor;
     int idMaestro;
     bool estado;
 
     factory EscuelaModel.fromJson(Map<String, dynamic> json) => EscuelaModel(
-        idEscuela: json["IdEscuela"],
-        logo: json["Logo"],
-        logoOriginal: json["Logo"],
-        nombre: json["Nombre"],
-        direccion: json["Direccion"],
-        idComuna: json["IdComuna"],
-        idZona: json["IdZona"],
-        idInstructor: json["IdInstructor"],
-        idMaestro: json["IdMaestro"],
-        estado: json["Estado"],
+        idEscuela: json["idEscuela"],
+        nombre: json["nombre"],
+        direccion: json["direccion"],
+        idComuna: json["idComuna"],
+        idZona: json["idZona"],
+        idRegion: json["idRegion"],
+        idInstructor: json["idInstructor"],
+        idMaestro: json["idMaestro"],
+        estado: json["estado"],
+        logo: json["logo"]??"",
+        logoOriginal: json["logo"]??"",
     );
 
     Map<String, dynamic> toJson() => {
@@ -53,6 +56,7 @@ class EscuelaModel {
         "Nombre": nombre,
         "Direccion": direccion,
         "IdComuna": idComuna,
+        "idRegion":idRegion,
         "IdZona": idZona,
         "IdInstructor": idInstructor,
         "IdMaestro": idMaestro,

@@ -11,11 +11,6 @@ class EscuelaBloc {
 
   Stream<EscuelaModel> get userPerfilStream => _escuelaController.stream;
 
-  void getEscuelaById(int id) async {
-    final user = await _escuelaService.getEscuelaById(id);
-    _escuelaController.add(user);    
-  }
-
   void getAllEscuelas() async {
     final user = await _escuelaService.getAllEscuelas();
     _escuelaController.add(user);    
@@ -26,11 +21,6 @@ class EscuelaBloc {
     _escuelaController.add(user);    
   }
 
-  void updateEscuela(EscuelaModel escuelaModel) async {
-    final user = await _escuelaService.updateEscuela(escuelaModel);
-    _escuelaController.add(user);    
-  }
-    
   Future<String> subirFoto(File foto, String logoOriginal) async {
     final fotoUrl = await _escuelaService.subirImagen(foto, logoOriginal);
     return fotoUrl;

@@ -1,14 +1,13 @@
 import 'package:fetachiappmovil/bloc/escuela_bloc.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
+import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuelaAdd_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
-import 'package:flutter/material.dart';
-
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
 
-
+import 'package:flutter/material.dart';
 
 class EscuelaPage extends StatefulWidget {
 
@@ -91,6 +90,16 @@ class _EscuelaPageState extends State<EscuelaPage> {
               },
             );
           }else{
+            final escuelaInstructorJson = escuelaPorIdInstructorModelToJson(escuela);
+            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EscuelaAddPage(),
+                              settings: RouteSettings(
+                                arguments: escuelaModelFromJson(escuelaInstructorJson),
+                              ),
+                            ),
+                          );  
             return false;
           }
         },          
