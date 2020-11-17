@@ -42,7 +42,7 @@ class AuthServices {
 
     _prefs.token = '';
     _prefs.uid   = '';
-    
+    _prefs.perfil = '';
     return {'ok': true};
   }
 }

@@ -6,7 +6,7 @@ import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/models/comuna_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
-import 'package:fetachiappmovil/models/instructorMaestro_model.dart';
+import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/region_model.dart';
 import 'package:fetachiappmovil/models/zona_model.dart';
 import 'package:fetachiappmovil/services/comunaRegion_service.dart';
@@ -43,8 +43,8 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
   Future<List<RegionModel>> region;
   Future<List<ComunaModel>> comuna;
   Future<List<ZonaModel>>   zonas;
-  Future<List<InstructorMaestroModel>>   instructores;
-  Future<List<InstructorMaestroModel>>   maestros;
+  Future<List<DropDownModel>>   instructores;
+  Future<List<DropDownModel>>   maestros;
 
   @override
   Widget build(BuildContext context) {
@@ -395,9 +395,9 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
      return Container(
         child: Padding(
             padding: EdgeInsets.only(top: 10.0),
-          child: FutureBuilder<List<InstructorMaestroModel>>(
+          child: FutureBuilder<List<DropDownModel>>(
             future: instructores,
-            builder: (BuildContext context,  AsyncSnapshot<List<InstructorMaestroModel>> snapshot) {
+            builder: (BuildContext context,  AsyncSnapshot<List<DropDownModel>> snapshot) {
 
               if (!snapshot.hasData)
                 return CircularProgressIndicator();
@@ -441,9 +441,9 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
      return Container(
         child: Padding(
             padding: EdgeInsets.only(top: 10.0),
-          child: FutureBuilder<List<InstructorMaestroModel>>(
+          child: FutureBuilder<List<DropDownModel>>(
             future: maestros,
-            builder: (BuildContext context,  AsyncSnapshot<List<InstructorMaestroModel>> snapshot) {
+            builder: (BuildContext context,  AsyncSnapshot<List<DropDownModel>> snapshot) {
 
               if (!snapshot.hasData)
                 return CircularProgressIndicator();

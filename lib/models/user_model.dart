@@ -48,7 +48,8 @@ class User {
         this.idApoderado,
         this.idInfoContacto,
         this.userRoles,
-        this.role
+        this.role,
+        this.idEscuela
     });
 
     String id;
@@ -70,6 +71,7 @@ class User {
     dynamic idInfoContacto;
     List<String> userRoles;
     String role;
+    int idEscuela;
 
     factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
@@ -111,6 +113,7 @@ class User {
         "idApoderado": idApoderado,
         "idInfoContacto": idInfoContacto,
         "userRoles": List<dynamic>.from(userRoles.map((x) => x)),
-        "role": role
+        "role": role,
+        "idEscuela": idEscuela
     };
 }

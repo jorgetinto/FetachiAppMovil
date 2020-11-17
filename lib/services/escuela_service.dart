@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
+import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
 
@@ -137,7 +138,7 @@ class EscuelaServices {
   }
 
 
-  Future<List<EscuelaPorIdInstructorModel>>  getEscuelaPorIdUsuario()  async {    
+  Future<List<DropDownModel>>  getEscuelaPorIdUsuario()  async {    
 
     final url = '$urlBase/Escuela/GetEscuelaPorIdUsuario/${_prefs.uid}';
 
@@ -149,8 +150,8 @@ class EscuelaServices {
 
     if (response.statusCode == 200) {
         final items = json.decode(response.body).cast<Map<String, dynamic>>();
-        List<EscuelaPorIdInstructorModel> listOfUsers = items.map<EscuelaPorIdInstructorModel>((json) {
-          return EscuelaPorIdInstructorModel.fromJson(json);
+        List<DropDownModel> listOfUsers = items.map<DropDownModel>((json) {
+          return DropDownModel.fromJson(json);
         }).toList();
 
         return listOfUsers;

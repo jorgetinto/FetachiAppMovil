@@ -23,7 +23,6 @@ import 'package:fetachiappmovil/pages/home_page.dart';
     if (_prefs.perfil == "Apoderado" || _prefs.perfil == "Estudiante") {
         return <_Route>[
             _Route(FontAwesomeIcons.userCircle, 'Perfil',               HomePage()),
-            _Route(FontAwesomeIcons.school,     'Escuela',              EscuelaPage()),
         ];          
     }
 
