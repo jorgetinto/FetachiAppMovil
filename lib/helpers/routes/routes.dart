@@ -1,7 +1,7 @@
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuela_page.dart';
+import 'package:fetachiappmovil/pages/Usuarios/escuelasAsociadas_page.dart';
 import 'package:fetachiappmovil/pages/resetPassword_page.dart';
-import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -30,7 +30,7 @@ import 'package:fetachiappmovil/pages/home_page.dart';
         return <_Route>[
             _Route(FontAwesomeIcons.userCircle, 'Perfil',               HomePage()),
             _Route(FontAwesomeIcons.school,     'Escuela',              EscuelaPage()),
-            _Route(FontAwesomeIcons.userCog,    'Usuarios',             UsuariosPage()),
+            _Route(FontAwesomeIcons.userCog,    'Usuarios',             EscuelasAsociadas()),
             _Route(FontAwesomeIcons.lock,       'Cambiar Contraseña',   Resetpassword()),
         ];          
     }

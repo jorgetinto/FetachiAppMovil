@@ -7,6 +7,7 @@ import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario
 import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
+import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -63,7 +64,8 @@ class EscuelaServices {
     return respModel;
   }
 
-  Future<EscuelaModel> createEscuela(EscuelaModel escuelaModel) async { 
+  Future<bool> createEscuela(EscuelaModel escuelaModel) async { 
+    bool respuesta  = false;
     final url       = '$urlBase/Escuela/';
     final response  = await http.post(url, headers: {
       'Content-Type': 'application/json',
@@ -72,8 +74,11 @@ class EscuelaServices {
     },
     body: escuelaModelToJson(escuelaModel));  
 
-    final respModel = escuelaModelFromJson(response.body.toString());
-    return respModel;
+    if (response.statusCode == 204) {
+       respuesta = true;
+     }
+
+    return respuesta;
   }
 
   Future<bool> updateEscuela(EscuelaModel escuelaModel) async { 
@@ -152,6 +157,28 @@ class EscuelaServices {
         final items = json.decode(response.body).cast<Map<String, dynamic>>();
         List<DropDownModel> listOfUsers = items.map<DropDownModel>((json) {
           return DropDownModel.fromJson(json);
+        }).toList();
+
+        return listOfUsers;
+      } else {
+        throw Exception('Failed to load internet');
+      }
+  }
+
+    Future<List<UsuarioPorIdEscuelaModel>>  getEscuelaPorIdUsuarioGrind()  async {    
+
+    final url = '$urlBase/Escuela/GetEscuelaPorIdUsuario/${_prefs.uid}';
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    });    
+
+    if (response.statusCode == 200) {
+        final items = json.decode(response.body).cast<Map<String, dynamic>>();
+        List<UsuarioPorIdEscuelaModel> listOfUsers = items.map<UsuarioPorIdEscuelaModel>((json) {
+          return UsuarioPorIdEscuelaModel.fromJson(json);
         }).toList();
 
         return listOfUsers;

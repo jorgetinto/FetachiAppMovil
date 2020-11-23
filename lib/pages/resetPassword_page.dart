@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import 'home_page.dart';
 
-
 class Resetpassword extends StatelessWidget {
 
   Widget _instrucciones() {

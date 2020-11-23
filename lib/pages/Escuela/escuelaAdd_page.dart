@@ -532,7 +532,7 @@ void _submit() async {
 
           if (escuelaModel.idEscuela == null){
             escuelaModel.idEscuela = 0;
-            escuelaBloc.createEscuela(escuelaModel);
+            escuelaProvider.createEscuela(escuelaModel);
           }else {
             escuelaProvider.updateEscuela(escuelaModel);
              Navigator.push(context, SlideRightRoute(widget: EscuelaPage()));

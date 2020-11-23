@@ -16,11 +16,6 @@ class EscuelaBloc {
     _escuelaController.add(user);    
   }
 
-  void createEscuela(EscuelaModel escuelaModel) async {
-    final user = await _escuelaService.createEscuela(escuelaModel);
-    _escuelaController.add(user);    
-  }
-
   Future<String> subirFoto(File foto, String logoOriginal) async {
     final fotoUrl = await _escuelaService.subirImagen(foto, logoOriginal);
     return fotoUrl;

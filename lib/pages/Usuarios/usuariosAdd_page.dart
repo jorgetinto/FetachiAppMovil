@@ -48,11 +48,17 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   @override
   Widget build(BuildContext context) {
 
+    final UserForRegisterModel userData = ModalRoute.of(context).settings.arguments;
+
     userBloc = ProviderBloc.userPefilBloc(context);
 
       setState(() {
           selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
-          selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario();                    
+          selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario(); 
+
+          if (userData != null) {
+            userModel = userData;
+           }
       });
     
     _procesarImagen(ImageSource origin) async {
@@ -142,7 +148,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         FocusScope.of(context).requestFocus(_node);
                       },
                       child: DropdownButtonFormField<String>(
-                      //value: escuelaModel.idZona?.toString()?? null,
+                      value: userModel.role?.toString()?? null,
                       decoration: InputDecoration(
                         labelText: 'Tipo de Usuario',
                         border: OutlineInputBorder(),                                      
@@ -159,7 +165,8 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                           userModel.role = value; 
 
                           if(value =="Estudiante" || value =="Instructor" || value =="Maestro"){
-                            selectGrado       = gradoProvider.getAllGrados();
+                            selectGrado = null;
+                            selectGrado = gradoProvider.getAllGrados();
                           }
                         });
                       },
@@ -195,7 +202,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         FocusScope.of(context).requestFocus(_node);
                       },
                       child: DropdownButtonFormField<String>(
-                      //value: escuelaModel.idZona?.toString()?? null,
+                      value: userModel.idGradoActual?.toString()?? null,
                       decoration: InputDecoration(
                         labelText: 'Grado',
                         border: OutlineInputBorder(),                                      
@@ -242,7 +249,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         FocusScope.of(context).requestFocus(_node);
                       },
                       child: DropdownButtonFormField<String>(
-                      //value: escuelaModel.idZona?.toString()?? null,
+                      value: userModel.idEscuela?.toString()?? null,
                       decoration: InputDecoration(
                         labelText: 'Escuela',
                         border: OutlineInputBorder(),                                      
@@ -401,30 +408,35 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
       return Padding(
         padding: EdgeInsets.only(top: 10.0),
-        child: DateTimeField(
-              
-            mode: DateFieldPickerMode.date,
-              dateFormat: DateFormat("dd/MM/yyyy"),            
-              selectedDate: selectedDate,
-              onDateSelected: (DateTime date) {
-                setState(() {
-                  userModel.fechaDeNacimiento = date.toString();
+        child: Focus(
+                focusNode: _node,
+                onFocusChange: (bool focus) {
+                  setState((){});
+                },
+                child:  DateTimeField(
+                      mode: DateFieldPickerMode.date,
+                        dateFormat: DateFormat("dd/MM/yyyy"),            
+                        selectedDate: selectedDate,
+                        onDateSelected: (DateTime date) {
+                          setState(() {
+                            userModel.fechaDeNacimiento = date.toString();
 
-                  if(int.parse(utils.calculateAge(date.toString())) <= 18){
-                    if(userModel.idEscuela != null)
-                      selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
-                  }else{
-                    selectApoderado = null;
-                  }
-              });
-            }, 
-              decoration: InputDecoration(
-                labelText: 'Fecha de nacimiento',
-                border: OutlineInputBorder()
-              ),
-              //label: 'Fecha de nacimiento',  
-          lastDate: DateTime(2101),
-        ),
+                            if(int.parse(utils.calculateAge(date.toString())) <= 18){
+                              if(userModel.idEscuela != null)
+                                selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
+                            }else{
+                              selectApoderado = null;
+                            }
+                        });
+                      }, 
+                        decoration: InputDecoration(
+                          labelText: 'Fecha de nacimiento',
+                          border: OutlineInputBorder()
+                        ),
+                        //label: 'Fecha de nacimiento',  
+                    lastDate: DateTime(2101),
+                ),
+        )
       );
   }
 
@@ -503,7 +515,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             
             userModel.estado = true;
 
-            if (userModel.id == null){
+            if (userModel.id == null || userModel.id == 0){
               userModel.id = 0;
               Map info = await usuarioProvider.crearUsuario(userModel);
 

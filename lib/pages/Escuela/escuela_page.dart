@@ -19,7 +19,6 @@ class _EscuelaPageState extends State<EscuelaPage> {
   EscuelaBloc   escuelaBloc;  
   Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
   final escuelaProvider      = new EscuelaServices();
-
   final scaffoldKey          = GlobalKey<ScaffoldState>();
 
   AppBar _appBar(BuildContext context) {
@@ -60,10 +59,10 @@ class _EscuelaPageState extends State<EscuelaPage> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               alignment: AlignmentDirectional.centerEnd,
               child: Icon(
-                Icons.delete_sharp,
+                Icons.delete,
                 color: Colors.white,
               ),
-            ),
+          ),
 
         confirmDismiss: (DismissDirection direction) async {
           if (direction == DismissDirection.endToStart) {
@@ -165,8 +164,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
           children: <Widget>[
           Column(
               children: [
-
-                SizedBox(height: 20.0),
+                  SizedBox(height: 20.0),
                   utils.buildTitle("Mis Escuelas"),
                   SizedBox(height: 5.0),
                   _featuredListHorizontal()
