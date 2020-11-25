@@ -525,8 +525,22 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                     showToast(context,info['message']);
                   }
             }else {
-             // escuelaProvider.updateEscuela(escuelaModel);
-              //Navigator.push(context, SlideRightRoute(widget: UsuariosPage()));
+              Map infoUP = await usuarioProvider.updateUsuario(userModel);
+              if (infoUP['ok']) {
+                showToast(context,'Usuario creado de forma exitosa!');
+                escuelaInstructor.idEscuela = userModel.idEscuela;
+                Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UsuariosPage(),
+                          settings: RouteSettings(
+                            arguments: escuelaInstructor,
+                          ),
+                        ),
+                      ); 
+              } else {
+                showToast(context, infoUP['message']);
+              }
             }
 
             // Timer(Duration(milliseconds: 800), () {

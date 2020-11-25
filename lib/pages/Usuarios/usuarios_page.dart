@@ -44,9 +44,16 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   Widget build(BuildContext context) {
-
     final EscuelaPorIdInstructorModel userData  = ModalRoute.of(context).settings.arguments;
     listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);     
+    
+    Future<Null> _handleRefresh() async {
+        await Future.delayed(Duration(seconds: 3), () {
+            setState(() {
+              listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);     
+            });
+        });
+      }
 
     Widget _crearItem(BuildContext context, UsuarioPorIdEscuelaModel usuario ) {
 
@@ -144,19 +151,24 @@ class _UsuariosPageState extends State<UsuariosPage> {
               new Future.delayed(const Duration(seconds : 2));
               return Center(child: Text("No se encontraron usuarios"));
             } else {
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: listData.data.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[                     
-                      _crearItem(context, listData.data[position] )
-                    ],
-                  );
-                },
+              return Expanded(
+                  flex: 1,
+                  child: RefreshIndicator(child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: listData.data.length,
+                    itemBuilder: (BuildContext context, int position) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[                     
+                          _crearItem(context, listData.data[position] )
+                        ],
+                      );
+                    },
+                   ),
+                   onRefresh: _handleRefresh,
+                ),
               );
             }
           },

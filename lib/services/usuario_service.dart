@@ -181,4 +181,22 @@ class UsuarioServices {
     }
   }
 
+  Future<Map<String, dynamic>> updateUsuario(UserForRegisterModel user) async {    
+
+    final url = '$urlBase/Usuario/UpdateUsuario/${user.id}';
+
+    final response = await http.put(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    },
+    body: userForRegisterModelToJson(user));    
+
+    if (response.statusCode == 200) {
+        return {'ok': true, 'message': 'Usuario Creado con exito'};
+      } else {  
+        Map<String, dynamic> decodedResp = json.decode(response.body);  
+        return {'ok': false, 'message': decodedResp['message']};
+      }
+  }
 }
