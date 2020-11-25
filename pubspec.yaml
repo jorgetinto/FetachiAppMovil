@@ -38,6 +38,7 @@ dependencies:
   rxdart: ^0.24.1
   shared_preferences: ^0.5.8
   date_field: ^0.3.0
+  sk_onboarding_screen: ^1.0.1
 
   http: ^0.12.2
   jwt_decoder: ^1.0.3

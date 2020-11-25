@@ -136,13 +136,12 @@ class UsuarioServices {
       'Accept': 'application/json',
       'Authorization': 'Bearer ${_prefs.token}',
     },
-    body: userForRegisterModelToJson(user));
-
-    Map<String, dynamic> decodedResp = json.decode(response.body);  
+    body: userForRegisterModelToJson(user));    
 
     if (response.statusCode == 200) {
-        return {'ok': true, 'message': decodedResp['message']};
+        return {'ok': true, 'message': 'Usuario Creado con exito'};
       } else {  
+        Map<String, dynamic> decodedResp = json.decode(response.body);  
         return {'ok': false, 'message': decodedResp['message']};
       }
   }
@@ -163,4 +162,23 @@ class UsuarioServices {
 
     return respuesta;
   }
+
+  Future<UserForRegisterModel>  getUsuarioByIdUsuario(int id)  async {    
+    final url = '$urlBase/Usuario/GetUsuarioByIdUsuario/$id';
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    });
+
+    try {
+      final respModel = userForRegisterModelFromJson(response.body.toString());
+      return respModel;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
 }

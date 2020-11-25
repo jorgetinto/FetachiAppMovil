@@ -43,37 +43,37 @@ class UserForRegisterModel {
     String phoneNumber;
     String direccion;
     String idComuna;
-    dynamic statusCard;
-    dynamic folio;
-    dynamic imagen;
-    dynamic idInfoContacto;
-    dynamic idApoderado;
+    String statusCard;
+    int folio;
+    String imagen;
+    int idInfoContacto;
+    int idApoderado;
     int idGradoActual;
     bool estado;
-    dynamic idEscuela;
+    int idEscuela;
     String role;
 
     factory UserForRegisterModel.fromJson(Map<String, dynamic> json) => UserForRegisterModel(
-        id: json["Id"],
-        userName: json["UserName"],
-        rut: json["Rut"],
-        nombres: json["Nombres"],
-        apellidoPaterno: json["ApellidoPaterno"],
-        apellidoMaterno: json["ApellidoMaterno"],
-        fechaDeNacimiento: json["FechaDeNacimiento"],
-        email: json["Email"],
-        phoneNumber: json["PhoneNumber"],
-        direccion: json["Direccion"],
-        idComuna: json["IdComuna"],
-        statusCard: json["StatusCard"],
-        folio: json["Folio"],
-        imagen: json["Imagen"],
-        idInfoContacto: json["IdInfoContacto"],
-        idApoderado: json["IdApoderado"],
-        idGradoActual: json["IdGradoActual"],
-        estado: json["Estado"],
-        idEscuela: json["IdEscuela"],
-        role: json["Role"],
+        id: json["id"],
+        userName: json["userName"]??"",
+        rut: json["rut"]??"",
+        nombres: json["nombres"]??"",
+        apellidoPaterno: json["apellidoPaterno"]??"",
+        apellidoMaterno: json["apellidoMaterno"]??"",
+        fechaDeNacimiento: json["fechaDeNacimiento"]??"",
+        email: json["email"]??"",
+        phoneNumber: json["phoneNumber"]??"",
+        direccion: json["direccion"]??"",
+        idComuna: json["idComuna"]??"",
+        statusCard: json["statusCard"]??"",
+        folio: json["folio"]??"",
+        imagen: json["imagen"]??"",
+        idInfoContacto: json["idInfoContacto"],
+        idApoderado: json["idApoderado"],
+        idGradoActual: json["idGradoActual"],
+        estado: json["estado"],
+        idEscuela: json["idEscuela"],
+        role: json["role"],
     );
 
     Map<String, dynamic> toJson() => {

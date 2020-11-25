@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:date_field/date_field.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/bloc/userPerfil_bloc.dart';
-import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/validators/RutHelper_widget.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
+import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
@@ -31,11 +31,12 @@ class UsuariosAddPage extends StatefulWidget {
   GlobalKey<ScaffoldState>  scaffoldKey      = new GlobalKey<ScaffoldState>();
   FocusNode                 _node            = new FocusNode();
 
-  UserForRegisterModel      userModel        = new UserForRegisterModel();
+  UserForRegisterModel      userModel;
   UserPerfilBloc            userBloc;  
   UsuarioServices           usuarioProvider  = new UsuarioServices();
   EscuelaServices           escuelaProvider  = new EscuelaServices();
   GradoServices             gradoProvider    = new GradoServices();
+  EscuelaPorIdInstructorModel escuelaInstructor = new EscuelaPorIdInstructorModel();
 
   Future<List<DropDownModel>>                 selectTipoUsuario;
   Future<List<DropDownModel>>                 selectGrado;
@@ -55,6 +56,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
       setState(() {
           selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
           selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario(); 
+          userModel         = new UserForRegisterModel();
 
           if (userData != null) {
             userModel = userData;
@@ -492,24 +494,12 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     void _submit() async {
       if (!formKey.currentState.validate()) {
         return;
-      }else {
-          // scaffoldKey.currentState.showSnackBar(
-          //   new SnackBar(duration: new Duration(seconds: 40), content:
-          //     new Row(
-          //       children: <Widget>[
-          //         new CircularProgressIndicator(),
-          //         new Text("    Guardando cambios...")
-          //       ],
-          //     ),
-          //   )
-          // );
-
+      }else { 
           formKey.currentState.save();
 
           if (foto != null) {
             userModel.imagen = await userBloc.subirFoto(foto, userModel.imagen);
-          }   
-
+          }
 
           if(userModel != null) {
             
@@ -521,7 +511,16 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
                   if (info['ok']) {
                     showToast(context,'Usuario creado de forma exitosa!');
-                    Navigator.pushReplacement(context, SlideRightSinOpacidadRoute(widget: UsuariosPage()));
+                    escuelaInstructor.idEscuela = userModel.idEscuela;
+                     Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UsuariosPage(),
+                              settings: RouteSettings(
+                                arguments: escuelaInstructor,
+                              ),
+                            ),
+                          );  
                   } else {
                     showToast(context,info['message']);
                   }

@@ -4,10 +4,8 @@ import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/widget/Header_widget.dart';
+import 'package:fetachiappmovil/pages/Onboarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
-
-import '../home_page.dart';
-
 
 class LoginPage extends StatefulWidget {
 
@@ -169,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
     Map info = await bloc.login(bloc.userName.trim(), bloc.password.trim());
     if (info['ok']) {
       await new Future.delayed(const Duration(seconds : 3));
-      Navigator.pushReplacement(context, SlideRightSinOpacidadRoute(widget: HomePage()));
+      Navigator.pushReplacement(context, SlideRightSinOpacidadRoute(widget: OnBoardingPage()));
     } else {
       showToast(context,info['mensaje']);
     }

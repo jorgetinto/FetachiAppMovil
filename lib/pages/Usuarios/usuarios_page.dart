@@ -1,10 +1,10 @@
 import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
+import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
-import 'package:fetachiappmovil/pages/Escuela/escuelaAdd_page.dart';
+import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
-import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
 import 'package:fetachiappmovil/services/usuario_service.dart';
 
 import 'package:flutter/material.dart';
@@ -20,7 +20,8 @@ class _UsuariosPageState extends State<UsuariosPage> {
   final escuelaProvider                                   = new EscuelaServices();
   final scaffoldKey                                       = new GlobalKey<ScaffoldState>();
   UsuarioServices usuarioProvider                         = new UsuarioServices();
-  TextEditingController editingController                 = new TextEditingController();
+  TextEditingController editingController                 = new TextEditingController();  
+  UserForRegisterModel register                  = new UserForRegisterModel();
   Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;  
   Future<List<DropDownModel>>   selectEscuela;
 
@@ -95,20 +96,16 @@ class _UsuariosPageState extends State<UsuariosPage> {
               },
             );
           }else{
-
-            // Debo crear un endpoint que retorne los mismos datos que cuando creo un usuario 
-
-
-            // final usuarioDetails = usuarioPorIdEscuelaModelToJson(usuario);
-            // Navigator.push(
-            //                 context,
-            //                 MaterialPageRoute(
-            //                   builder: (context) => UsuariosAddPage(),
-            //                   settings: RouteSettings(
-            //                     arguments: userForRegisterModelToJson(usuarioDetails),
-            //                   ),
-            //                 ),
-            //               );  
+            final usuarioDetails = await usuarioProvider.getUsuarioByIdUsuario(usuario.id);
+            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UsuariosAddPage(),
+                              settings: RouteSettings(
+                                arguments: usuarioDetails,
+                              ),
+                            ),
+                          );  
             return false;
           }
         },          
@@ -186,7 +183,16 @@ class _UsuariosPageState extends State<UsuariosPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, router.SlideRightRoute(widget: EscuelaAddPage()));
+           register.idEscuela = userData.idEscuela;
+            Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UsuariosAddPage(),
+                    settings: RouteSettings(
+                      arguments: register,
+                    ),
+                  ),
+                );  
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.redAccent,
