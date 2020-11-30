@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
   _login(LoginBloc bloc, BuildContext context) async {
 
     _scaffoldKey.currentState.showSnackBar(
-      new SnackBar(duration: new Duration(seconds: 6), content:
+      new SnackBar(duration: new Duration(seconds: 1), content:
         new Row(
           children: <Widget>[
             new CircularProgressIndicator(),
@@ -166,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
 
     Map info = await bloc.login(bloc.userName.trim(), bloc.password.trim());
     if (info['ok']) {
-      await new Future.delayed(const Duration(seconds : 3));
+      await new Future.delayed(const Duration(milliseconds : 400));
       Navigator.pushReplacement(context, SlideRightSinOpacidadRoute(widget: OnBoardingPage()));
     } else {
       showToast(context,info['mensaje']);

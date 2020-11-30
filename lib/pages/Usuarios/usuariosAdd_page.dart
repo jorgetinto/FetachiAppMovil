@@ -42,6 +42,7 @@ class UsuariosAddPage extends StatefulWidget {
   Future<List<DropDownModel>>                 selectGrado;
   Future<List<DropDownModel>>                 selectApoderado;
   Future<List<DropDownModel>>   selectEscuela;
+  bool _isVisible = true;
 
 class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
@@ -167,9 +168,16 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                           userModel.role = value; 
 
                           if(value =="Estudiante" || value =="Instructor" || value =="Maestro"){
-                            selectGrado = null;
+                            selectGrado = null;                            
                             selectGrado = gradoProvider.getAllGrados();
+                          }                         
+
+                          if(value =="Admin" || value =="Instructor" || value =="Maestro"){
+                            _isVisible = false;
+                          }else {
+                            _isVisible = true;
                           }
+
                         });
                       },
                     ),
@@ -231,59 +239,62 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     }
 
     Widget _dropdrownEscuela() {
-     return Container(
-        child: Padding(
-            padding: EdgeInsets.only(top: 10.0),
-          child: FutureBuilder<List<DropDownModel>>(
-            future: selectEscuela,
-            builder: (BuildContext context,  AsyncSnapshot<List<DropDownModel>> snapshot) {
+     return Visibility(
+          visible: _isVisible,
+          child:   Container(
+          child: Padding(
+              padding: EdgeInsets.only(top: 10.0),
+            child: FutureBuilder<List<DropDownModel>>(
+              future: selectEscuela,
+              builder: (BuildContext context,  AsyncSnapshot<List<DropDownModel>> snapshot) {
 
-              if (!snapshot.hasData)
-                return CircularProgressIndicator();
+                if (!snapshot.hasData)
+                  return CircularProgressIndicator();
 
-                  return Focus(
-                        focusNode: _node,
-                        onFocusChange: (bool focus) {
-                          setState((){});
+                    return Focus(
+                          focusNode: _node,
+                          onFocusChange: (bool focus) {
+                            setState((){});
+                          },
+                        child: Listener(
+                        onPointerDown: (_) {
+                          FocusScope.of(context).requestFocus(_node);
                         },
-                      child: Listener(
-                      onPointerDown: (_) {
-                        FocusScope.of(context).requestFocus(_node);
-                      },
-                      child: DropdownButtonFormField<String>(
-                      value: userModel.idEscuela?.toString()?? null,
-                      decoration: InputDecoration(
-                        labelText: 'Escuela',
-                        border: OutlineInputBorder(),                                      
+                        child: DropdownButtonFormField<String>(
+                        value: userModel.idEscuela?.toString()?? null,
+                        decoration: InputDecoration(
+                          labelText: 'Escuela',
+                          border: OutlineInputBorder(),                                      
+                        ),
+                        isDense: true,
+                        isExpanded: true,
+                        items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
+                            child: Text(tipo.nombre),
+                            value:  tipo.id.toString()               
+                          )
+                        ).toList(),
+                        onChanged:(value) {
+                          setState(() {   
+                            userModel.idEscuela = int.parse(value);
+
+                              if(userModel.fechaDeNacimiento != null){
+                                if(int.parse(utils.calculateAge(userModel.fechaDeNacimiento.toString())) <= 18){
+                                    if(userModel.idEscuela != null)
+                                      selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
+                               }else{
+                                  selectApoderado = null;
+                                }
+                              }       
+                          });
+                        },
                       ),
-                      isDense: true,
-                      isExpanded: true,
-                      items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
-                          child: Text(tipo.nombre),
-                          value:  tipo.id.toString()               
-                        )
-                      ).toList(),
-                      onChanged:(value) {
-                        setState(() {   
-                          userModel.idEscuela = int.parse(value);
-
-                            if(userModel.fechaDeNacimiento != null){
-                              if(int.parse(utils.calculateAge(userModel.fechaDeNacimiento.toString())) <= 18){
-                                  if(userModel.idEscuela != null)
-                                    selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
-                             }else{
-                                selectApoderado = null;
-                              }
-                            }       
-                        });
-                      },
                     ),
-                  ),
-                );
+                  );
 
-            }),
+              }),
+          ),
         ),
-      );
+     );
     }
 
     Widget _inputUserName() {
@@ -527,7 +538,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             }else {
               Map infoUP = await usuarioProvider.updateUsuario(userModel);
               if (infoUP['ok']) {
-                showToast(context,'Usuario creado de forma exitosa!');
+                showToast(context, (userModel?.id == null) ? 'Usuario creado de forma exitosa!': 'Usuario actualizado de forma exitosa!');
                 escuelaInstructor.idEscuela = userModel.idEscuela;
                 Navigator.pushReplacement(
                         context,
@@ -542,14 +553,6 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                 showToast(context, infoUP['message']);
               }
             }
-
-            // Timer(Duration(milliseconds: 800), () {
-            //     setState(() {
-            //       Navigator.push(context, SlideRightRoute(widget: HomePage()));
-            //     });
-            // });
-
-  
           }
       }
     }
@@ -567,7 +570,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             ),
             color: Colors.redAccent,
             textColor: Colors.white,
-            label: Text('Guardar'),
+            label: (userModel?.id == null) ? Text('Guardar'): Text('Actualizar'),
             icon: Icon(Icons.save),
             onPressed: () =>  _submit(),
             ),
@@ -606,7 +609,6 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
               )
             ),
         ),
-
       )
     ),
    );

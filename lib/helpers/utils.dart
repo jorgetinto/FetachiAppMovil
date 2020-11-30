@@ -79,7 +79,9 @@ import 'package:toast/toast.dart';
                   child: CircleAvatar(
                     radius: 30.0,
                     child: (tipoFoto) ? Image.asset('assets/img/FETACHI.png') 
-                                      :  (snapshot.data.imagen != null)?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))): Container(height: 0, width: 0,) ,
+                                      :  (snapshot.data.imagen != null)
+                                      ?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen)))
+                                      :  Container(height: 0, width: 0,) ,
                     backgroundColor: Colors.white,
                   ),
                   
@@ -118,7 +120,21 @@ import 'package:toast/toast.dart';
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                      Text("${snapshot.data.nombres} \n${snapshot.data.apellidoPaterno}  ${snapshot.data.apellidoMaterno}", maxLines: 20, style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),),
+                  Container(
+                          width: (!tipoFoto)? 180.0: 250.0,
+                          padding: new EdgeInsets.only(right: 13.0),
+                          child: new Text(
+                            '${snapshot.data.nombres} ${snapshot.data.apellidoPaterno} ${snapshot.data.apellidoMaterno}',
+                            overflow: TextOverflow.ellipsis,
+                            style: new TextStyle(
+                              fontSize: 14.0,
+                              fontFamily: 'Roboto',
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+
                       SizedBox(height: 5.0,),
                       Text("Rut: ${snapshot.data.rut}", style: TextStyle(fontSize: 13.0),),
                       SizedBox(height: 5.0,),
@@ -130,9 +146,18 @@ import 'package:toast/toast.dart';
                         children: [
                           FaIcon(FontAwesomeIcons.map, size: 10.0, color: Colors.black54,),
                           SizedBox(height: 10.0,),
-                          Text(" ${snapshot.data.direccion}, ${snapshot.data.comuna?? " "}", style: TextStyle(color: Colors.black54)),
+                            Container(
+                              width: (!tipoFoto)? 180.0: 250.0,
+                              padding: new EdgeInsets.only(right: 13.0),
+                              child: new Text(
+                                " ${snapshot.data.direccion}, ${snapshot.data.comuna?? " "}",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 14.0)
+                              ),
+                            ),
                         ],
                       )
+                      
                     ],
         ),
       ],

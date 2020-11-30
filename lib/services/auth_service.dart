@@ -40,9 +40,9 @@ class AuthServices {
   
   Future<Map<String, dynamic>> signOut() async {
 
-    _prefs.token = '';
-    _prefs.uid   = '';
-    _prefs.perfil = '';
+    _prefs.token = null;
+    _prefs.uid   = null;
+    _prefs.perfil = null;
     return {'ok': true};
   }
 }

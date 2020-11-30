@@ -1,4 +1,3 @@
-import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
@@ -22,8 +21,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
   UsuarioServices usuarioProvider                         = new UsuarioServices();
   TextEditingController editingController                 = new TextEditingController();  
   UserForRegisterModel register                  = new UserForRegisterModel();
-  Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;  
-  Future<List<DropDownModel>>   selectEscuela;
+  Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -37,18 +35,12 @@ class _UsuariosPageState extends State<UsuariosPage> {
   }
 
   @override
-  void initState() { 
-    selectEscuela = escuelaProvider.getEscuelaPorIdUsuario();  
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final EscuelaPorIdInstructorModel userData  = ModalRoute.of(context).settings.arguments;
     listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);     
     
     Future<Null> _handleRefresh() async {
-        await Future.delayed(Duration(seconds: 3), () {
+        await Future.delayed(Duration(seconds: 1), () {
             setState(() {
               listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);     
             });
@@ -122,7 +114,9 @@ class _UsuariosPageState extends State<UsuariosPage> {
                  ListTile(
                         leading: CircleAvatar(
                           radius: 25.0,
-                          backgroundImage: usuario.imagen !=null? NetworkImage(usuario.imagen): AssetImage('assets/img/FETACHI50.png'),// escuela.logo?? NetworkImage(escuela.logo),
+                          backgroundImage: usuario.imagen !=null && usuario.imagen != ""
+                                ? NetworkImage(usuario.imagen)
+                                : AssetImage('assets/img/FETACHI50.png'),
                           backgroundColor: Colors.black,
                         ),
                        title: Text('${ usuario.nombres }'),
@@ -151,24 +145,28 @@ class _UsuariosPageState extends State<UsuariosPage> {
               new Future.delayed(const Duration(seconds : 2));
               return Center(child: Text("No se encontraron usuarios"));
             } else {
-              return Expanded(
-                  flex: 1,
-                  child: RefreshIndicator(child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: listData.data.length,
-                    itemBuilder: (BuildContext context, int position) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[                     
-                          _crearItem(context, listData.data[position] )
-                        ],
-                      );
-                    },
-                   ),
-                   onRefresh: _handleRefresh,
-                ),
+              return Column(
+                children: [
+                  Expanded(
+                      flex: 1,
+                      child: RefreshIndicator(child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: listData.data.length,
+                        itemBuilder: (BuildContext context, int position) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[                     
+                              _crearItem(context, listData.data[position] )
+                            ],
+                          );
+                        },
+                       ),
+                       onRefresh: _handleRefresh,
+                    ),
+                  ),
+                ],
               );
             }
           },

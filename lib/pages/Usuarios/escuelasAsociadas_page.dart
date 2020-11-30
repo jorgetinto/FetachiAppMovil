@@ -1,4 +1,7 @@
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
+import 'package:fetachiappmovil/models/userForRegister_model.dart';
+import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
@@ -16,6 +19,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
 
   final escuelaProvider                                   = new EscuelaServices();
   final scaffoldKey                                       = new GlobalKey<ScaffoldState>();
+  final _prefs                                            = new PreferenciasUsuario();
   Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
 
   AppBar _appBar(BuildContext context) {
@@ -37,6 +41,14 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
 
   @override
   Widget build(BuildContext context) {
+
+    Future<Null> _handleRefresh() async {
+        await Future.delayed(Duration(seconds: 1), () {
+            setState(() {
+              escuelasLista = escuelaProvider.getEscuelaByIdInstructor();    
+            });
+        });
+      }
 
     Widget _crearItem(BuildContext context, EscuelaPorIdInstructorModel escuela ) {
 
@@ -82,20 +94,31 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
               new Future.delayed(const Duration(seconds : 2));
               return Center(child: Text("Para continuar debe crear una escuela primero"));
             } else {
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: listData.data.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[                     
-                      _crearItem(context, listData.data[position] )
+              return 
+                  Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                          child: RefreshIndicator(
+                            child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: listData.data.length,
+                            itemBuilder: (BuildContext context, int position) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[                     
+                                  _crearItem(context, listData.data[position] )
+                                ],
+                              );
+                            },
+                          ),
+                          onRefresh: _handleRefresh,
+                        ),
+              ),
                     ],
                   );
-                },
-              );
             }
           },
         ),   
@@ -119,7 +142,26 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
             ),
           ]
         ),
-      )
+      ),
+      floatingActionButton: 
+      (_prefs.perfil == "Admin" || _prefs.perfil == "Maestro") ?
+          FloatingActionButton(
+            onPressed: () {
+              //register.idEscuela = userData.idEscuela;
+              UserForRegisterModel model = new UserForRegisterModel();
+                Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UsuariosAddPage(),
+                        settings: RouteSettings(
+                          arguments: model,
+                        ),
+                      ),
+                    );  
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.redAccent,
+          ): Container(height: 0, width: 0,)
    );
   }
 }

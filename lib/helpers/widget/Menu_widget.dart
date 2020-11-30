@@ -20,6 +20,7 @@ class MenuPrincipal extends StatefulWidget {
 }
 
 class _MenuPrincipalState extends State<MenuPrincipal> {
+
   @override
   Widget build(BuildContext context) {
     final userPerfilBloc    = ProviderBloc.userPefilBloc(context);
@@ -89,9 +90,22 @@ class _MenuPrincipalState extends State<MenuPrincipal> {
   }
 }
 
-class _ListOpciones extends StatelessWidget {
+class _ListOpciones extends StatefulWidget {
+  @override
+  __ListOpcionesState createState() => __ListOpcionesState();
+}
+
+class __ListOpcionesState extends State<_ListOpciones> {
+
   @override
   Widget build(BuildContext context) {
+
+    List<dynamic>  pageRoutes = new List<dynamic>();
+
+    setState(() {      
+       pageRoutes  = listaRuta();
+    });
+
     return ListView.separated(
       physics:          BouncingScrollPhysics(),
       itemCount:        pageRoutes.length,
