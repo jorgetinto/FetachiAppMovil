@@ -20,8 +20,17 @@ class _UsuariosPageState extends State<UsuariosPage> {
   final scaffoldKey                                       = new GlobalKey<ScaffoldState>();
   UsuarioServices usuarioProvider                         = new UsuarioServices();
   TextEditingController editingController                 = new TextEditingController();  
-  UserForRegisterModel register                  = new UserForRegisterModel();
+  UserForRegisterModel register                           = new UserForRegisterModel();
+  TextEditingController controller                        = new TextEditingController();
+
+  List<UsuarioPorIdEscuelaModel>   listaResultadoOriginal  = new  List<UsuarioPorIdEscuelaModel>();
+   List<UsuarioPorIdEscuelaModel>   listaResultado         = new  List<UsuarioPorIdEscuelaModel>();
+  List<UsuarioPorIdEscuelaModel>   listaResultadocopia     = new  List<UsuarioPorIdEscuelaModel>();
+
   Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;
+  EscuelaPorIdInstructorModel userData;
+  String searchString = "";
+
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -35,14 +44,34 @@ class _UsuariosPageState extends State<UsuariosPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final EscuelaPorIdInstructorModel userData  = ModalRoute.of(context).settings.arguments;
-    listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);     
+  void initState() {
+
+       Future.delayed(Duration.zero,(){
+         setState(() {
+          userData                                    = ModalRoute.of(context).settings.arguments;
+          listaResultado                              = new  List<UsuarioPorIdEscuelaModel>();
+          listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);
+
+          listaUsuarios.then((value) => {
+            if (value != null)  listaResultadoOriginal.addAll(value)
+          });
+
+         });
+       });
     
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
     Future<Null> _handleRefresh() async {
         await Future.delayed(Duration(seconds: 1), () {
             setState(() {
-              listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);     
+              listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela); 
+              listaUsuarios.then((value) => {
+                if (value != null)  listaResultadoOriginal.addAll(value)
+              });    
             });
         });
       }
@@ -149,20 +178,38 @@ class _UsuariosPageState extends State<UsuariosPage> {
                 children: [
                   Expanded(
                       flex: 1,
-                      child: RefreshIndicator(child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: listData.data.length,
-                        itemBuilder: (BuildContext context, int position) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[                     
-                              _crearItem(context, listData.data[position] )
-                            ],
-                          );
-                        },
-                       ),
+                      child: RefreshIndicator(
+                        child: 
+
+                        (searchString == "" || searchString == null) 
+                        ?  ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: listData.data.length,
+                          itemBuilder: (BuildContext context, int position) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[       
+                                _crearItem(context, listData.data[position])
+                              ],
+                            );
+                          },
+                        ) :
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: listaResultado.length,
+                          itemBuilder: (BuildContext context, int position) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[       
+                                _crearItem(context, listaResultado[position])
+                              ],
+                            );
+                          },
+                        ),
                        onRefresh: _handleRefresh,
                     ),
                   ),
@@ -182,10 +229,53 @@ class _UsuariosPageState extends State<UsuariosPage> {
           children: <Widget>[
           Column(
               children: [
+                  new Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new Card(
+                    child: new ListTile(
+                      leading: new Icon(Icons.search),
+                      title: new TextField(
+                        controller: controller,
+                        decoration: new InputDecoration(
+                        hintText: 'Search', border: InputBorder.none),
+                        onChanged: (value) {
+                            setState((){
+                              
+                               
+                              if (value.length >= 3){
+                                searchString = value;
+                                listaResultadocopia = new List<UsuarioPorIdEscuelaModel>();
+                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.nombres.toLowerCase().contains(searchString.toLowerCase()))).toList();
+
+                                if (listaResultadocopia.length > 0)
+                                    listaResultado = listaResultadocopia;
+
+                                if (searchString == "" || searchString == null)
+                                    listaResultado = listaResultadoOriginal;  
+                              }else{
+                                  searchString = "";
+                                  listaResultado = listaResultadoOriginal; 
+                              }
+
+                            });
+                          },
+                        ),
+                      trailing: new IconButton(icon: new Icon(Icons.cancel), onPressed: () {
+                          setState(() {
+                            controller.clear();
+                            searchString = ""; 
+                            listaResultado = listaResultadoOriginal;                           
+                          });
+                      },),
+                    ),
+                  ),
+                ),
+
                   SizedBox(height: 20.0),
                   utils.buildTitle("Mis Usuarios"),
                   SizedBox(height: 5.0),
-                  _featuredListHorizontal()
+                  _featuredListHorizontal(),
+                  SizedBox(height: 80.0),
               ],
             ),
           ]
