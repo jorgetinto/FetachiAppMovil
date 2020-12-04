@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
@@ -19,12 +20,11 @@ class _UsuariosPageState extends State<UsuariosPage> {
   final escuelaProvider                                   = new EscuelaServices();
   final scaffoldKey                                       = new GlobalKey<ScaffoldState>();
   UsuarioServices usuarioProvider                         = new UsuarioServices();
-  TextEditingController editingController                 = new TextEditingController();  
   UserForRegisterModel register                           = new UserForRegisterModel();
   TextEditingController controller                        = new TextEditingController();
 
   List<UsuarioPorIdEscuelaModel>   listaResultadoOriginal  = new  List<UsuarioPorIdEscuelaModel>();
-   List<UsuarioPorIdEscuelaModel>   listaResultado         = new  List<UsuarioPorIdEscuelaModel>();
+  List<UsuarioPorIdEscuelaModel>  listaResultado          = new  List<UsuarioPorIdEscuelaModel>();
   List<UsuarioPorIdEscuelaModel>   listaResultadocopia     = new  List<UsuarioPorIdEscuelaModel>();
 
   Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;
@@ -45,11 +45,10 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   void initState() {
-
        Future.delayed(Duration.zero,(){
          setState(() {
           userData                                    = ModalRoute.of(context).settings.arguments;
-          listaResultado                              = new  List<UsuarioPorIdEscuelaModel>();
+          listaResultado                              = new  List<UsuarioPorIdEscuelaModel>();         
           listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);
 
           listaUsuarios.then((value) => {
@@ -62,19 +61,21 @@ class _UsuariosPageState extends State<UsuariosPage> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
 
+
     Future<Null> _handleRefresh() async {
-        await Future.delayed(Duration(seconds: 1), () {
-            setState(() {
-              listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela); 
-              listaUsuarios.then((value) => {
-                if (value != null)  listaResultadoOriginal.addAll(value)
-              });    
-            });
-        });
-      }
+      await Future.delayed(Duration(seconds: 1), () {
+          setState(() {
+            listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela); 
+            listaUsuarios.then((value) => {
+              if (value != null)  listaResultadoOriginal.addAll(value)
+            });    
+          });
+      });
+    }
 
     Widget _crearItem(BuildContext context, UsuarioPorIdEscuelaModel usuario ) {
 
@@ -148,8 +149,42 @@ class _UsuariosPageState extends State<UsuariosPage> {
                                 : AssetImage('assets/img/FETACHI50.png'),
                           backgroundColor: Colors.black,
                         ),
-                       title: Text('${ usuario.nombres }'),
-                        subtitle: Text('${ usuario.gradoActual }'),
+                       // title: Text('${ usuario.folio } - ${ usuario.nombres }'),
+                       title: 
+                        Container(
+                          width: 80.0,
+                          padding: new EdgeInsets.only(right: 13.0),
+                          child: new Text(
+                            '${ usuario.folio } - ${ usuario.nombres } ',
+                            overflow: TextOverflow.ellipsis,
+                            style: new TextStyle(
+                              fontSize: 14.0,
+                              fontFamily: 'Roboto',
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),                       
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(' ${ usuario.gradoActual??'N/A' }') ,
+                            Text('|') ,
+                            Text(' ${ usuario.perfil??'N/A' }') ,
+                            Text('|') ,
+                            Badge(
+                                toAnimate: false,
+                                shape: BadgeShape.square,
+                                badgeColor: (usuario.estado)? Colors.green: Colors.redAccent,
+                                borderRadius: BorderRadius.circular(8),
+                                badgeContent: Text((usuario.estado)?'Activo':'Inactivo', style: 
+                                                    TextStyle(fontSize: 10.0,
+                                                        fontFamily: 'Roboto',
+                                                        color: Colors.white
+                                                  )),
+                              ),
+                              
+                        ],), 
                         trailing: Icon(Icons.more_vert),
                         isThreeLine: true,
                       ),
@@ -163,7 +198,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
       
       return (listaUsuarios != null ) ?   
       Container(
-        margin: const EdgeInsets.symmetric(vertical: 20.0),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         padding: EdgeInsets.all(8.0),
         height: MediaQuery.of(context).copyWith().size.height / 1.4,
         child: FutureBuilder(
@@ -213,23 +248,17 @@ class _UsuariosPageState extends State<UsuariosPage> {
                        onRefresh: _handleRefresh,
                     ),
                   ),
+                  SizedBox(height: 40.0),
                 ],
               );
             }
           },
         ),   
-      ): Container(height: 0, width: 0,);  
+      ): CircularProgressIndicator();
     }
 
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: _appBar(context),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-          Column(
-              children: [
-                  new Padding(
+    Widget _search(){
+      return new Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: new Card(
                     child: new ListTile(
@@ -237,15 +266,13 @@ class _UsuariosPageState extends State<UsuariosPage> {
                       title: new TextField(
                         controller: controller,
                         decoration: new InputDecoration(
-                        hintText: 'Search', border: InputBorder.none),
+                        hintText: 'Buscar folio', border: InputBorder.none),
                         onChanged: (value) {
                             setState((){
-                              
-                               
                               if (value.length >= 3){
                                 searchString = value;
                                 listaResultadocopia = new List<UsuarioPorIdEscuelaModel>();
-                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.nombres.toLowerCase().contains(searchString.toLowerCase()))).toList();
+                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.folio == int.parse(searchString))).toList();
 
                                 if (listaResultadocopia.length > 0)
                                     listaResultado = listaResultadocopia;
@@ -256,7 +283,6 @@ class _UsuariosPageState extends State<UsuariosPage> {
                                   searchString = "";
                                   listaResultado = listaResultadoOriginal; 
                               }
-
                             });
                           },
                         ),
@@ -269,13 +295,21 @@ class _UsuariosPageState extends State<UsuariosPage> {
                       },),
                     ),
                   ),
-                ),
+                );
+    }
 
-                  SizedBox(height: 20.0),
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: _appBar(context),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+          Column(
+              children: [
+                  _search(),
+                  SizedBox(height: 10.0),
                   utils.buildTitle("Mis Usuarios"),
-                  SizedBox(height: 5.0),
                   _featuredListHorizontal(),
-                  SizedBox(height: 80.0),
               ],
             ),
           ]

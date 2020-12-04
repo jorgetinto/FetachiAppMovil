@@ -20,7 +20,12 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
   final escuelaProvider                                   = new EscuelaServices();
   final scaffoldKey                                       = new GlobalKey<ScaffoldState>();
   final _prefs                                            = new PreferenciasUsuario();
+  TextEditingController controller                        = new TextEditingController();
+  List<EscuelaPorIdInstructorModel>   listaResultadoOriginal  = new  List<EscuelaPorIdInstructorModel>();
+  List<EscuelaPorIdInstructorModel>   listaResultado          = new  List<EscuelaPorIdInstructorModel>();
+  List<EscuelaPorIdInstructorModel>   listaResultadocopia     = new  List<EscuelaPorIdInstructorModel>();
   Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
+  String searchString = "";
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -35,7 +40,19 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
 
   @override
   void initState() {
-     escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
+     
+
+    Future.delayed(Duration.zero,(){
+        setState(() {
+          listaResultado = new  List<EscuelaPorIdInstructorModel>();
+          escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
+
+          escuelasLista.then((value) => {
+            if (value != null)  listaResultadoOriginal.addAll(value)
+          });
+        });
+      });
+
     super.initState();
   }
 
@@ -45,7 +62,10 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
     Future<Null> _handleRefresh() async {
         await Future.delayed(Duration(seconds: 1), () {
             setState(() {
-              escuelasLista = escuelaProvider.getEscuelaByIdInstructor();    
+              escuelasLista = escuelaProvider.getEscuelaByIdInstructor(); 
+              escuelasLista.then((value) => {
+                if (value != null)  listaResultadoOriginal.addAll(value)
+              });   
             });
         });
       }
@@ -84,7 +104,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
 
     Widget _featuredListHorizontal()  {   
       return Container(
-        margin: const EdgeInsets.symmetric(vertical: 20.0),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         padding: EdgeInsets.all(8.0),
         height: MediaQuery.of(context).copyWith().size.height / 1.4,
         child: FutureBuilder(
@@ -98,26 +118,45 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
                   Column(
                     children: [
                       Expanded(
-                        flex: 1,
-                          child: RefreshIndicator(
-                            child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: listData.data.length,
-                            itemBuilder: (BuildContext context, int position) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[                     
-                                  _crearItem(context, listData.data[position] )
-                                ],
-                              );
-                            },
+                              flex: 1,
+                              child: RefreshIndicator(
+                                child: 
+
+                                (searchString == "" || searchString == null) 
+                                ?  ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: listData.data.length,
+                                  itemBuilder: (BuildContext context, int position) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[       
+                                        _crearItem(context, listData.data[position])
+                                      ],
+                                    );
+                                  },
+                                ) :
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: listaResultado.length,
+                                  itemBuilder: (BuildContext context, int position) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[       
+                                        _crearItem(context, listaResultado[position])
+                                      ],
+                                    );
+                                  },
+                                ),
+                              onRefresh: _handleRefresh,
+                            ),
                           ),
-                          onRefresh: _handleRefresh,
-                        ),
-              ),
+                           SizedBox(height: 40.0),
                     ],
+                    
                   );
             }
           },
@@ -125,6 +164,46 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
       ); 
     }
 
+    Widget _search(){
+      return new Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new Card(
+                    child: new ListTile(
+                      leading: new Icon(Icons.search),
+                      title: new TextField(
+                        controller: controller,
+                        decoration: new InputDecoration(
+                        hintText: 'Buscar escuela', border: InputBorder.none),
+                        onChanged: (value) {
+                            setState((){
+                              if (value.length >= 3){
+                                searchString = value;
+                                listaResultadocopia = new List<EscuelaPorIdInstructorModel>();
+                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.nombre.toLowerCase().contains(searchString.toLowerCase()))).toList();
+
+                                if (listaResultadocopia.length > 0)
+                                    listaResultado = listaResultadocopia;
+
+                                if (searchString == "" || searchString == null)
+                                    listaResultado = listaResultadoOriginal;  
+                              }else{
+                                  searchString = "";
+                                  listaResultado = listaResultadoOriginal; 
+                              }
+                            });
+                          },
+                        ),
+                      trailing: new IconButton(icon: new Icon(Icons.cancel), onPressed: () {
+                          setState(() {
+                            controller.clear();
+                            searchString = ""; 
+                            listaResultado = listaResultadoOriginal;                           
+                          });
+                      },),
+                    ),
+                  ),
+                );
+    }
 
     return Scaffold(
       key: scaffoldKey,
@@ -134,34 +213,35 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
           children: <Widget>[
           Column(
               children: [
-                  SizedBox(height: 20.0),
-                  utils.buildTitle("Seleccione una escuela"),
-                  SizedBox(height: 5.0),
-                  _featuredListHorizontal()
+                  _search(),
+                  SizedBox(height: 10.0),
+                  utils.buildTitle("Seleccione una escuela"),                
+                  _featuredListHorizontal(),
+                 
               ],
             ),
           ]
         ),
       ),
       floatingActionButton: 
-      (_prefs.perfil == "Admin" || _prefs.perfil == "Maestro") ?
-          FloatingActionButton(
-            onPressed: () {
-              //register.idEscuela = userData.idEscuela;
-              UserForRegisterModel model = new UserForRegisterModel();
-                Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UsuariosAddPage(),
-                        settings: RouteSettings(
-                          arguments: model,
-                        ),
-                      ),
-                    );  
-            },
-            child: Icon(Icons.add),
-            backgroundColor: Colors.redAccent,
-          ): Container(height: 0, width: 0,)
-   );
+              (_prefs.perfil == "Admin" || _prefs.perfil == "Maestro") ?
+                  FloatingActionButton(
+                    onPressed: () {
+                      //register.idEscuela = userData.idEscuela;
+                      UserForRegisterModel model = new UserForRegisterModel();
+                        Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UsuariosAddPage(),
+                                settings: RouteSettings(
+                                  arguments: model,
+                                ),
+                              ),
+                            );  
+                    },
+                    child: Icon(Icons.add),
+                    backgroundColor: Colors.redAccent,
+                  ): Container(height: 0, width: 0,)
+          );
   }
 }

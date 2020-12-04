@@ -1,5 +1,3 @@
-import 'package:fetachiappmovil/bloc/escuela_bloc.dart';
-import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuelaAdd_page.dart';
@@ -16,10 +14,15 @@ class EscuelaPage extends StatefulWidget {
 }
 
 class _EscuelaPageState extends State<EscuelaPage> {
-  EscuelaBloc   escuelaBloc;  
-  Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
   final escuelaProvider      = new EscuelaServices();
-  final scaffoldKey          = GlobalKey<ScaffoldState>();
+  final scaffoldKey          = new GlobalKey<ScaffoldState>();
+
+  TextEditingController controller                            = new TextEditingController();
+  List<EscuelaPorIdInstructorModel>   listaResultadoOriginal  = new  List<EscuelaPorIdInstructorModel>();
+  List<EscuelaPorIdInstructorModel>   listaResultado          = new  List<EscuelaPorIdInstructorModel>();
+  List<EscuelaPorIdInstructorModel>   listaResultadocopia     = new  List<EscuelaPorIdInstructorModel>();
+  Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
+  String searchString = "";
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -32,14 +35,35 @@ class _EscuelaPageState extends State<EscuelaPage> {
     );
   }
 
+   @override
+  void initState() {
+    Future.delayed(Duration.zero,(){
+        setState(() {
+          listaResultado = new  List<EscuelaPorIdInstructorModel>();
+          escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
+
+          escuelasLista.then((value) => {
+            if (value != null)  listaResultadoOriginal.addAll(value)
+          });
+        });
+      });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    escuelaBloc = ProviderBloc.escuelaBloc(context);
-
-    setState(() {
-          escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
-    });
+    Future<Null> _handleRefresh() async {
+        await Future.delayed(Duration(seconds: 1), () {
+            setState(() {
+              escuelasLista = escuelaProvider.getEscuelaByIdInstructor(); 
+              escuelasLista.then((value) => {
+                if (value != null)  listaResultadoOriginal.addAll(value)
+              });   
+            });
+        });
+      }
 
     Widget _crearItem(BuildContext context, EscuelaPorIdInstructorModel escuela ) {
 
@@ -124,7 +148,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
 
     Widget _featuredListHorizontal()  {   
       return Container(
-        margin: const EdgeInsets.symmetric(vertical: 20.0),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         padding: EdgeInsets.all(8.0),
         height: MediaQuery.of(context).copyWith().size.height / 1.4,
         child: FutureBuilder(
@@ -132,29 +156,98 @@ class _EscuelaPageState extends State<EscuelaPage> {
           builder: (BuildContext context, AsyncSnapshot<List<EscuelaPorIdInstructorModel>> listData) {
             if (!listData.hasData) {
               new Future.delayed(const Duration(seconds : 2));
-              return Center(child: CircularProgressIndicator());
+              return Center(child: Text("Sin Información"));
             } else {
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: listData.data.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[                     
-                      _crearItem(context, listData.data[position] )
+              return 
+                  Column(
+                    children: [
+                      Expanded(
+                              flex: 1,
+                              child: RefreshIndicator(
+                                child: 
+
+                                (searchString == "" || searchString == null) 
+                                ?  ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: listData.data.length,
+                                  itemBuilder: (BuildContext context, int position) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[       
+                                        _crearItem(context, listData.data[position])
+                                      ],
+                                    );
+                                  },
+                                ) :
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: listaResultado.length,
+                                  itemBuilder: (BuildContext context, int position) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[       
+                                        _crearItem(context, listaResultado[position])
+                                      ],
+                                    );
+                                  },
+                                ),
+                              onRefresh: _handleRefresh,
+                            ),
+                          ),
+                           SizedBox(height: 40.0),
                     ],
+                    
                   );
-                },
-              );
             }
           },
         ),   
       ); 
     }
 
+    Widget _search(){
+      return new Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new Card(
+                    child: new ListTile(
+                      leading: new Icon(Icons.search),
+                      title: new TextField(
+                        controller: controller,
+                        decoration: new InputDecoration(
+                        hintText: 'Buscar escuela', border: InputBorder.none),
+                        onChanged: (value) {
+                            setState((){
+                              if (value.length >= 3){
+                                searchString = value;
+                                listaResultadocopia = new List<EscuelaPorIdInstructorModel>();
+                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.nombre.toLowerCase().contains(searchString.toLowerCase()))).toList();
 
+                                if (listaResultadocopia.length > 0)
+                                    listaResultado = listaResultadocopia;
+
+                                if (searchString == "" || searchString == null)
+                                    listaResultado = listaResultadoOriginal;  
+                              }else{
+                                  searchString = "";
+                                  listaResultado = listaResultadoOriginal; 
+                              }
+                            });
+                          },
+                        ),
+                      trailing: new IconButton(icon: new Icon(Icons.cancel), onPressed: () {
+                          setState(() {
+                            controller.clear();
+                            searchString = ""; 
+                            listaResultado = listaResultadoOriginal;                           
+                          });
+                      },),
+                    ),
+                  ),
+                );
+    }
 
     return Scaffold(
       key: scaffoldKey,
@@ -164,9 +257,9 @@ class _EscuelaPageState extends State<EscuelaPage> {
           children: <Widget>[
           Column(
               children: [
-                  SizedBox(height: 20.0),
+                  _search(),
+                  SizedBox(height: 10.0),
                   utils.buildTitle("Mis Escuelas"),
-                  SizedBox(height: 5.0),
                   _featuredListHorizontal()
               ],
             ),

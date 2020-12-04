@@ -18,6 +18,7 @@ class UsuarioPorIdEscuelaModel {
         this.imagen,
         this.gradoActual,
         this.escuela,
+        this.perfil,
         this.estado,
     });
 
@@ -29,6 +30,7 @@ class UsuarioPorIdEscuelaModel {
     dynamic imagen;
     dynamic gradoActual;
     String escuela;
+    String perfil;
     bool estado;
 
     factory UsuarioPorIdEscuelaModel.fromJson(Map<String, dynamic> json) => UsuarioPorIdEscuelaModel(
@@ -40,6 +42,7 @@ class UsuarioPorIdEscuelaModel {
         imagen: json["imagen"],
         gradoActual: json["gradoActual"],
         escuela: json["escuela"],
+        perfil: json["perfil"],
         estado: json["estado"],
     );
 
@@ -52,6 +55,7 @@ class UsuarioPorIdEscuelaModel {
         "imagen": imagen,
         "gradoActual": gradoActual,
         "escuela": escuela,
+        "perfil": perfil,
         "estado": estado,
     };
 }

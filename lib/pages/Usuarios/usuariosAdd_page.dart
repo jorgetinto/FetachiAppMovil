@@ -502,6 +502,28 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
       ): Container(height: 0, width: 0,);
     }
 
+    Widget _switchEstado(){
+       return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Switch(
+                  activeColor: Colors.pinkAccent,
+                  value:  userModel.estado,
+                  onChanged: (value) {
+                    setState(() {
+                      userModel.estado = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 12.0,),
+                Text('Estado : ${userModel.estado? 'Activo': 'Inactivo'}', style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15.0
+                ),)
+              ],
+            );
+    }
+
     void _submit() async {
       if (!formKey.currentState.validate()) {
         return;
@@ -513,9 +535,6 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           }
 
           if(userModel != null) {
-            
-            userModel.estado = true;
-
             if (userModel.id == null || userModel.id == 0){
               userModel.id = 0;
               Map info = await usuarioProvider.crearUsuario(userModel);
@@ -604,6 +623,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                   _inputFechaNacimiento(),
                   _dropdrownGrado(),
                   _dropdrownApoderado(),
+                  _switchEstado(),                 
                   _crearBoton()
                 ]
               )
