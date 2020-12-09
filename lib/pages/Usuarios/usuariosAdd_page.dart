@@ -43,26 +43,44 @@ class UsuariosAddPage extends StatefulWidget {
   Future<List<DropDownModel>>                 selectApoderado;
   Future<List<DropDownModel>>   selectEscuela;
   bool _isVisible = true;
+  UserForRegisterModel userData;
 
 class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    Future.delayed(Duration.zero,(){
+         setState(() {
+            userData          = ModalRoute.of(context).settings.arguments;
+            userBloc          = ProviderBloc.userPefilBloc(context);
+            selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
+            selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario(); 
+            userModel         = new UserForRegisterModel();
 
-    final UserForRegisterModel userData = ModalRoute.of(context).settings.arguments;
-
-    userBloc = ProviderBloc.userPefilBloc(context);
-
-      setState(() {
-          selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
-          selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario(); 
-          userModel         = new UserForRegisterModel();
-
-          if (userData != null) {
+            if (userData != null) {
             userModel = userData;
-           }
-      });
+            }
+
+            if(userModel.role =="Estudiante" || userModel.role =="Instructor" || userModel.role =="Maestro"){
+                              Future.delayed(Duration.zero,(){
+                               selectGrado = gradoProvider.getAllGrados();
+                              });                         
+                            }                        
+
+            if(userModel.role =="Admin" || userModel.role =="Instructor" || userModel.role =="Maestro"){
+              _isVisible = false;
+            }else {
+              _isVisible = true;
+            }
+
+         });
+       });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     
     _procesarImagen(ImageSource origin) async {
       final _picker                   = ImagePicker();
@@ -150,37 +168,41 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                       onPointerDown: (_) {
                         FocusScope.of(context).requestFocus(_node);
                       },
-                      child: DropdownButtonFormField<String>(
-                      value: userModel.role?.toString()?? null,
-                      decoration: InputDecoration(
-                        labelText: 'Tipo de Usuario',
-                        border: OutlineInputBorder(),                                      
-                      ),
-                      isDense: true,
-                      isExpanded: true,
-                      items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
-                          child: Text(tipo.nombre),
-                          value:  tipo.nombre               
-                        )
-                      ).toList(),
-                      onChanged:(value) {
-                        setState(() {   
-                          userModel.role = value; 
+                       child: new IgnorePointer(
+                        ignoring: false,
+                        child: DropdownButtonFormField<String>(
+                        value: userModel.role?.toString()?? null,
+                        decoration: InputDecoration(
+                          labelText: 'Tipo de Usuario',
+                          border: OutlineInputBorder(),                                      
+                        ),
+                        isDense: true,
+                        isExpanded: true,
+                        items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
+                            child: Text(tipo.nombre),
+                            value:  tipo.nombre               
+                          )
+                        ).toList(),
+                        onChanged:(value) {
+                          setState(() {   
+                            userModel.role = value; 
 
-                          if(value =="Estudiante" || value =="Instructor" || value =="Maestro"){
-                            selectGrado = null;                            
-                            selectGrado = gradoProvider.getAllGrados();
-                          }                         
+                            if(value =="Estudiante" || value =="Instructor" || value =="Maestro"){
+                              Future.delayed(Duration.zero,(){
+                               selectGrado = gradoProvider.getAllGrados();
+                              });                         
+                            }                         
 
-                          if(value =="Admin" || value =="Instructor" || value =="Maestro"){
-                            _isVisible = false;
-                          }else {
-                            _isVisible = true;
-                          }
+                            if(value =="Admin" || value =="Instructor" || value =="Maestro"){
+                              _isVisible = false;
+                            }else {
+                              _isVisible = true;
+                            }
 
-                        });
-                      },
+                          });
+                        },
                     ),
+                      ),
                   ),
                 );
 

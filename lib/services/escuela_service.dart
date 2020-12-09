@@ -29,8 +29,7 @@ class EscuelaServices {
     return respModel;
   }
 
-  Future<List<EscuelaPorIdInstructorModel>>  getEscuelaByIdInstructor()  async {    
-
+  Future<List<EscuelaPorIdInstructorModel>>  getEscuelaByIdInstructor()  async {   
     final url = '$urlBase/Escuela/GetEscuelaByIdInstructor/${_prefs.uid}';
 
     final response = await http.get(url, headers: {

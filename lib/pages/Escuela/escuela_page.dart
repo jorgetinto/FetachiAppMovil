@@ -1,6 +1,8 @@
+import 'package:badges/badges.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuelaAdd_page.dart';
+import 'package:fetachiappmovil/pages/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
@@ -28,7 +30,11 @@ class _EscuelaPageState extends State<EscuelaPage> {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => 
+        Navigator.push (
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+        ),
       ),
       title: Text('Escuelas'),
       backgroundColor: Colors.black,      
@@ -95,7 +101,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text("Atención!"),
-                  content: const Text("Esta seguro que desea eliminar esta escuela?"),
+                  content: const Text("Esta seguro que desea desactivar esta escuela?, todos los usuarios asociados a esta escuela quedaran desactivados"),
                   actions: <Widget>[
                     FlatButton(
                       onPressed: () {
@@ -136,8 +142,47 @@ class _EscuelaPageState extends State<EscuelaPage> {
                           backgroundColor: Colors.black,
                         ),
                         title: Text('${ escuela.nombre }'),
-                        subtitle: Text( '${ escuela.nombreInstructor }  /n ${ escuela.direccion }'),
-                        trailing: Icon(Icons.more_vert),
+                        subtitle: Container(
+                              width: 350.0,
+                              padding: new EdgeInsets.only(right: 13.0),
+                              child: new Text(
+                                'Instructor: ${ escuela.nombreInstructor } \nDir.: ${ escuela.direccion }',
+                                overflow: TextOverflow.ellipsis,
+                                style: new TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: 'Roboto',
+                                  color: Colors.black45,
+                                ),
+                              ),
+                            ),                          
+                        trailing:
+                            Column(
+                              children: [
+                                Badge(
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: (escuela.estado)? Colors.blue[900]: Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: Text((escuela.estado)?' A ':' I ', style: 
+                                                        TextStyle(fontSize: 10.0,
+                                                            fontFamily: 'Roboto',
+                                                            color: Colors.white
+                                                      )),
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Badge(
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(20), 
+                                    badgeContent: Text(' ${escuela.cantidadUsuarios} ', style: 
+                                                        TextStyle(fontSize: 10.0,
+                                                            fontFamily: 'Roboto',
+                                                            color: Colors.white
+                                                      )),                                  
+                                  ),
+                              ],
+                            ),
                         isThreeLine: true,
                       ),
               ],
@@ -169,6 +214,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
                                 (searchString == "" || searchString == null) 
                                 ?  ListView.builder(
                                   shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
                                   itemCount: listData.data.length,
                                   itemBuilder: (BuildContext context, int position) {
                                     return Column(

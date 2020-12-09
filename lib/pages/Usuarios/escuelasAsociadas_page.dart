@@ -1,8 +1,10 @@
+import 'package:badges/badges.dart';
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
+import 'package:fetachiappmovil/pages/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 
@@ -31,7 +33,11 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => 
+         Navigator.push (
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+          ),
       ),
       title: Text('Usuarios'),
       backgroundColor: Colors.black,      
@@ -39,8 +45,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
   }
 
   @override
-  void initState() {
-     
+  void initState() {     
 
     Future.delayed(Duration.zero,(){
         setState(() {
@@ -82,8 +87,47 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
                           backgroundColor: Colors.black,
                         ),
                         title: Text('${ escuela.nombre }'),
-                        subtitle: Text( '${ escuela.nombreInstructor }  /n ${ escuela.direccion }'),
-                        trailing: Icon(Icons.chevron_right),
+                        subtitle: Container(
+                              width: 350.0,
+                              padding: new EdgeInsets.only(right: 13.0),
+                              child: new Text(
+                                'Instructor: ${ escuela.nombreInstructor } \nDir.: ${ escuela.direccion }',
+                                overflow: TextOverflow.ellipsis,
+                                style: new TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: 'Roboto',
+                                  color: Colors.black45,
+                                ),
+                              ),
+                            ),      
+                        trailing:
+                            Column(
+                              children: [
+                                Badge(
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: (escuela.estado)? Colors.blue[900]: Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(8),
+                                    badgeContent: Text((escuela.estado)?' A ':' I ', style: 
+                                                        TextStyle(fontSize: 10.0,
+                                                            fontFamily: 'Roboto',
+                                                            color: Colors.white
+                                                      )),
+                                  ),
+                                  SizedBox(height: 10.0,),
+                                  Badge(
+                                    toAnimate: false,
+                                    shape: BadgeShape.square,
+                                    badgeColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(20), 
+                                    badgeContent: Text(' ${escuela.cantidadUsuarios} ', style: 
+                                                        TextStyle(fontSize: 10.0,
+                                                            fontFamily: 'Roboto',
+                                                            color: Colors.white
+                                                      )),                                  
+                                  ),
+                              ],
+                            ),
                         isThreeLine: true,
                         onTap: () {
                           Navigator.push(
@@ -125,6 +169,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
                                 (searchString == "" || searchString == null) 
                                 ?  ListView.builder(
                                   shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
                                   itemCount: listData.data.length,
                                   itemBuilder: (BuildContext context, int position) {
                                     return Column(

@@ -227,8 +227,14 @@ class Escuela {
         this.zona,
         this.idInstructor,
         this.nombreInstructor,
+
+        this.gradoInstructor,
+        this.fonoInstructor,
+        this.correoInstructor,
+
         this.idMaestro,
         this.nombreMaestro,
+        this.logo,
         this.estado,
     });
 
@@ -243,8 +249,14 @@ class Escuela {
     String zona;
     int idInstructor;
     String nombreInstructor;
+
+    String gradoInstructor;
+    String fonoInstructor;
+    String correoInstructor;
+
     int idMaestro;
     String nombreMaestro;
+    String logo;
     bool estado;
 
     factory Escuela.fromJson(Map<String, dynamic> json) => Escuela(
@@ -259,8 +271,14 @@ class Escuela {
         zona: json["zona"],
         idInstructor: json["idInstructor"],
         nombreInstructor: json["nombreInstructor"],
+
+        gradoInstructor: json["gradoInstructor"],
+        fonoInstructor: json["fonoInstructor"],
+        correoInstructor: json["correoInstructor"],
+
         idMaestro: json["idMaestro"],
         nombreMaestro: json["nombreMaestro"],
+        logo: json["logo"],
         estado: json["estado"],
     );
 
@@ -276,8 +294,12 @@ class Escuela {
         "zona": zona,
         "idInstructor": idInstructor,
         "nombreInstructor": nombreInstructor,
+        "gradoInstructor":gradoInstructor,
+        "fonoInstructor":fonoInstructor,
+        "correoInstructor":correoInstructor,
         "idMaestro": idMaestro,
         "nombreMaestro": nombreMaestro,
+        "logo": logo,
         "estado": estado,
     };
 }

@@ -17,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 
-import '../home_page.dart';
 import 'escuela_page.dart';
 
 
@@ -86,6 +85,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                    _dropdrownZonas(),
                   _dropdrownInstructor(),
                   _dropdrownMaestro(),
+                  _switchEstado(),
                   _crearBoton()
                 ]
               )
@@ -136,6 +136,23 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
     }  
 
     setState(() {});
+  }
+
+  _showMaterialDialog() {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text("Atención"),
+              content: new Text("Si desactiva esta escuela, también desactivara a los usuarios asociados a esta escuela."),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Cerrar'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ));
   }
 
   Widget _mostrarFoto() {
@@ -483,6 +500,32 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
       );
   }
 
+  Widget _switchEstado(){
+       return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Switch(
+                  activeColor: Colors.pinkAccent,
+                  value:  escuelaModel.estado,
+                  onChanged: (value) {
+                    setState(() {
+                      
+                      if (!value)
+                        _showMaterialDialog();
+
+                      escuelaModel.estado = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 12.0,),
+                Text('Estado : ${escuelaModel.estado? 'Activo': 'Inactivo'}', style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15.0
+                ),)
+              ],
+            );
+    }
+
   Widget _crearBoton() {
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 30.0),
@@ -523,26 +566,17 @@ void _submit() async {
 
         if (foto != null) {
            escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
-        }   
+        }
 
-
-        if(escuelaModel != null) {
-          
-          escuelaModel.estado = true;
-
+        if(escuelaModel != null) { 
           if (escuelaModel.idEscuela == null){
             escuelaModel.idEscuela = 0;
-            escuelaProvider.createEscuela(escuelaModel);
+            escuelaProvider.createEscuela(escuelaModel);           
           }else {
             escuelaProvider.updateEscuela(escuelaModel);
-             Navigator.push(context, SlideRightRoute(widget: EscuelaPage()));
           }
-
-          Timer(Duration(milliseconds: 800), () {
-              setState(() {
-                Navigator.push(context, SlideRightRoute(widget: HomePage()));
-              });
-          });
+           await Future.delayed(const Duration(milliseconds: 700));
+           Navigator.push(context, SlideRightRoute(widget: EscuelaPage()));
         }
      }
   }

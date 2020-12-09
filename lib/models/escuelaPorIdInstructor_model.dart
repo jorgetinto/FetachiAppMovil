@@ -24,6 +24,7 @@ class EscuelaPorIdInstructorModel {
         this.idMaestro,
         this.nombreMaestro,
         this.logo,
+        this.cantidadUsuarios,
         this.estado,
     });
 
@@ -41,6 +42,7 @@ class EscuelaPorIdInstructorModel {
     int idMaestro;
     String nombreMaestro;
     String logo;
+    int cantidadUsuarios;
     bool estado;
 
     factory EscuelaPorIdInstructorModel.fromJson(Map<String, dynamic> json) => EscuelaPorIdInstructorModel(
@@ -58,6 +60,7 @@ class EscuelaPorIdInstructorModel {
         idMaestro: json["idMaestro"],
         nombreMaestro: json["nombreMaestro"],
         logo: json["logo"],
+        cantidadUsuarios: json["cantidadUsuarios"],
         estado: json["estado"],
     );
 
@@ -76,6 +79,7 @@ class EscuelaPorIdInstructorModel {
         "idMaestro": idMaestro,
         "nombreMaestro": nombreMaestro,
         "logo": logo,
+        "cantidadUsuarios":cantidadUsuarios,
         "estado": estado,
     };
 

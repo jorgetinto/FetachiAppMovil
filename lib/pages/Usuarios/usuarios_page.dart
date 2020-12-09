@@ -9,6 +9,8 @@ import 'package:fetachiappmovil/services/usuario_service.dart';
 
 import 'package:flutter/material.dart';
 
+import 'escuelasAsociadas_page.dart';
+
 class UsuariosPage extends StatefulWidget {
 
   @override
@@ -36,7 +38,12 @@ class _UsuariosPageState extends State<UsuariosPage> {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () {
+         Navigator.push (
+              context,
+              MaterialPageRoute(builder: (context) => EscuelasAsociadas()),
+          );
+        },
       ),
       title: Text('Usuarios'),
       backgroundColor: Colors.black,      
@@ -175,7 +182,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
                             Badge(
                                 toAnimate: false,
                                 shape: BadgeShape.square,
-                                badgeColor: (usuario.estado)? Colors.green: Colors.redAccent,
+                                badgeColor: (usuario.estado)? Colors.blue[900]: Colors.redAccent,
                                 borderRadius: BorderRadius.circular(8),
                                 badgeContent: Text((usuario.estado)?'Activo':'Inactivo', style: 
                                                     TextStyle(fontSize: 10.0,
@@ -219,6 +226,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
                         (searchString == "" || searchString == null) 
                         ?  ListView.builder(
                           shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
                           itemCount: listData.data.length,
                           itemBuilder: (BuildContext context, int position) {
                             return Column(
@@ -332,5 +340,6 @@ class _UsuariosPageState extends State<UsuariosPage> {
         backgroundColor: Colors.redAccent,
       ),
    );
+   
   }
 }

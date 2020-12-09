@@ -2,7 +2,6 @@
 import 'package:fetachiappmovil/bloc/login_bloc.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
-import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/widget/Header_widget.dart';
 import 'package:fetachiappmovil/pages/Onboarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
@@ -153,23 +152,31 @@ class _LoginPageState extends State<LoginPage> {
 
   _login(LoginBloc bloc, BuildContext context) async {
 
-    _scaffoldKey.currentState.showSnackBar(
-      new SnackBar(duration: new Duration(seconds: 1), content:
-        new Row(
-          children: <Widget>[
-            new CircularProgressIndicator(),
-            new Text("    Iniciando Sesión...")
-          ],
-        ),
-      )
-    );
-
     Map info = await bloc.login(bloc.userName.trim(), bloc.password.trim());
     if (info['ok']) {
-      await new Future.delayed(const Duration(milliseconds : 400));
+        _scaffoldKey.currentState.showSnackBar(
+          new SnackBar(duration: new Duration(milliseconds: 1600), content:
+            new Row(
+              children: <Widget>[
+                new CircularProgressIndicator(),
+                new Text(' Iniciando sesión')
+              ],
+            ),
+          )
+        );
+        await new Future.delayed(const Duration(milliseconds : 400));
       Navigator.pushReplacement(context, SlideRightSinOpacidadRoute(widget: OnBoardingPage()));
     } else {
-      showToast(context,info['mensaje']);
+      _scaffoldKey.currentState.showSnackBar(
+        new SnackBar(duration: new Duration(milliseconds: 2000), content:
+          new Row(
+            children: <Widget>[
+              new CircularProgressIndicator(),
+              new Text('  - ' + info['mensaje'])
+            ],
+          ),
+        )
+      );
     }
   }
 

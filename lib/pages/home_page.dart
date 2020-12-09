@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:fetachiappmovil/helpers/widget/Menu_widget.dart';
+import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
@@ -31,7 +32,9 @@ class _HomePageState extends State<HomePage> {
         String position,
         String duration,
         IconData icono,
-        Widget page}) {
+        Widget page,
+        dynamic parametros
+        }) {
       String dura = (duration != "") ? '($duration)' : '';
 
       return ListTile(
@@ -55,7 +58,19 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black87, size: 20.0),
             onPressed: () {
               if (page != null) {
-                Navigator.push(context, router.SlideRightRoute(widget: page));
+                  if (parametros == null)
+                      Navigator.push(context, router.SlideRightRoute(widget: page));
+                  else
+                   Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => page,
+                              settings: RouteSettings(
+                                arguments: parametros,
+                              ),
+                            ),
+                          );
+               
               }
             },
           ),
@@ -64,27 +79,26 @@ class _HomePageState extends State<HomePage> {
     }
   
     Widget _crearImagen(AsyncSnapshot<UserPerfilModel> snapshot) {
-      return Container(
-        width: double.infinity,
-        height: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(100)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.black,
-            radius: 18,
-            child: ClipOval(
-              child: 
-              
-              (snapshot.data.imagen != null)?  Container(child: Image.network(
-                                                                                snapshot.data.imagen,
-                                                                                fit: BoxFit.scaleDown,
-                                                                              )): Container(height: 0, width: 0,) ,
-            ),
-          ),
-        ),
+
+      return Center(
+        child: Container(
+                  width: 250,
+                  height: 250,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(100)),
+                  ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 30.0,
+                        child: (snapshot.data.imagen == null) 
+                                          ?  ClipOval(child: Image.asset('assets/no-image.png')) 
+                                          :  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))),
+                        backgroundColor: Colors.grey[400],
+                      ),
+                    ),
+                    
+                  ),
       );
     }
 
@@ -167,6 +181,8 @@ class _HomePageState extends State<HomePage> {
                       company: "${snapshot.data.escuelas[i].nombre}",
                       position: "${snapshot.data.escuelas[i].direccion}",
                       duration: "${snapshot.data.escuelas[i].comuna}",
+                      page: DetalleEscuelaHomePage(),
+                      parametros: snapshot.data.escuelas[i]
                     )
                 : Container(
                     height: 0,

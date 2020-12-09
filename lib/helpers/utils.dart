@@ -77,14 +77,14 @@ import 'package:toast/toast.dart';
                   width: 80.0,
                   height: 80.0,
                   child: CircleAvatar(
-                    radius: 30.0,
-                    child: (tipoFoto) ? Image.asset('assets/img/FETACHI.png') 
-                                      :  (snapshot.data.imagen != null)
-                                      ?  ClipOval(child: Container(child: Image.network(snapshot.data.imagen)))
-                                      :  Container(height: 0, width: 0,) ,
-                    backgroundColor: Colors.white,
-                  ),
-                  
+                      radius: 30.0,                   
+                      child: (tipoFoto) 
+                                        ?  ClipOval(child: Image.asset('assets/img/FETACHI.png')) 
+                                        :  (snapshot.data.imagen != null) 
+                                          ? ClipOval(child: Container(child: Image.network(snapshot.data.imagen)))
+                                          : ClipOval(child: Image.asset('assets/no-image.png')) 
+                      ,backgroundColor: Colors.grey[400],
+                    ),
                 ),         
 
                 Positioned(
