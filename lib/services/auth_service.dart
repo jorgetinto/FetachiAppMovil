@@ -39,8 +39,7 @@ class AuthServices {
             
             return {'ok': true,'mensaje': 'ok'};
           }
-        }   
-        
+        }         
         return {'ok': false, 'mensaje': decodedResp['message']};
 
     } on SocketException {

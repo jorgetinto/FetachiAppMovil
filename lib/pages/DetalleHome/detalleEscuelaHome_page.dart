@@ -260,11 +260,18 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
                 Icons.phone,
                 color: Colors.black54,
               ),
-              SizedBox(width: 10.0),
-              Text(
-                "${widget.escuelaDetalle?.fonoInstructor??'Sin Información'}",
-                style: TextStyle(fontSize: 16.0),
-              ),
+              SizedBox(width: 10.0),             
+
+               InkWell(
+                      child: Text("+569 ${widget.escuelaDetalle?.fonoInstructor??'Sin Informacion'}",style: TextStyle(fontSize: 16.0),),
+                      onTap: () {                           
+                        if (widget.escuelaDetalle?.fonoInstructor != null && widget.escuelaDetalle.fonoInstructor.isNotEmpty){
+                          FlutterOpenWhatsapp.sendSingleMessage("+569 ${widget.escuelaDetalle?.fonoInstructor}", "Hello");
+                        }else {
+                          showToast(context, 'Número invalido'); 
+                        }
+                      },
+                      )
             ],
           ),
            SizedBox(height: 30.0,),    
@@ -367,11 +374,25 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
                             Text('|') ,
                             Text(' ${ usuario.perfil==null?'N/A': (usuario.perfil != 'Instructor')? usuario.perfil : 'Estudiante*' }') , 
                             Text('|') ,
-                            // Text(' ${ usuario.pho??'N/A' }') , 
                         ],), 
                         trailing: Icon(FontAwesomeIcons.whatsapp, color: Colors.green,),
                         isThreeLine: true,
-                        onTap: () => FlutterOpenWhatsapp.sendSingleMessage("${usuario?.fono}", "Hello"),
+                        onTap: () {
+                            if (usuario?.fono != null && usuario.fono.isNotEmpty){
+                              FlutterOpenWhatsapp.sendSingleMessage("+569 ${usuario?.fono}", "Hello");
+                            }else {
+                              scaffoldKey.currentState.showSnackBar(
+                                  new SnackBar(duration: new Duration(seconds: 2), content:
+                                    new Row(
+                                      children: <Widget>[
+                                        new CircularProgressIndicator(),
+                                        new Text(" Número Invalido")
+                                      ],
+                                    ),
+                                  )
+                                );
+                            }
+                          },
                       ),
               ],
             ),

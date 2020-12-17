@@ -16,6 +16,7 @@ import 'package:fetachiappmovil/pages/home_page.dart';
 import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:fetachiappmovil/services/userPerfil_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -255,6 +256,10 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       child: TextFormField(
         initialValue: usePerfilModel.fono,
         textCapitalization: TextCapitalization.sentences,
+        keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+            ],
         decoration: InputDecoration(
           labelText: 'Celular',
           border: OutlineInputBorder(),
@@ -263,7 +268,10 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         validator: (value){
           if (value == null || value.trim() == "") {
             return 'Campo requerido';
-          } else {
+          }
+          if (value.trim().length != 8) {
+            return 'Número no valido';           
+          }else {
             return null;
           }
         },
@@ -526,15 +534,22 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       child: TextFormField(
         initialValue: contactoEntity.fono,
         textCapitalization: TextCapitalization.sentences,
+         keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+            ],
         decoration: InputDecoration(
           labelText: 'Celular',
           border: OutlineInputBorder(),
         ),
         onSaved: (value) => contactoEntity.fono = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+         if (value == null || value.trim() == "") {
             return 'Campo requerido';
-          } else {
+          }
+          if (value.trim().length != 8) {
+            return 'Número no valido';           
+          }else {
             return null;
           }
         },

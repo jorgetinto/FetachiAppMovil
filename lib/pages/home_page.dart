@@ -1,5 +1,8 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
+import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/widget/Menu_widget.dart';
+import 'package:fetachiappmovil/pages/Auth/login_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detallePupiloHome_page.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +12,12 @@ import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 import 'package:fetachiappmovil/helpers/validators/validaciones_varias.dart' as validar;
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'DetalleHome/detalleApoderadoHome_page.dart';
 import 'DetalleHome/detalleContactoHome_page.dart';
+
 
 
 class HomePage extends StatefulWidget {
@@ -22,16 +27,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  
+  final _prefs            = new PreferenciasUsuario();
 
-  @override
-  Widget build(BuildContext context) {  
-
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-    final perfilBloc = ProviderBloc.userPefilBloc(context);
-    perfilBloc.buscarUserPerfil();
-
-    ListTile _buildExperienceRow(
+   ListTile _buildExperienceRow(
         {String company,
         String position,
         String duration,
@@ -81,6 +80,27 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
+
+  @override
+  void initState() {
+    if (_prefs.token.toString().isEmpty){
+       Navigator.pushReplacement(
+        context,
+        router.SlideRightSinOpacidadRoute(widget: LoginPage())
+      );
+    }
+
+    super.initState();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {  
+
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+    final perfilBloc = ProviderBloc.userPefilBloc(context);
+    perfilBloc.buscarUserPerfil();   
   
     Widget _crearImagen(AsyncSnapshot<UserPerfilModel> snapshot) {
 
@@ -283,11 +303,17 @@ class _HomePageState extends State<HomePage> {
                 Icons.phone,
                 color: Colors.black54,
               ),
-              SizedBox(width: 10.0),
-              Text(
-                "${snapshot.data.fono}",
-                style: TextStyle(fontSize: 16.0),
-              ),
+              SizedBox(width: 10.0),             
+
+              InkWell( child: Text("+569 ${snapshot.data.fono}",style: TextStyle(fontSize: 16.0),),
+                        onTap: () {                           
+                          if (snapshot.data?.fono != null && snapshot.data.fono.isNotEmpty){
+                            FlutterOpenWhatsapp.sendSingleMessage("+569 ${snapshot.data?.fono}", "Hello");
+                          }else {
+                            showToast(context, 'Número invalido'); 
+                          }
+                        },
+                      )
             ],
           ),
         ],
@@ -304,7 +330,7 @@ class _HomePageState extends State<HomePage> {
 
                     _buildExperienceRow(
                                 company: " ${snapshot.data.informacionContacto?.nombre} ${snapshot.data.informacionContacto?.apellidoPaterno}",
-                                position: "${snapshot.data.informacionContacto?.fono}",
+                                position: "+569 ${snapshot.data.informacionContacto?.fono}",
                                 duration: "",
                                 page: DetalleContactoHomePage(),
                                 parametros: snapshot.data.informacionContacto

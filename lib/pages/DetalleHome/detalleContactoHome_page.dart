@@ -1,6 +1,7 @@
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
 
 class DetalleContactoHomePage extends StatefulWidget {
@@ -134,7 +135,18 @@ class _DetalleContactoHomePageState extends State<DetalleContactoHomePage> {
                       SizedBox(width: 30.0),
                       Icon(Icons.phone, color: Colors.black54,),
                       SizedBox(width: 10.0),
-                      Text( "${userData?.fono??'Sin Información'}", style: TextStyle(fontSize: 16.0),),
+
+                      InkWell(
+                          child: Text( "+569 ${userData?.fono??'Sin Información'}",style: TextStyle(fontSize: 16.0),),
+                          onTap: () {                           
+                            if (userData?.fono != null && userData.fono.isNotEmpty){
+                              FlutterOpenWhatsapp.sendSingleMessage("+569 ${userData?.fono}", "Hello");
+                            }else {
+                              showToast(context, 'Número invalido'); 
+                            }
+                          },
+                      )
+                      
                     ],
                   ),
                   SizedBox(height: 30.0,),    
