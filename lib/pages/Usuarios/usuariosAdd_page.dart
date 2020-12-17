@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
@@ -9,12 +8,14 @@ import 'package:fetachiappmovil/helpers/validators/RutHelper_widget.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
+import 'package:fetachiappmovil/pages/Sabunim/SabunimPage.dart';
+import 'package:fetachiappmovil/pages/Usuarios/escuelasAsociadas_page.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/services/grado_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:flutter/material.dart';
-import 'package:fetachiappmovil/helpers/utils.dart' as utils;
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:intl/intl.dart';
@@ -26,62 +27,87 @@ class UsuariosAddPage extends StatefulWidget {
   _UsuariosAddPageState createState() => _UsuariosAddPageState();
 }
 
-  File                      foto;
-  GlobalKey<FormState>      formKey          = new GlobalKey<FormState>();
-  GlobalKey<ScaffoldState>  scaffoldKey      = new GlobalKey<ScaffoldState>();
-  FocusNode                 _node            = new FocusNode();
-
-  UserForRegisterModel      userModel;
-  UserPerfilBloc            userBloc;  
-  UsuarioServices           usuarioProvider  = new UsuarioServices();
-  EscuelaServices           escuelaProvider  = new EscuelaServices();
-  GradoServices             gradoProvider    = new GradoServices();
-  EscuelaPorIdInstructorModel escuelaInstructor = new EscuelaPorIdInstructorModel();
-
-  Future<List<DropDownModel>>                 selectTipoUsuario;
-  Future<List<DropDownModel>>                 selectGrado;
-  Future<List<DropDownModel>>                 selectApoderado;
-  Future<List<DropDownModel>>   selectEscuela;
-  bool _isVisible = true;
-  UserForRegisterModel userData;
-
 class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
+  File                      foto;
+  GlobalKey<FormState>      formKey             = new GlobalKey<FormState>();
+  GlobalKey<ScaffoldState>  scaffoldKey         = new GlobalKey<ScaffoldState>();
+  FocusNode                 _node               = new FocusNode();
+  UserForRegisterModel      userModel           = new UserForRegisterModel();
+  UserPerfilBloc            userBloc            = new UserPerfilBloc();  
+  UsuarioServices           usuarioProvider     = new UsuarioServices();
+  EscuelaServices           escuelaProvider     = new EscuelaServices();
+  GradoServices             gradoProvider       = new GradoServices();
+  EscuelaPorIdInstructorModel escuelaInstructor = new EscuelaPorIdInstructorModel();
+  UserForRegisterModel      userData            = new UserForRegisterModel();
+
+  Future<List<DropDownModel>>   selectTipoUsuario;
+  Future<List<DropDownModel>>   selectGrado;
+  Future<List<DropDownModel>>   selectApoderado;
+  Future<List<DropDownModel>>   selectEscuela;
+  MaskedTextController controller;
+
+  
+
+  bool _isVisible = true;
+  bool _loading = true;
+  bool _fechaValida = false;
 
   @override
   void initState() {
-    Future.delayed(Duration.zero,(){
-         setState(() {
-            userData          = ModalRoute.of(context).settings.arguments;
-            userBloc          = ProviderBloc.userPefilBloc(context);
-            selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
-            selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario(); 
-            userModel         = new UserForRegisterModel();
-
-            if (userData != null) {
-            userModel = userData;
-            }
-
-            if(userModel.role =="Estudiante" || userModel.role =="Instructor" || userModel.role =="Maestro"){
-                              Future.delayed(Duration.zero,(){
-                               selectGrado = gradoProvider.getAllGrados();
-                              });                         
-                            }                        
-
-            if(userModel.role =="Admin" || userModel.role =="Instructor" || userModel.role =="Maestro"){
-              _isVisible = false;
-            }else {
-              _isVisible = true;
-            }
-
-         });
-       });
+     new Future.delayed(new Duration(milliseconds: 900), () {
+        setState(() {
+            _loading = false;         
+        });
+      }); 
     super.initState();
   }
 
   @override
+  void dispose() {
+    userData          = new UserForRegisterModel();
+    userModel         = new UserForRegisterModel(); 
+    _loading          = true;  
+    _isVisible        = true;  
+    super.dispose();
+  }
+  
+  @override
   Widget build(BuildContext context) {
-    
+
+    setState(() {
+        userData          = new UserForRegisterModel();
+        userModel         = new UserForRegisterModel();        
+        userData          = ModalRoute.of(context).settings.arguments;   
+        userBloc          = ProviderBloc.userPefilBloc(context);         
+        selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
+        selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario();  
+
+        if (userData != null)
+            userModel = userData;
+
+        if (userModel.estado == null)
+            userModel.estado = true;
+
+          if(userModel.idEscuela != null)
+            selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);       
+
+        if(userModel.role =="Estudiante" || userModel.role =="Instructor" || userModel.role =="Maestro"){
+          Future.delayed(Duration.zero,(){
+            selectGrado = gradoProvider.getAllGrados();
+          });                         
+        }                        
+
+        if(userModel.role =="Admin"|| userModel.role =="Maestro"){
+          _isVisible = false;
+        }else {
+          _isVisible = true;
+        }  
+
+        controller =  new MaskedTextController(text: userModel?.rut, mask: '00.000.000-@');
+
+    });
+
     _procesarImagen(ImageSource origin) async {
       final _picker                   = ImagePicker();
       PickedFile pickedFile           = await _picker.getImage(source: origin);      
@@ -300,7 +326,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                             userModel.idEscuela = int.parse(value);
 
                               if(userModel.fechaDeNacimiento != null){
-                                if(int.parse(utils.calculateAge(userModel.fechaDeNacimiento.toString())) <= 18){
+                                if(int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 18){
                                     if(userModel.idEscuela != null)
                                       selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
                                }else{
@@ -329,7 +355,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
               labelText: "Usuario",
               border: OutlineInputBorder(),                        
             ),
-            onSaved: (value) => userModel.userName = value,
+            onSaved: (value) => userModel.userName = value.trim(),
             validator: (value){
               if (value == null) {
                 return 'Campo requerido';
@@ -351,7 +377,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
               labelText: 'Nombres',
               border: OutlineInputBorder(),                        
             ),
-            onSaved: (value) => userModel.nombres = value,
+            onSaved: (value) => userModel.nombres = value.trim(),
             validator: (value){
               if (value == null) {
                 return 'Campo requerido';
@@ -373,7 +399,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             labelText: 'Apellido Paterno',
             border: OutlineInputBorder(),
           ),
-          onSaved: (value) => userModel.apellidoPaterno = value,
+          onSaved: (value) => userModel.apellidoPaterno = value.trim(),
           validator: (value){
             if (value == null) {
               return 'Campo requerido';
@@ -395,7 +421,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             labelText: 'Apellido Materno',
             border: OutlineInputBorder(),
           ),
-          onSaved: (value) => userModel.apellidoMaterno = value,
+          onSaved: (value) => userModel.apellidoMaterno = value.trim(),
           validator: (value){
             if (value == null) {
               return 'Campo requerido';
@@ -407,11 +433,12 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
       );
     }
 
-    Widget _inputRut() {
+    Widget _inputRut() { 
+
     return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: TextFormField(
-        initialValue: userModel.rut,
+        controller:  controller,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           labelText: 'Rut',
@@ -425,7 +452,6 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           if (value.isEmpty || value == null) {
             return 'Campo requerido';
           } else {
-
             if (rutHelp.check(value)){
               return null;
             } else {
@@ -439,7 +465,9 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
     Widget _inputFechaNacimiento() {
 
-      DateTime selectedDate = (userModel.fechaDeNacimiento != null)? DateTime.parse(userModel.fechaDeNacimiento.toString()) : new DateTime.now() ;
+      DateTime selectedDate = (userModel.fechaDeNacimiento != null)
+                                ? DateTime.parse(userModel.fechaDeNacimiento.toString()) 
+                                : new DateTime.now() ;
 
       return Padding(
         padding: EdgeInsets.only(top: 10.0),
@@ -454,22 +482,28 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         selectedDate: selectedDate,
                         onDateSelected: (DateTime date) {
                           setState(() {
+
                             userModel.fechaDeNacimiento = date.toString();
 
-                            if(int.parse(utils.calculateAge(date.toString())) <= 18){
-                              if(userModel.idEscuela != null)
-                                selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
-                            }else{
-                              selectApoderado = null;
+                            if(int.parse(calculateAge(date.toString())) >= 5){
+                              if(int.parse(calculateAge(date.toString())) <= 18){
+                                if(userModel.idEscuela != null)
+                                  selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
+                              }else{
+                                selectApoderado = null;
+                              }
+                              _fechaValida = true;
                             }
+                            
                         });
                       }, 
                         decoration: InputDecoration(
                           labelText: 'Fecha de nacimiento',
                           border: OutlineInputBorder()
-                        ),
-                        //label: 'Fecha de nacimiento',  
+                        ),  
+                   
                     lastDate: DateTime(2101),
+                    
                 ),
         )
       );
@@ -498,7 +532,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         FocusScope.of(context).requestFocus(_node);
                       },
                       child: DropdownButtonFormField<String>(
-                      //value: escuelaModel.idZona?.toString()?? null,
+                      value: userModel.idApoderado?.toString()?? null,
                       decoration: InputDecoration(
                         labelText: 'Apoderado',
                         border: OutlineInputBorder(),                                      
@@ -507,7 +541,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                       isExpanded: true,
                       items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
                           child: Text(tipo.nombre),
-                          value:  tipo.nombre               
+                          value:  tipo.id.toString()               
                         )
                       ).toList(),
                       onChanged:(value) {
@@ -538,7 +572,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                   },
                 ),
                 SizedBox(height: 12.0,),
-                Text('Estado : ${userModel.estado? 'Activo': 'Inactivo'}', style: TextStyle(
+                 Text('Estado : ${ (userModel.estado == null)? 'Activo':  (userModel.estado)? 'Activo': 'Inactivo'}', style: TextStyle(
                   color: Colors.black,
                   fontSize: 15.0
                 ),)
@@ -550,6 +584,12 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
       if (!formKey.currentState.validate()) {
         return;
       }else { 
+
+         if (!_fechaValida && int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 5) {
+           return  showToast(context,'Campo de fecha de nacimiento invalida!');       
+         }
+
+
           formKey.currentState.save();
 
           if (foto != null) {
@@ -562,17 +602,33 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
               Map info = await usuarioProvider.crearUsuario(userModel);
 
                   if (info['ok']) {
-                    showToast(context,'Usuario creado de forma exitosa!');
-                    escuelaInstructor.idEscuela = userModel.idEscuela;
-                     Navigator.pushReplacement(
+                    showToast(context,'Usuario creado de forma exitosa!');                   
+
+                    if (userModel.role == "Admin")
+                    {
+                         Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => UsuariosPage(),
-                              settings: RouteSettings(
-                                arguments: escuelaInstructor,
-                              ),
-                            ),
-                          );  
+                            MaterialPageRoute(builder: (context) => EscuelasAsociadas()),
+                        );
+                   } 
+                   else if (userModel.role =="Maestro"){
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => SabunimPage()),
+                        );
+                   }else {
+                        escuelaInstructor.idEscuela = userModel.idEscuela;
+                        Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UsuariosPage(),
+                                  settings: RouteSettings(
+                                    arguments: escuelaInstructor,
+                                  ),
+                                ),
+                              );  
+                    }
+
                   } else {
                     showToast(context,info['message']);
                   }
@@ -580,16 +636,32 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
               Map infoUP = await usuarioProvider.updateUsuario(userModel);
               if (infoUP['ok']) {
                 showToast(context, (userModel?.id == null) ? 'Usuario creado de forma exitosa!': 'Usuario actualizado de forma exitosa!');
-                escuelaInstructor.idEscuela = userModel.idEscuela;
-                Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UsuariosPage(),
-                          settings: RouteSettings(
-                            arguments: escuelaInstructor,
-                          ),
-                        ),
-                      ); 
+                
+                  if (userModel.role == "Admin" || userModel.role =="Instructor" )
+                    {
+                         Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => EscuelasAsociadas()),
+                        );
+                   } 
+                   else if (userModel.role =="Maestro"){
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => SabunimPage()),
+                        );
+                   }else {
+                        escuelaInstructor.idEscuela = userModel.idEscuela;
+                        Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UsuariosPage(),
+                                  settings: RouteSettings(
+                                    arguments: escuelaInstructor,
+                                  ),
+                                ),
+                              );  
+                    }     
+                
               } else {
                 showToast(context, infoUP['message']);
               }
@@ -624,7 +696,10 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
       appBar: _appBar(context),
       body: SingleChildScrollView(
         child: Container(
-          child: Padding(padding: EdgeInsets.all(15.0),
+
+          child: (!_loading) ? 
+          
+          Padding(padding: EdgeInsets.all(15.0),
           child: Form(
               key: formKey,
               child: Column(
@@ -633,7 +708,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                     child: _mostrarFoto()                    
                   ),
                   SizedBox(height: 20.0),
-                  utils.buildTitle("Información Usuario"),
+                  buildTitle("Información Usuario"),
                   SizedBox(height: 5.0),
                   _dropdrownTipoUsuario(),
                   _dropdrownEscuela(),
@@ -641,8 +716,8 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                   _inputNombre(), 
                   _inputApellidoPaterno(),
                   _inputApellidoMaterno(),
-                  _inputRut(),
                   _inputFechaNacimiento(),
+                  _inputRut(),
                   _dropdrownGrado(),
                   _dropdrownApoderado(),
                   _switchEstado(),                 
@@ -650,7 +725,17 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                 ]
               )
             ),
-        ),
+        ):
+
+        // By default, show a loading spinner.
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 200.0),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              ),
+            ),
       )
     ),
    );

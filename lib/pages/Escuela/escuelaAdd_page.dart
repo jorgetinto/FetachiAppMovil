@@ -1,23 +1,21 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:fetachiappmovil/bloc/escuela_bloc.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
+import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/comuna_model.dart';
-import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
+import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/models/region_model.dart';
 import 'package:fetachiappmovil/models/zona_model.dart';
+import 'package:fetachiappmovil/pages/Escuela/escuela_page.dart';
 import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:fetachiappmovil/services/zona_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:fetachiappmovil/helpers/utils.dart' as utils;
-
-import 'escuela_page.dart';
 
 
 class EscuelaAddPage extends StatefulWidget {
@@ -28,75 +26,101 @@ class EscuelaAddPage extends StatefulWidget {
 
 class _EscuelaAddPageState extends State<EscuelaAddPage> {
 
-  File                      foto;
-  EscuelaBloc               escuelaBloc;  
-  GlobalKey<FormState>      formKey          = new GlobalKey<FormState>();
-  GlobalKey<ScaffoldState>  scaffoldKey      = new GlobalKey<ScaffoldState>();
-  EscuelaServices           escuelaProvider  = new EscuelaServices();
-  EscuelaModel              escuelaModel     = new EscuelaModel();
-  ComunaRegionServices      comunaRegion     = new ComunaRegionServices();
-  ZonaServices              zona             = new ZonaServices();
-  UsuarioServices           usuario          = new UsuarioServices();
-  FocusNode                 _node            = new FocusNode();
+    GlobalKey<FormState>      formKey          = new GlobalKey<FormState>();
+    GlobalKey<ScaffoldState>  scaffoldKey      = new GlobalKey<ScaffoldState>();
 
-  Future<List<RegionModel>> region;
-  Future<List<ComunaModel>> comuna;
-  Future<List<ZonaModel>>   zonas;
-  Future<List<DropDownModel>>   instructores;
-  Future<List<DropDownModel>>   maestros;
+    File                      foto;
+    EscuelaServices           escuelaProvider  = new EscuelaServices();
+    EscuelaModel              escuelaModel     = new EscuelaModel();
+    ComunaRegionServices      comunaRegion     = new ComunaRegionServices();
+    ZonaServices              zona             = new ZonaServices();
+    UsuarioServices           usuario          = new UsuarioServices();
+    FocusNode                 _node            = new FocusNode();
+
+    Future<List<RegionModel>>     region;
+    Future<List<ComunaModel>>     comuna;
+    Future<List<ZonaModel>>       zonas;
+    Future<List<DropDownModel>>   instructores;
+    Future<List<DropDownModel>>   maestros;
+
+    EscuelaModel userData;
+    EscuelaBloc  escuelaBloc;  
+
+    bool _loading = true;
+
+  @override
+  void initState() {
+     new Future.delayed(new Duration(milliseconds: 900), () {
+        setState(() {
+            _loading = false;         
+        });
+      }); 
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    userData      = new EscuelaModel();
+    escuelaModel  = new EscuelaModel(); 
+    _loading      = true;  
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    final EscuelaModel userData = ModalRoute.of(context).settings.arguments;
-    escuelaBloc = ProviderBloc.escuelaBloc(context);
-
     setState(() {
-        region        = comunaRegion.getAllRegiones();
-        zonas         = zona.getAllZonases();
-        instructores  = usuario.getUsuariosInstructores();
-        maestros      = usuario.getUsuariosMaestros();
+      userData      = new EscuelaModel();
+      escuelaModel  = new EscuelaModel();
+      userData      = ModalRoute.of(context).settings.arguments;
+      escuelaBloc   = ProviderBloc.escuelaBloc(context);
+      region        = comunaRegion.getAllRegiones();
+      zonas         = zona.getAllZonases();
+      instructores  = usuario.getUsuariosInstructores();
+      maestros      = usuario.getUsuariosMaestros();     
 
-        if (userData != null) {
-            escuelaModel = userData;
-        }
+      if (userData != null) {
+        escuelaModel = userData;
+      }     
     });
 
-    return Scaffold(
-     key: scaffoldKey,
-      appBar: _appBar(context),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Padding(padding: EdgeInsets.all(15.0),
-          child: Form(
-              key: formKey,
-              child: Column(
-                children: <Widget>[
-                  Center(
-                    child: _mostrarFoto()                    
-                  ),
-                  SizedBox(height: 20.0),
-                  utils.buildTitle("Información Dojang"),
-                  SizedBox(height: 5.0),
-                  _inputNombre(),
-                  _inputDireccion(),
-                  _dropdrownRegion(comunaRegion),       
-                  _dropdrownComuna(comunaRegion, comuna),  
-                   _dropdrownZonas(),
-                  _dropdrownInstructor(),
-                  _dropdrownMaestro(),
-                  _switchEstado(),
-                  _crearBoton()
-                ]
-              )
-            ),
-        ),
+    _procesarImagen(ImageSource origin) async {
+      final _picker                   = ImagePicker();
+      PickedFile pickedFile           = await _picker.getImage(source: origin);      
+      foto                            = File(pickedFile.path);  
 
-      )
-    ),
-   );
-  }
-  
+      if (foto != null) {
+        escuelaModel.logo = null;
+      }  
+
+      setState(() {});
+    }
+
+    _seleccionarFoto() async {
+      _procesarImagen(ImageSource.gallery);
+    }
+
+    _tomarFoto() async {
+      _procesarImagen(ImageSource.camera);
+    }
+
+    _showMaterialDialog() {
+      showDialog(
+          context: context,
+          builder: (_) => new AlertDialog(
+                title: new Text("Atención"),
+                content: new Text("Si desactiva esta escuela, también desactivara a los usuarios asociados a esta escuela."),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Cerrar'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    }
+
   AppBar _appBar(BuildContext context) {
       return AppBar(
         leading: IconButton(
@@ -118,50 +142,13 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
       );
   }
 
-  _seleccionarFoto() async {
-    _procesarImagen(ImageSource.gallery);
-  }
-
-  _tomarFoto() async {
-    _procesarImagen(ImageSource.camera);
-  }
-
-  _procesarImagen(ImageSource origin) async {
-    final _picker                   = ImagePicker();
-    PickedFile pickedFile           = await _picker.getImage(source: origin);      
-    foto                            = File(pickedFile.path);  
-
-    if (foto != null) {
-      escuelaModel.logo = null;
-    }  
-
-    setState(() {});
-  }
-
-  _showMaterialDialog() {
-    showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-              title: new Text("Atención"),
-              content: new Text("Si desactiva esta escuela, también desactivara a los usuarios asociados a esta escuela."),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Cerrar'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            ));
-  }
-
   Widget _mostrarFoto() {
 
-      if (escuelaModel.logo != null && escuelaModel.logo != "") {
+      if (escuelaModel?.logo != null && escuelaModel?.logo != "") {
 
         return FadeInImage(
           placeholder: AssetImage('assets/jar-loading.gif'), 
-          image: escuelaModel.logo != null ?NetworkImage(escuelaModel.logo) : Image.asset('assets/no-image.png'),
+          image: escuelaModel?.logo != null ?NetworkImage(escuelaModel?.logo) : Image.asset('assets/no-image.png'),
           height: 300.0,
           fit: BoxFit.contain,
           );
@@ -180,28 +167,27 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
       }
   }
 
-  Widget _inputNombre() {
-    return Padding(
-      padding: EdgeInsets.only(top: 10.0),
-      child: TextFormField(
-        initialValue: escuelaModel.nombre,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          labelText: 'Nombre',
-          border: OutlineInputBorder(),
-                        
-        ),
-        onSaved: (value) => escuelaModel.nombre = value,
-        validator: (value){
-          if (value == null) {
-            return 'Campo requerido';
-          } else {
-            return null;
-          }
-        },
-      ),
-    );
-  }
+  Widget _inputUserName() {
+        return Padding(
+          padding: EdgeInsets.only(top: 10.0),
+          child: TextFormField(
+            initialValue: escuelaModel.nombre,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              labelText: "Nombre",
+              border: OutlineInputBorder(),                        
+            ),
+            onSaved: (value) => escuelaModel.nombre = value,
+            validator: (value){
+              if (value == null) {
+                return 'Campo requerido';
+              } else {
+                return null;
+              }
+            },
+          ),
+        );
+    }
 
   Widget _inputDireccion() {
     return Padding(
@@ -506,19 +492,18 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               children: <Widget>[
                 Switch(
                   activeColor: Colors.pinkAccent,
-                  value:  escuelaModel.estado,
+                  value:  (escuelaModel.estado == null)? true:  (escuelaModel.estado)?true: false,
                   onChanged: (value) {
                     setState(() {
                       
                       if (!value)
                         _showMaterialDialog();
-
-                      escuelaModel.estado = value;
+                        escuelaModel.estado = value;
                     });
                   },
                 ),
                 SizedBox(height: 12.0,),
-                Text('Estado : ${escuelaModel.estado? 'Activo': 'Inactivo'}', style: TextStyle(
+                Text('Estado : ${ (escuelaModel.estado == null)? true:  (escuelaModel.estado)? 'Activo': 'Inactivo'}', style: TextStyle(
                   color: Colors.black,
                   fontSize: 15.0
                 ),)
@@ -526,58 +511,103 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
             );
     }
 
-  Widget _crearBoton() {
-    return Padding(
-      padding: EdgeInsets.only(top: 10.0, bottom: 30.0),
-      child: ButtonTheme(
-        minWidth: double.infinity,
-        height: 40.0,
-          child: RaisedButton.icon(
-          
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0)
-          ),
-          color: Colors.redAccent,
-          textColor: Colors.white,
-          label: Text('Guardar'),
-          icon: Icon(Icons.save),
-          onPressed: () =>  _submit(),
-          ),
-      ),
-    );  
-  }
+  void _submit() async {
+      if (!formKey.currentState.validate()) {
+        return;
+      }else {
+          scaffoldKey.currentState.showSnackBar(
+            new SnackBar(duration: new Duration(seconds: 40), content:
+              new Row(
+                children: <Widget>[
+                  new CircularProgressIndicator(),
+                  new Text("    Guardando cambios...")
+                ],
+              ),
+            )
+          );
 
-void _submit() async {
-     if (!formKey.currentState.validate()) {
-       return;
-     }else {
-        scaffoldKey.currentState.showSnackBar(
-          new SnackBar(duration: new Duration(seconds: 40), content:
-            new Row(
-              children: <Widget>[
-                new CircularProgressIndicator(),
-                new Text("    Guardando cambios...")
-              ],
-            ),
-          )
-        );
+          formKey.currentState.save();
 
-        formKey.currentState.save();
-
-        if (foto != null) {
-           escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
-        }
-
-        if(escuelaModel != null) { 
-          if (escuelaModel.idEscuela == null){
-            escuelaModel.idEscuela = 0;
-            escuelaProvider.createEscuela(escuelaModel);           
-          }else {
-            escuelaProvider.updateEscuela(escuelaModel);
+          if (foto != null) {
+            escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
           }
-           await Future.delayed(const Duration(milliseconds: 700));
-           Navigator.push(context, SlideRightRoute(widget: EscuelaPage()));
-        }
-     }
+
+          if(escuelaModel != null) { 
+            if (escuelaModel.idEscuela == null){
+              escuelaModel.idEscuela = 0;
+              escuelaProvider.createEscuela(escuelaModel);           
+            }else {
+              escuelaProvider.updateEscuela(escuelaModel);
+            }
+            await Future.delayed(const Duration(milliseconds: 700));
+            Navigator.push(context, SlideRightRoute(widget: EscuelaPage()));
+          }
+      }
+    }
+
+  Widget _crearBoton() {
+      return Padding(
+        padding: EdgeInsets.only(top: 10.0, bottom: 30.0),
+        child: ButtonTheme(
+          minWidth: double.infinity,
+          height: 40.0,
+            child: RaisedButton.icon(
+            
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0)
+            ),
+            color: Colors.redAccent,
+            textColor: Colors.white,
+            label: Text('Guardar'),
+            icon: Icon(Icons.save),
+            onPressed: () =>  _submit(),
+            ),
+        ),
+      );  
+    }
+
+   return Scaffold(
+     key: scaffoldKey,
+      appBar: _appBar(context),
+      body: SingleChildScrollView(
+        child: Container(
+          child: (!_loading) ? 
+          
+          Padding(padding: EdgeInsets.all(15.0),
+          child: Form(
+              key: formKey,
+              child: Column(
+                children: <Widget>[
+                  Center(
+                    child: _mostrarFoto()                    
+                  ),
+                  SizedBox(height: 20.0),
+                  buildTitle("Información Dojang"),
+                  SizedBox(height: 5.0),
+                  _inputUserName(),
+                  _inputDireccion(),
+                  _dropdrownRegion(comunaRegion),       
+                  _dropdrownComuna(comunaRegion, comuna),  
+                   _dropdrownZonas(),
+                  _dropdrownInstructor(),
+                  _dropdrownMaestro(),
+                  _switchEstado(),
+                  _crearBoton()
+                ]
+              )
+            )
+          ): // By default, show a loading spinner.
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 200.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+              ),
+            ),
+          ),
+
+      )
+    ),
+   );
   }
 }

@@ -17,6 +17,8 @@ class UsuarioPorIdEscuelaModel {
         this.folio,
         this.imagen,
         this.gradoActual,
+        this.fono,
+        this.email,
         this.escuela,
         this.perfil,
         this.estado,
@@ -29,6 +31,10 @@ class UsuarioPorIdEscuelaModel {
     int folio;
     dynamic imagen;
     dynamic gradoActual;
+
+    String fono;
+    String email;
+
     String escuela;
     String perfil;
     bool estado;
@@ -41,6 +47,8 @@ class UsuarioPorIdEscuelaModel {
         folio: json["folio"],
         imagen: json["imagen"],
         gradoActual: json["gradoActual"],
+        fono: json["fono"],
+        email: json["email"],
         escuela: json["escuela"],
         perfil: json["perfil"],
         estado: json["estado"],
@@ -54,6 +62,8 @@ class UsuarioPorIdEscuelaModel {
         "folio": folio,
         "imagen": imagen,
         "gradoActual": gradoActual,
+        "fono": fono,
+        "email": email,
         "escuela": escuela,
         "perfil": perfil,
         "estado": estado,

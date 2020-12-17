@@ -19,15 +19,16 @@ class EscuelasAsociadas extends StatefulWidget {
 
 class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
 
-  final escuelaProvider                                   = new EscuelaServices();
-  final scaffoldKey                                       = new GlobalKey<ScaffoldState>();
-  final _prefs                                            = new PreferenciasUsuario();
-  TextEditingController controller                        = new TextEditingController();
+  final escuelaProvider                                       = new EscuelaServices();
+  final scaffoldKey                                           = new GlobalKey<ScaffoldState>();
+  final _prefs                                                = new PreferenciasUsuario();
+  TextEditingController controller                            = new TextEditingController();
   List<EscuelaPorIdInstructorModel>   listaResultadoOriginal  = new  List<EscuelaPorIdInstructorModel>();
   List<EscuelaPorIdInstructorModel>   listaResultado          = new  List<EscuelaPorIdInstructorModel>();
   List<EscuelaPorIdInstructorModel>   listaResultadocopia     = new  List<EscuelaPorIdInstructorModel>();
   Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
-  String searchString = "";
+  String searchString = "";  
+  bool _loading = true;
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -45,24 +46,36 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
   }
 
   @override
-  void initState() {     
-
-    Future.delayed(Duration.zero,(){
+  void initState() {
+      new Future.delayed(new Duration(milliseconds: 900), () {
         setState(() {
-          listaResultado = new  List<EscuelaPorIdInstructorModel>();
-          escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
-
-          escuelasLista.then((value) => {
-            if (value != null)  listaResultadoOriginal.addAll(value)
-          });
+            _loading = false;         
         });
-      });
-
+      }); 
     super.initState();
   }
 
   @override
+  void dispose() {
+    listaResultadoOriginal  = new  List<EscuelaPorIdInstructorModel>();
+    listaResultado          = new  List<EscuelaPorIdInstructorModel>();
+    listaResultadocopia     = new  List<EscuelaPorIdInstructorModel>();
+    escuelasLista           = null;
+    _loading          = true;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    setState(() {
+        listaResultado = new  List<EscuelaPorIdInstructorModel>();
+        escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
+
+        escuelasLista.then((value) => {
+          if (value != null)  listaResultadoOriginal.addAll(value)
+        });
+    });
 
     Future<Null> _handleRefresh() async {
         await Future.delayed(Duration(seconds: 1), () {
@@ -253,7 +266,8 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
     return Scaffold(
       key: scaffoldKey,
       appBar: _appBar(context),
-      body: SingleChildScrollView(
+      body: (!_loading) ?  
+        SingleChildScrollView(
         child: Stack(
           children: <Widget>[
           Column(
@@ -267,12 +281,21 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
             ),
           ]
         ),
-      ),
+      ) :
+
+      Container(
+              padding: EdgeInsets.symmetric(vertical: 200.0),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              ),
+            ),
+            
       floatingActionButton: 
               (_prefs.perfil == "Admin" || _prefs.perfil == "Maestro") ?
                   FloatingActionButton(
                     onPressed: () {
-                      //register.idEscuela = userData.idEscuela;
                       UserForRegisterModel model = new UserForRegisterModel();
                         Navigator.push(
                               context,

@@ -2,9 +2,9 @@ import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
-import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../home_page.dart';
@@ -17,8 +17,7 @@ class DetalleEscuelaHomePage extends StatefulWidget {
 }
 
 class _DetalleEscuelaHomePageState extends State<DetalleEscuelaHomePage> {
-
-  final scaffoldKey                   = new GlobalKey<ScaffoldState>();
+ 
   UsuarioServices usuarioProvider     = new UsuarioServices();
   Escuela userData;
   
@@ -67,7 +66,7 @@ class _DetalleEscuelaHomePageState extends State<DetalleEscuelaHomePage> {
           body: TabBarView(
             children: [
               InternalDetalleEscuelaHome(userData),
-              InternalContactosEscuelaHome(userData.idEscuela)             
+              InternalContactosEscuelaHome(userData?.idEscuela)             
             ],
           ),
         ),
@@ -223,11 +222,11 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
                 child:Column(
                   children: [
                       SizedBox(height: 10.0,),
-                      _textoContainer("Dirección: ${widget.escuelaDetalle?.direccion}"),
+                      _textoContainer("Dirección: ${widget.escuelaDetalle?.direccion??'Sin Información'}"),
                       SizedBox(height: 5.0,),
-                      _textoContainer("Comuna: ${widget.escuelaDetalle?.comuna}"),
+                      _textoContainer("Comuna: ${widget.escuelaDetalle?.comuna??'Sin Información'}"),
                       SizedBox(height: 5.0,),
-                      _textoContainer("Región: ${widget.escuelaDetalle?.region}"),
+                      _textoContainer("Región: ${widget.escuelaDetalle?.region??'Sin Información'}"),
                   ],
                 )
               ),    
@@ -248,7 +247,7 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
               ),
               SizedBox(width: 10.0),
               Text(
-                "${widget.escuelaDetalle?.correoInstructor}",
+                "${widget.escuelaDetalle?.correoInstructor??'Sin Información'}",
                 style: TextStyle(fontSize: 16.0),
               ),
             ],
@@ -263,7 +262,7 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
               ),
               SizedBox(width: 10.0),
               Text(
-                "${widget.escuelaDetalle?.fonoInstructor}",
+                "${widget.escuelaDetalle?.fonoInstructor??'Sin Información'}",
                 style: TextStyle(fontSize: 16.0),
               ),
             ],
@@ -291,6 +290,7 @@ class InternalContactosEscuelaHome extends StatefulWidget {
 
 class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaHome> {
 
+  UsuarioServices usuarioProvider     = new UsuarioServices();
   TextEditingController controller                        = new TextEditingController();
   List<UsuarioPorIdEscuelaModel>   listaResultadoOriginal  = new  List<UsuarioPorIdEscuelaModel>();
   List<UsuarioPorIdEscuelaModel>  listaResultado          = new  List<UsuarioPorIdEscuelaModel>();
@@ -299,7 +299,7 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
   Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;
   EscuelaPorIdInstructorModel userData;
   String searchString = "";
-
+  final scaffoldKey                   = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
        Future.delayed(Duration.zero,(){
@@ -342,7 +342,7 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
                           radius: 25.0,
                           backgroundImage: usuario.imagen !=null && usuario.imagen != ""
                                 ? NetworkImage(usuario.imagen)
-                                : AssetImage('assets/img/FETACHI50.png'),
+                                : AssetImage('assets/no-image.png'),
                           backgroundColor: Colors.black,
                         ),
                        title: 
@@ -365,12 +365,13 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
                           children: [
                             Text(' ${ usuario.gradoActual??'N/A' }') ,
                             Text('|') ,
-                            Text(' ${ usuario.perfil??'N/A' }') , 
+                            Text(' ${ usuario.perfil==null?'N/A': (usuario.perfil != 'Instructor')? usuario.perfil : 'Estudiante*' }') , 
                             Text('|') ,
                             // Text(' ${ usuario.pho??'N/A' }') , 
                         ],), 
                         trailing: Icon(FontAwesomeIcons.whatsapp, color: Colors.green,),
                         isThreeLine: true,
+                        onTap: () => FlutterOpenWhatsapp.sendSingleMessage("${usuario?.fono}", "Hello"),
                       ),
               ],
             ),
@@ -484,7 +485,7 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
 
     return Scaffold(
       key: scaffoldKey,
-      body: SingleChildScrollView(
+       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
           Column(

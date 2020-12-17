@@ -1,11 +1,11 @@
 import 'package:badges/badges.dart';
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuelaAdd_page.dart';
 import 'package:fetachiappmovil/pages/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
-import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
 
 import 'package:flutter/material.dart';
 
@@ -16,16 +16,38 @@ class EscuelaPage extends StatefulWidget {
 }
 
 class _EscuelaPageState extends State<EscuelaPage> {
-  final escuelaProvider      = new EscuelaServices();
-  final scaffoldKey          = new GlobalKey<ScaffoldState>();
 
-  TextEditingController controller                            = new TextEditingController();
+  EscuelaServices                     escuelaProvider         = new EscuelaServices();
+  GlobalKey<ScaffoldState>            scaffoldKey             = new GlobalKey<ScaffoldState>();
+  TextEditingController               controller              = new TextEditingController();
   List<EscuelaPorIdInstructorModel>   listaResultadoOriginal  = new  List<EscuelaPorIdInstructorModel>();
   List<EscuelaPorIdInstructorModel>   listaResultado          = new  List<EscuelaPorIdInstructorModel>();
   List<EscuelaPorIdInstructorModel>   listaResultadocopia     = new  List<EscuelaPorIdInstructorModel>();
   Future<List<EscuelaPorIdInstructorModel>>   escuelasLista;
+  final _prefs            = new PreferenciasUsuario();
   String searchString = "";
+  bool _loading = true;
 
+  @override
+  void initState() {
+      new Future.delayed(new Duration(milliseconds: 900), () {
+        setState(() {
+            _loading = false;         
+        });
+      }); 
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    listaResultadoOriginal  = new  List<EscuelaPorIdInstructorModel>();
+    listaResultado          = new  List<EscuelaPorIdInstructorModel>();
+    listaResultadocopia     = new  List<EscuelaPorIdInstructorModel>();
+    escuelasLista           = null;
+    _loading          = true;
+    super.dispose();
+  }
+    
   AppBar _appBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
@@ -41,24 +63,17 @@ class _EscuelaPageState extends State<EscuelaPage> {
     );
   }
 
-   @override
-  void initState() {
-    Future.delayed(Duration.zero,(){
-        setState(() {
-          listaResultado = new  List<EscuelaPorIdInstructorModel>();
-          escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
-
-          escuelasLista.then((value) => {
-            if (value != null)  listaResultadoOriginal.addAll(value)
-          });
-        });
-      });
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+
+    setState(() {
+      listaResultado = null;
+      escuelasLista = escuelaProvider.getEscuelaByIdInstructor();
+
+      escuelasLista.then((value) => {
+        if (value != null)  listaResultadoOriginal.addAll(value)
+      });
+    });
 
     Future<Null> _handleRefresh() async {
         await Future.delayed(Duration(seconds: 1), () {
@@ -73,7 +88,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
 
     Widget _crearItem(BuildContext context, EscuelaPorIdInstructorModel escuela ) {
 
-      return Dismissible(
+      return  (escuela != null)? Dismissible(
           key: UniqueKey(),
           background: Container(
               color: Colors.blueAccent,
@@ -188,7 +203,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
               ],
             ),
           )
-        ); 
+        ): Container(height: 0, width: 0,);
     }
 
     Widget _featuredListHorizontal()  {   
@@ -221,7 +236,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment: MainAxisAlignment.start,
-                                      children: <Widget>[       
+                                      children: <Widget>[                                        
                                         _crearItem(context, listData.data[position])
                                       ],
                                     );
@@ -298,7 +313,9 @@ class _EscuelaPageState extends State<EscuelaPage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: _appBar(context),
-      body: SingleChildScrollView(
+      body: (!_loading) ?  
+      
+      SingleChildScrollView(
         child: Stack(
           children: <Widget>[
           Column(
@@ -311,10 +328,43 @@ class _EscuelaPageState extends State<EscuelaPage> {
             ),
           ]
         ),
-      ),
+      ) :
+
+      Container(
+              padding: EdgeInsets.symmetric(vertical: 200.0),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              ),
+            ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, router.SlideRightRoute(widget: EscuelaAddPage()));
+         EscuelaModel model = new EscuelaModel();
+         model.estado = true;        
+
+          if(listaResultadoOriginal.isEmpty && (_prefs.perfil == "Instructor"  )) {
+              model.idInstructor = int.parse(_prefs.uid);
+          }
+          else if (listaResultadoOriginal.isEmpty && (_prefs.perfil == "Maestro")) {
+            model.idInstructor = int.parse(_prefs.uid); 
+            model.idMaestro = int.parse(_prefs.uid);     
+          }
+          else{
+              model.idInstructor = listaResultadoOriginal[0]?.idInstructor??null;
+          }
+
+
+         Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EscuelaAddPage(),
+                        settings: RouteSettings(
+                          arguments: model
+                        ),
+                      ),
+                    ); 
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.redAccent,

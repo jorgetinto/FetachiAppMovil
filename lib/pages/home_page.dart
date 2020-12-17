@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:fetachiappmovil/helpers/widget/Menu_widget.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
+import 'package:fetachiappmovil/pages/DetalleHome/detallePupiloHome_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
@@ -9,6 +10,9 @@ import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 import 'package:fetachiappmovil/helpers/validators/validaciones_varias.dart' as validar;
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'DetalleHome/detalleApoderadoHome_page.dart';
+import 'DetalleHome/detalleContactoHome_page.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -204,8 +208,10 @@ class _HomePageState extends State<HomePage> {
 
                     _buildExperienceRow(
                                 company: "${snapshot.data.apoderado?.nombres} ${snapshot.data.apoderado?.apellidoPaterno}",
-                                position: "${snapshot.data.apoderado.fono}",
+                                position: "Folio: ${snapshot.data.apoderado?.folio}",
                                 duration: "",
+                                page: DetalleApoderadoHomePage(),
+                                parametros: snapshot.data.apoderado
                               ),  
                   ],
                 ) : Container(height: 0, width: 0,);
@@ -226,12 +232,16 @@ class _HomePageState extends State<HomePage> {
               physics: NeverScrollableScrollPhysics(),
               itemCount: snapshot.data.pupilos.length,
               itemBuilder: (context, i) {
-              return snapshot.data.pupilos[i] != null
+
+
+              return snapshot.data?.pupilos[i] != null
                 ? 
                   _buildExperienceRow(
-                      company: "${snapshot.data.pupilos[i].nombres} ${snapshot.data.pupilos[i].apellidoPaterno}",
+                      company: "${snapshot.data?.pupilos[i]?.nombres} ${snapshot.data?.pupilos[i]?.apellidoPaterno}",
                       position: "",
-                      duration: "${snapshot.data.pupilos[i].escuela}",
+                      duration: "${snapshot.data?.pupilos[i]?.escuela}",
+                      page: DetallePupiloHomePage(),
+                      parametros: snapshot.data?.pupilos[i]?? new Apoderado()
                     )
                 : Container(
                     height: 0,
@@ -296,6 +306,8 @@ class _HomePageState extends State<HomePage> {
                                 company: " ${snapshot.data.informacionContacto?.nombre} ${snapshot.data.informacionContacto?.apellidoPaterno}",
                                 position: "${snapshot.data.informacionContacto?.fono}",
                                 duration: "",
+                                page: DetalleContactoHomePage(),
+                                parametros: snapshot.data.informacionContacto
                               ),  
                   ],
                 ) : Container(height: 0, width: 0,);

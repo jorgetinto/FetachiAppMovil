@@ -1,5 +1,6 @@
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuela_page.dart';
+import 'package:fetachiappmovil/pages/Sabunim/SabunimPage.dart';
 import 'package:fetachiappmovil/pages/Usuarios/escuelasAsociadas_page.dart';
 import 'package:fetachiappmovil/pages/home_page.dart';
 import 'package:fetachiappmovil/pages/resetPassword_page.dart';
@@ -20,14 +21,36 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
     if (_prefs.perfil == "Apoderado" || _prefs.perfil == "Estudiante") {
         return <Route>[
             Route(FontAwesomeIcons.userCircle, 'Perfil',               HomePage()),
+            Route(Icons.lock,                  'Cambiar Contraseña',   Resetpassword()),
         ];          
     }
-    else if (_prefs.perfil == "Instructor" || _prefs.perfil == "Maestro" || _prefs.perfil == "Admin") {
+    else if (_prefs.perfil == "Instructor") {
         return <Route>[
-            Route(FontAwesomeIcons.userCircle, 'Perfil',               HomePage()),
-            Route(FontAwesomeIcons.school,     'Escuela',              EscuelaPage()),
-            Route(FontAwesomeIcons.userCog,    'Usuarios',             EscuelasAsociadas()),
-            Route(FontAwesomeIcons.lock,       'Cambiar Contraseña',   Resetpassword()),
+            Route(FontAwesomeIcons.userCircle,      'Perfil',               HomePage()),
+            Route(Icons.school,                     'Escuelas',             EscuelaPage()),
+            Route(Icons.supervised_user_circle,     'Usuarios',             EscuelasAsociadas()),
+            Route(Icons.lock,                       'Cambiar Contraseña',   Resetpassword()),            
+        ];          
+    }
+    else if (_prefs.perfil == "Maestro") {
+        return <Route>[
+            Route(FontAwesomeIcons.userCircle,      'Perfil',             HomePage()),
+            Route(Icons.school,                     'Escuelas',           EscuelaPage()),
+            Route(Icons.supervised_user_circle,     'Usuarios',           EscuelasAsociadas()),
+            Route(Icons.note_add,                   'Examen',             EscuelasAsociadas()),
+            Route(Icons.check,                      'Examinar',           EscuelasAsociadas()),
+            Route(Icons.lock,                       'Cambiar Contraseña', Resetpassword()),            
+        ];          
+    }
+    else if (_prefs.perfil == "Admin") {
+        return <Route>[
+            Route(FontAwesomeIcons.userCircle,      'Perfil',             HomePage()),
+            Route(Icons.school,                     'Escuelas',           EscuelaPage()),
+            Route(Icons.supervised_user_circle,     'Usuarios',           EscuelasAsociadas()),
+            Route(Icons.supervised_user_circle,     'Sabonim',            SabunimPage()),
+            Route(Icons.note_add,                   'Examen',             EscuelasAsociadas()),
+            Route(Icons.check,                      'Examinar',           EscuelasAsociadas()),
+            Route(Icons.lock,                       'Cambiar Contraseña', Resetpassword()),            
         ];          
     }
     else {

@@ -40,14 +40,12 @@ class EscuelaServices {
 
     if (response.statusCode == 200) {
         final items = json.decode(response.body).cast<Map<String, dynamic>>();
-        List<EscuelaPorIdInstructorModel> listOfUsers = items.map<EscuelaPorIdInstructorModel>((json) {
+        List<EscuelaPorIdInstructorModel>  listOfUsers = items.map<EscuelaPorIdInstructorModel>((json) {
           return EscuelaPorIdInstructorModel.fromJson(json);
         }).toList();
-
-        return listOfUsers;
-      } else {
-        throw Exception('Failed to load internet');
+        return listOfUsers.where((i) => i.idEscuela != 0).toList();
       }
+    return List<EscuelaPorIdInstructorModel>();
   }
 
   Future<EscuelaModel>  getAllEscuelas()  async {    

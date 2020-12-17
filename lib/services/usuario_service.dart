@@ -122,10 +122,32 @@ class UsuarioServices {
         }).toList();
 
         return listOfUsers;
-      } else {
-        throw Exception('Failed to load internet');
-      }
+      } 
+      return new List<UsuarioPorIdEscuelaModel>();
   }
+
+  Future<List<UsuarioPorIdEscuelaModel>>  getUsuarioSabunim()  async {  
+
+      final url = '$urlBase/Usuario/GetUsuarioSabunim/';
+
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${_prefs.token}',
+      });
+
+      if (response.statusCode == 200) {
+        final items = json.decode(response.body).cast<Map<String, dynamic>>();
+
+        List<UsuarioPorIdEscuelaModel> listOfUsers = items.map<UsuarioPorIdEscuelaModel>((json) {
+          return UsuarioPorIdEscuelaModel.fromJson(json);
+        }).toList();
+
+        return listOfUsers;
+      } 
+      return new List<UsuarioPorIdEscuelaModel>();
+  }
+ 
 
   Future<Map<String, dynamic>> crearUsuario(UserForRegisterModel user) async {    
 

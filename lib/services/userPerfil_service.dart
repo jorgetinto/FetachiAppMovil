@@ -26,6 +26,19 @@ class UserPerfilServices {
     return respModel;
   }
 
+  Future<UserPerfilModel>  getUsuarioById(int idUsuario)  async {    
+    final url = '$urlBase/Usuario/$idUsuario';
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    });
+
+    final respModel = userPerfilModelFromJson(response.body.toString());
+    return respModel;
+  }
+
   Future<Map<String, dynamic>> changePassword(String password) async {
     
     final authData = {
@@ -53,7 +66,7 @@ class UserPerfilServices {
     }
   }
 
-  Future<UserPerfilModel> editarPerfilUsuario(UserPerfilModel userPerfil) async {    
+  Future<Map<String, dynamic>> editarPerfilUsuario(UserPerfilModel userPerfil) async {    
 
     final url = '$urlBase/Usuario/${_prefs.uid}';
 
@@ -62,10 +75,14 @@ class UserPerfilServices {
       'Accept': 'application/json',
       'Authorization': 'Bearer ${_prefs.token}',
     },
-    body: userPerfilModelToJson(userPerfil));  
+    body: userPerfilModelToJson(userPerfil)); 
 
-    final respModel = userPerfilModelFromJson(response.body.toString());
-    return respModel;
+    if (response.statusCode == 200) {
+        return {'ok': true, 'message': 'Perfil editado con exito'};
+      } else {  
+        Map<String, dynamic> decodedResp = json.decode(response.body);  
+        return {'ok': false, 'message': decodedResp['message']};
+      } 
   }
 
   Future<String> subirImagen(File imagen, String imagenOriginal ) async {

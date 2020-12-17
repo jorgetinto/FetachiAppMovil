@@ -1,3 +1,9 @@
 // cd..
 // cd .\FitachiAppBackend\
+
+// MIGRATION
+// dotnet ef migrations add "Comentario migracion" -o "Domain/Migrations" --project .\FetachiBackendApp\
+// dotnet ef database update --project .\FetachiBackendApp\
+
+// RUN
 // dotnet run  --project .\FetachiBackendApp\ --urls http://0.0.0.0:5001

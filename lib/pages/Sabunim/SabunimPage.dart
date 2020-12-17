@@ -1,23 +1,21 @@
 import 'package:badges/badges.dart';
-import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
+import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
+import 'package:fetachiappmovil/pages/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
-import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 import 'package:fetachiappmovil/services/usuario_service.dart';
-
 import 'package:flutter/material.dart';
 
-import 'escuelasAsociadas_page.dart';
 
-class UsuariosPage extends StatefulWidget {
+class SabunimPage extends StatefulWidget {
 
   @override
-  _UsuariosPageState createState() => _UsuariosPageState();
+  _SabunimPageState createState() => _SabunimPageState();
 }
 
-class _UsuariosPageState extends State<UsuariosPage> {
+class _SabunimPageState extends State<SabunimPage> {
 
   GlobalKey<ScaffoldState>        scaffoldKey             = new GlobalKey<ScaffoldState>();
   EscuelaServices                 escuelaProvider         = new EscuelaServices();
@@ -27,12 +25,10 @@ class _UsuariosPageState extends State<UsuariosPage> {
   List<UsuarioPorIdEscuelaModel>  listaResultadoOriginal  = new  List<UsuarioPorIdEscuelaModel>();
   List<UsuarioPorIdEscuelaModel>  listaResultado          = new  List<UsuarioPorIdEscuelaModel>();
   List<UsuarioPorIdEscuelaModel>  listaResultadocopia     = new  List<UsuarioPorIdEscuelaModel>();
-  EscuelaPorIdInstructorModel     userData                = new EscuelaPorIdInstructorModel();
 
   Future<List<UsuarioPorIdEscuelaModel>>   listaUsuarios;
   String searchString = "";
   bool _loading = true;
-
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -41,11 +37,11 @@ class _UsuariosPageState extends State<UsuariosPage> {
         onPressed: () {
          Navigator.push (
               context,
-              MaterialPageRoute(builder: (context) => EscuelasAsociadas()),
+              MaterialPageRoute(builder: (context) => HomePage()),
           );
         },
       ),
-      title: Text('Usuarios'),
+      title: Text('Mantenedor Sabunim'),
       backgroundColor: Colors.black,      
     );
   }
@@ -70,13 +66,13 @@ class _UsuariosPageState extends State<UsuariosPage> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
 
     setState(() {
-        userData              = ModalRoute.of(context).settings.arguments;
         listaResultado        = new  List<UsuarioPorIdEscuelaModel>();         
-        listaUsuarios         = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela);
+        listaUsuarios         = usuarioProvider.getUsuarioSabunim();
 
         listaUsuarios.then((value) => {
           if (value != null)  listaResultadoOriginal.addAll(value)
@@ -86,7 +82,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
     Future<Null> _handleRefresh() async {
       await Future.delayed(Duration(seconds: 1), () {
           setState(() {
-            listaUsuarios                               = usuarioProvider.getUsuariosByIdEscuela(userData.idEscuela); 
+            listaUsuarios                               = usuarioProvider.getUsuarioSabunim(); 
             listaUsuarios.then((value) => {
               if (value != null)  listaResultadoOriginal.addAll(value)
             });    
@@ -166,7 +162,6 @@ class _UsuariosPageState extends State<UsuariosPage> {
                                 : AssetImage('assets/img/FETACHI50.png'),
                           backgroundColor: Colors.black,
                         ),
-                       // title: Text('${ usuario.folio } - ${ usuario.nombres }'),
                        title: 
                         Container(
                           width: 80.0,
@@ -327,7 +322,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
               children: [
                   _search(),
                   SizedBox(height: 10.0),
-                  utils.buildTitle("Mis Usuarios"),
+                  buildTitle("Mis Usuarios"),
                   _featuredListHorizontal(),
               ],
             ),
@@ -346,7 +341,6 @@ class _UsuariosPageState extends State<UsuariosPage> {
             
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-           register.idEscuela = userData.idEscuela;
             Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -361,6 +355,5 @@ class _UsuariosPageState extends State<UsuariosPage> {
         backgroundColor: Colors.redAccent,
       ),
    );
-   
   }
 }

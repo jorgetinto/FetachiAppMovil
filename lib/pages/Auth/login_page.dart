@@ -66,13 +66,18 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: Column(
               children: <Widget>[
-                Text('iniciar Sesión', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),),
+
+
+
+                 Text('iniciar Sesión', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),),
                 SizedBox(height: 20.0,),
                 _crearUserName(bloc),
                  SizedBox(height: 20.0,),
                 _crearPassword(bloc),
                  SizedBox(height: 20.0,),
-                _crearBotton(bloc)
+                _crearBotton(bloc),
+                 SizedBox(height: 20.0,),
+                 Text('Versión: 1.0.0')
               ],
             ),
           ),
@@ -182,15 +187,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
  Widget build(BuildContext context) {  
-
     return Scaffold(
-    key: _scaffoldKey,
-    body: Stack(
-      children: <Widget>[
-        _crearFondo(context),
-        _loginForm(context),
-      ],
-    )
+      key: _scaffoldKey,
+      body: Stack(
+        children: <Widget>[
+          _crearFondo(context),
+          _loginForm(context),
+
+        ],
+      )
     );
   }
 }
