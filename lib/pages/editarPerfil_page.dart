@@ -17,6 +17,7 @@ import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:fetachiappmovil/services/userPerfil_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -38,6 +39,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   InformacionContacto contactoEntity  = new InformacionContacto();
 
   File foto;
+  File croppedImage;
   Future<List<RegionModel>> region;
   Future<List<RegionModel>> regionContacto;
   Future<List<ComunaModel>> comuna;
@@ -92,15 +94,31 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   }
 
   _procesarImagen(ImageSource origin) async {
-      final _picker                   = ImagePicker();
-      PickedFile pickedFile           = await _picker.getImage(source: origin);      
-      foto                            = File(pickedFile.path);  
+      PickedFile pickedFile = await ImagePicker().getImage(
+        source: origin,
+        maxWidth: 1080,
+        maxHeight: 1080,
+      );
+
+     await _cropImage(pickedFile.path);      
+  }
+
+  /// Crop Image
+  _cropImage(filePath) async {
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (croppedImage != null) {
+      foto = croppedImage;
 
       if (foto != null) {
         usePerfilModel.imagen = null;
-      }  
+      }
 
       setState(() {});
+    }
   }
 
   Widget _mostrarFoto() {
