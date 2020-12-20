@@ -1,3 +1,4 @@
+import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:fetachiappmovil/pages/editarPerfil_page.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +82,7 @@ import 'package:toast/toast.dart';
                       child: (tipoFoto) 
                                         ?  ClipOval(child: Image.asset('assets/img/FETACHI.png')) 
                                         :  (snapshot.data.imagen != null) 
-                                          ? ClipOval(child: Container(child: Image.network(snapshot.data.imagen)))
+                                          ? ClipOval(child: Container(child: Image.network("${Constants.IMAGEN_USUARIO}${snapshot.data.imagen}")))
                                           : ClipOval(child: Image.asset('assets/no-image.png')) 
                       ,backgroundColor: Colors.grey[400],
                     ),

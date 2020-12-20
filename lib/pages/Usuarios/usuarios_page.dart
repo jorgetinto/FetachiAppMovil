@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:fetachiappmovil/helpers/constants.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
@@ -162,11 +163,10 @@ class _UsuariosPageState extends State<UsuariosPage> {
                         leading: CircleAvatar(
                           radius: 25.0,
                           backgroundImage: usuario.imagen !=null && usuario.imagen != ""
-                                ? NetworkImage(usuario.imagen)
-                                : AssetImage('assets/img/FETACHI50.png'),
+                                ? NetworkImage("$IMAGEN_USUARIO${usuario.imagen}")
+                                : AssetImage('assets/no-image.png'),
                           backgroundColor: Colors.black,
                         ),
-                       // title: Text('${ usuario.folio } - ${ usuario.nombres }'),
                        title: 
                         Container(
                           width: 80.0,

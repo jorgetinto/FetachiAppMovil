@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:date_field/date_field.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/bloc/userPerfil_bloc.dart';
+import 'package:fetachiappmovil/helpers/constants.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/validators/RutHelper_widget.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
@@ -16,6 +17,7 @@ import 'package:fetachiappmovil/services/grado_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:intl/intl.dart';
@@ -108,16 +110,52 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
     });
 
-    _procesarImagen(ImageSource origin) async {
-      final _picker                   = ImagePicker();
-      PickedFile pickedFile           = await _picker.getImage(source: origin);      
-      foto                            = File(pickedFile.path);  
+   /// Crop Image
+  _cropImage(filePath) async {
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 600,
+      maxHeight: 600,
+      aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Recortar',
+            toolbarColor: Colors.black87,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Recortar',
+        )
+    );
+    if (croppedImage != null) {
+      foto = croppedImage;
 
       if (foto != null) {
-        userModel.imagen= null;
-      }  
+        userModel.imagen = null;
+      }
 
       setState(() {});
+    }
+  }
+
+    _procesarImagen(ImageSource origin) async {
+       PickedFile pickedFile = await ImagePicker().getImage(
+        source: origin,
+        maxWidth: 1080,
+        maxHeight: 1080,
+      );
+
+     await _cropImage(pickedFile.path);      
     }
 
     _seleccionarFoto() async {
@@ -127,14 +165,14 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     _tomarFoto() async {
       _procesarImagen(ImageSource.camera);
     }
-
+   
     Widget _mostrarFoto() {
 
       if (userModel.imagen != null && userModel.imagen != "") {
 
         return FadeInImage(
           placeholder: AssetImage('assets/jar-loading.gif'), 
-          image: userModel.imagen != null ?NetworkImage(userModel.imagen) : Image.asset('assets/no-image.png'),
+          image: userModel.imagen != null ?NetworkImage("$IMAGEN_USUARIO${userModel.imagen}") : Image.asset('assets/no-image.png'),
           height: 300.0,
           fit: BoxFit.contain,
           );
@@ -593,7 +631,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           formKey.currentState.save();
 
           if (foto != null) {
-            userModel.imagen = await userBloc.subirFoto(foto, userModel.imagen);
+            userModel.imagen = await userBloc.upload(foto, true);
           }
 
           if(userModel != null) {

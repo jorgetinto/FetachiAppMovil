@@ -17,9 +17,9 @@ class UserPerfilBloc {
     final user = await _userPefilService.getPerfilById();
     _userPerfilController.add(user);    
   }
-  
-  Future<String> subirFoto(File foto, String imagenOriginal) async {
-    final fotoUrl = await _userPefilService.subirImagen(foto, imagenOriginal);
+
+    Future<String> upload(File foto, bool esUsuario) async {
+    String fotoUrl = await _userPefilService.upload(foto, esUsuario);
     return fotoUrl;
   }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fetachiappmovil/bloc/escuela_bloc.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
+import 'package:fetachiappmovil/helpers/constants.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/comuna_model.dart';
@@ -12,9 +13,11 @@ import 'package:fetachiappmovil/models/zona_model.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuela_page.dart';
 import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
+import 'package:fetachiappmovil/services/userPerfil_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:fetachiappmovil/services/zona_service.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 
@@ -31,6 +34,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
 
     File                      foto;
     EscuelaServices           escuelaProvider  = new EscuelaServices();
+    UserPerfilServices        userService      = new UserPerfilServices();
     EscuelaModel              escuelaModel     = new EscuelaModel();
     ComunaRegionServices      comunaRegion     = new ComunaRegionServices();
     ZonaServices              zona             = new ZonaServices();
@@ -84,16 +88,53 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
       }     
     });
 
-    _procesarImagen(ImageSource origin) async {
-      final _picker                   = ImagePicker();
-      PickedFile pickedFile           = await _picker.getImage(source: origin);      
-      foto                            = File(pickedFile.path);  
+    /// Crop Image
+  _cropImage(filePath) async {
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 600,
+      maxHeight: 600,
+      aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Recortar',
+            toolbarColor: Colors.black87,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Recortar',
+        )
+    );
+
+    if (croppedImage != null) {
+      foto = croppedImage;
 
       if (foto != null) {
         escuelaModel.logo = null;
-      }  
+      }
 
       setState(() {});
+    }
+  }
+
+   _procesarImagen(ImageSource origin) async {
+       PickedFile pickedFile = await ImagePicker().getImage(
+        source: origin,
+        maxWidth: 1080,
+        maxHeight: 1080,
+      );
+
+     await _cropImage(pickedFile.path);     
     }
 
     _seleccionarFoto() async {
@@ -121,7 +162,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               ));
     }
 
-  AppBar _appBar(BuildContext context) {
+   AppBar _appBar(BuildContext context) {
       return AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -148,7 +189,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
 
         return FadeInImage(
           placeholder: AssetImage('assets/jar-loading.gif'), 
-          image: escuelaModel?.logo != null ?NetworkImage(escuelaModel?.logo) : Image.asset('assets/no-image.png'),
+          image: escuelaModel?.logo != null ?NetworkImage("$IMAGEN_ESCUELA${escuelaModel?.logo}") : Image.asset('assets/no-image.png'),
           height: 300.0,
           fit: BoxFit.contain,
           );
@@ -529,7 +570,10 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
           formKey.currentState.save();
 
           if (foto != null) {
-            escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
+           // escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
+            await userService.upload(foto, false).then((value) => {
+              if (value != null) escuelaModel.logo = value 
+            });
           }
 
           if(escuelaModel != null) { 

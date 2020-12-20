@@ -1,22 +1,24 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
-import 'package:fetachiappmovil/helpers/utils.dart';
-import 'package:fetachiappmovil/helpers/widget/Menu_widget.dart';
+
 import 'package:fetachiappmovil/pages/Auth/login_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detallePupiloHome_page.dart';
-import 'package:flutter/material.dart';
+import 'DetalleHome/detalleApoderadoHome_page.dart';
+import 'DetalleHome/detalleContactoHome_page.dart';
 
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
+import 'package:fetachiappmovil/helpers/widget/Menu_widget.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart' as router;
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 import 'package:fetachiappmovil/helpers/validators/validaciones_varias.dart' as validar;
+import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
+import 'package:fetachiappmovil/helpers/utils.dart';
+
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'DetalleHome/detalleApoderadoHome_page.dart';
-import 'DetalleHome/detalleContactoHome_page.dart';
+import 'package:flutter/material.dart';
 
 
 
@@ -117,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                         radius: 30.0,
                         child: (snapshot.data.imagen == null) 
                                           ?  ClipOval(child: Image.asset('assets/no-image.png')) 
-                                          :  ClipOval(child: Container(child: Image.network(snapshot.data.imagen))),
+                                          :  ClipOval(child: Container(child: Image.network("${Constants.IMAGEN_USUARIO}${snapshot.data.imagen}"))),
                         backgroundColor: Colors.grey[400],
                       ),
                     ),

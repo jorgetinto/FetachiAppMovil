@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
@@ -111,34 +109,6 @@ class EscuelaServices {
 
     return respuesta;
   }
-
-  Future<String> subirImagen(File imagen, String logoOriginal ) async {
-
-    final cloudinary = Cloudinary(
-     '989953882978531',
-     'taUtLylZzk5I-SK69mPGM7f74T8',
-     'jpino'
-    );
-
-    final String cloudinaryCustomFolder = "Fetachi/Escuelas";
-
-    if (logoOriginal != null) {
-        await cloudinary.deleteFile(
-                  url: logoOriginal,
-                  resourceType: CloudinaryResourceType.image,
-                  invalidate: false,
-            );
-    }
-
-    final response = await cloudinary.uploadFile(
-      imagen.path,
-      resourceType: CloudinaryResourceType.image,
-      folder: cloudinaryCustomFolder,
-    );
-
-    return response.secureUrl;
-  }
-
 
   Future<List<DropDownModel>>  getEscuelaPorIdUsuario()  async {    
 

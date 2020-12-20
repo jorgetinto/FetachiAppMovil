@@ -231,6 +231,7 @@ class Escuela {
         this.gradoInstructor,
         this.fonoInstructor,
         this.correoInstructor,
+        this.fotoInstructor,
 
         this.idMaestro,
         this.nombreMaestro,
@@ -253,6 +254,7 @@ class Escuela {
     String gradoInstructor;
     String fonoInstructor;
     String correoInstructor;
+    String fotoInstructor;
 
     int idMaestro;
     String nombreMaestro;
@@ -275,6 +277,7 @@ class Escuela {
         gradoInstructor: json["gradoInstructor"],
         fonoInstructor: json["fonoInstructor"],
         correoInstructor: json["correoInstructor"],
+        fotoInstructor: json["fotoInstructor"],
 
         idMaestro: json["idMaestro"],
         nombreMaestro: json["nombreMaestro"],
@@ -297,6 +300,7 @@ class Escuela {
         "gradoInstructor":gradoInstructor,
         "fonoInstructor":fonoInstructor,
         "correoInstructor":correoInstructor,
+        "fotoInstructor": fotoInstructor,
         "idMaestro": idMaestro,
         "nombreMaestro": nombreMaestro,
         "logo": logo,

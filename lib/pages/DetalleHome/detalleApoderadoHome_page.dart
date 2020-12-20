@@ -1,5 +1,7 @@
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
+import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
@@ -44,7 +46,7 @@ class _DetalleApoderadoHomePageState extends State<DetalleApoderadoHomePage> {
                                 radius: 30.0,
                                  child: (userData?.imagen == null) 
                                           ?  ClipOval(child: Image.asset('assets/no-image.png')) 
-                                          :  ClipOval(child: Container(child: Image.network(userData?.imagen))),
+                                          :  ClipOval(child: Container(child: Image.network("${Constants.IMAGEN_USUARIO}${userData?.imagen}"))),
                                  backgroundColor: Colors.grey[400],
                               ),
                             ),

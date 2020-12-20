@@ -1,13 +1,16 @@
-import 'package:fetachiappmovil/helpers/utils.dart';
-import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
+import 'package:fetachiappmovil/helpers/constants.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
+import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
+
 import 'package:fetachiappmovil/services/usuario_service.dart';
+import 'package:fetachiappmovil/helpers/utils.dart';
+import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
+import '../home_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../home_page.dart';
 
 
 class DetalleEscuelaHomePage extends StatefulWidget {
@@ -103,7 +106,7 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
                         radius: 30.0,
                         child: (snapshot?.logo == null) 
                                           ?  ClipOval(child: Image.asset('assets/no-image.png')) 
-                                          :  ClipOval(child: Container(child: Image.network(snapshot.logo))),
+                                          :  ClipOval(child: Container(child: Image.network("$IMAGEN_ESCUELA${snapshot.logo}"))),
                         backgroundColor: Colors.grey[400],
                       ),
                     ),
@@ -152,7 +155,9 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
                                       height: 60.0,
                                       child: CircleAvatar(
                                           radius: 30.0,                   
-                                          child: ClipOval(child: Image.asset('assets/no-image.png')) 
+                                           child: (widget.escuelaDetalle?.fotoInstructor == null) 
+                                          ?  ClipOval(child: Image.asset('assets/no-image.png')) 
+                                          :  ClipOval(child: Container(child: Image.network("${Constants.IMAGEN_USUARIO}${widget.escuelaDetalle?.fotoInstructor}")))
                                           ,backgroundColor: Colors.grey[400],
                                         ),
                                     ),
@@ -348,7 +353,7 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
                         leading: CircleAvatar(
                           radius: 25.0,
                           backgroundImage: usuario.imagen !=null && usuario.imagen != ""
-                                ? NetworkImage(usuario.imagen)
+                                ? NetworkImage("${Constants.IMAGEN_USUARIO}${usuario.imagen}")
                                 : AssetImage('assets/no-image.png'),
                           backgroundColor: Colors.black,
                         ),

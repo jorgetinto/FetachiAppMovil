@@ -9,6 +9,7 @@ import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/validators/RutHelper_widget.dart';
 import 'package:fetachiappmovil/helpers/validators/validaciones_varias.dart' as validar;
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
+import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/models/comuna_model.dart';
 import 'package:fetachiappmovil/models/region_model.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
@@ -109,6 +110,26 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       sourcePath: filePath,
       maxWidth: 600,
       maxHeight: 600,
+      aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Recortar',
+            toolbarColor: Colors.black87,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Recortar',
+        )
     );
     if (croppedImage != null) {
       foto = croppedImage;
@@ -127,7 +148,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
         return FadeInImage(
           placeholder: AssetImage('assets/jar-loading.gif'), 
-          image: NetworkImage(usePerfilModel.imagen),
+          image: NetworkImage("${Constants.IMAGEN_USUARIO}${usePerfilModel.imagen}"),
           height: 300.0,
           fit: BoxFit.contain,
           );
@@ -735,7 +756,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
 
         if (foto != null) {
-           usePerfilModel.imagen = await userPerfilBloc.subirFoto(foto, user.imagenOriginal);
+          usePerfilModel.imagen = await userPerfilBloc.upload(foto, true);
         }   
 
         contactoEntity.idInfoContacto       = contactoEntity.idInfoContacto?? 0;

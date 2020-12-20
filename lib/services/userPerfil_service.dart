@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
@@ -68,7 +67,7 @@ class UserPerfilServices {
 
   Future<Map<String, dynamic>> editarPerfilUsuario(UserPerfilModel userPerfil) async {    
 
-    final url = '$urlBase/Usuario/${_prefs.uid}';
+    final url = '$urlBase/Usuario/${userPerfil.id}';
 
     final response = await http.put(url, headers: {
       'Content-Type': 'application/json',
@@ -85,31 +84,25 @@ class UserPerfilServices {
       } 
   }
 
-  Future<String> subirImagen(File imagen, String imagenOriginal ) async {
+  Future<String> upload(File imageFile, bool esUsuario) async {   
 
-    final cloudinary = Cloudinary(
-     '989953882978531',
-     'taUtLylZzk5I-SK69mPGM7f74T8',
-     'jpino'
-    );
+      final url = '$urlBase/Upload/$esUsuario';
+      Map<String, String> headers = { "Authorization": "Bearer ${_prefs.token}"};
 
-    final String cloudinaryCustomFolder = "Fetachi/Usuarios";
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+      request.headers.addAll(headers);
+      request.files.add(await http.MultipartFile.fromPath('imagen', imageFile.path));
+      var streamResponse = await request.send();
+     
+      final resp = await http.Response.fromStream(streamResponse);
 
-    if (imagenOriginal != null) {
-        await cloudinary.deleteFile(
-                  url: imagenOriginal,
-                  resourceType: CloudinaryResourceType.image,
-                  invalidate: false,
-            );
+      if ( resp.statusCode != 200 && resp.statusCode != 201 ) {
+        print('Algo salio mal');
+        return null;
+      }
+
+      final respData = json.decode(resp.body);
+
+      return respData['fileName'];
     }
-
-    final response = await cloudinary.uploadFile(
-      imagen.path,
-      resourceType: CloudinaryResourceType.image,
-      folder: cloudinaryCustomFolder,
-    );
-
-    return response.secureUrl;
-  }
-
 }

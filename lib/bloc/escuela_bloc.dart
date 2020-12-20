@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
@@ -14,11 +13,6 @@ class EscuelaBloc {
   void getAllEscuelas() async {
     final user = await _escuelaService.getAllEscuelas();
     _escuelaController.add(user);    
-  }
-
-  Future<String> subirFoto(File foto, String logoOriginal) async {
-    final fotoUrl = await _escuelaService.subirImagen(foto, logoOriginal);
-    return fotoUrl;
   }
 
 }

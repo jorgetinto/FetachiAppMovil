@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:fetachiappmovil/helpers/constants.dart';
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
@@ -96,7 +97,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
                  ListTile(
                         leading: CircleAvatar(
                           radius: 25.0,
-                          backgroundImage: escuela.logo !=null? NetworkImage(escuela.logo): AssetImage('assets/img/FETACHI50.png'),// escuela.logo?? NetworkImage(escuela.logo),
+                          backgroundImage: escuela.logo !=null? NetworkImage("$IMAGEN_ESCUELA${escuela.logo}"): AssetImage('assets/img/FETACHI50.png'),// escuela.logo?? NetworkImage(escuela.logo),
                           backgroundColor: Colors.black,
                         ),
                         title: Text('${ escuela.nombre }'),
