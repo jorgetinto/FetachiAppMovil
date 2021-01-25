@@ -6,7 +6,7 @@ import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 
 
-import '../editarPerfil_page.dart';
+import '../Usuarios/editarPerfil_page.dart';
 
 
 class DetallePupiloHomePage extends StatefulWidget {

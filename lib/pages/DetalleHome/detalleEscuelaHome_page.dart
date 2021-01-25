@@ -6,7 +6,7 @@ import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
-import '../home_page.dart';
+import '../Home/home_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';

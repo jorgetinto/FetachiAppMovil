@@ -162,7 +162,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
                  ListTile(
                         leading: CircleAvatar(
                           radius: 25.0,
-                          backgroundImage: usuario.imagen !=null && usuario.imagen != ""
+                          backgroundImage: (usuario.imagen !=null && usuario.imagen != "")
                                 ? NetworkImage("$IMAGEN_USUARIO${usuario.imagen}")
                                 : AssetImage('assets/no-image.png'),
                           backgroundColor: Colors.black,
@@ -345,6 +345,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
             ),
             
       floatingActionButton: FloatingActionButton(
+        elevation: 1,
         onPressed: () {
            register.idEscuela = userData.idEscuela;
             Navigator.push(

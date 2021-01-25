@@ -13,7 +13,7 @@ import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/models/comuna_model.dart';
 import 'package:fetachiappmovil/models/region_model.dart';
 import 'package:fetachiappmovil/models/userPerfil_model.dart';
-import 'package:fetachiappmovil/pages/home_page.dart';
+import 'package:fetachiappmovil/pages/Home/home_page.dart';
 import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:fetachiappmovil/services/userPerfil_service.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +46,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   Future<List<ComunaModel>> comuna;
   Future<List<ComunaModel>> comunaContacto;
 
-  bool _loading = true;
+  bool  _loading = true; 
 
   @override
   void initState() {
@@ -358,17 +358,17 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
   Widget _inputstatusCard() {
 
-     return ( usePerfilModel.idGradoActual != null && usePerfilModel.idGradoActual > 10) ?
+     return ( usePerfilModel?.idGradoActual != null && usePerfilModel.idGradoActual > 10) ?
         Padding(
           padding: EdgeInsets.only(top: 10.0),
           child: TextFormField(
-            initialValue: (usePerfilModel.statusCard != null)? usePerfilModel.statusCard.toString(): "",
+            initialValue: (usePerfilModel?.statusCard != null)? usePerfilModel?.statusCard.toString(): "",
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               labelText: 'Status Card',
               border: OutlineInputBorder(),
             ),
-            onSaved: (value) => usePerfilModel.statusCard = int.parse(value),
+            onSaved: (value) => usePerfilModel?.statusCard = int.parse(value),
             validator: (value){
               if (value == null) {
                 return 'Campo requerido';
@@ -731,7 +731,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
           textColor: Colors.white,
           label: Text('Guardar'),
           icon: Icon(Icons.save),
-          onPressed: () =>  _submit(user),
+          onPressed:  () =>  _submit(user),
           ),
       ),
     );  
@@ -756,7 +756,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
 
         if (foto != null) {
-          usePerfilModel.imagen = await userPerfilBloc.upload(foto, true);
+          usePerfilModel.imagen = await userPerfilBloc.upload(foto, true, user.id);
         }   
 
         contactoEntity.idInfoContacto       = contactoEntity.idInfoContacto?? 0;

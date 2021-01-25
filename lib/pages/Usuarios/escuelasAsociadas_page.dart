@@ -5,7 +5,7 @@ import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuarios_page.dart';
-import 'package:fetachiappmovil/pages/home_page.dart';
+import 'package:fetachiappmovil/pages/Home/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 
@@ -97,7 +97,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
                  ListTile(
                         leading: CircleAvatar(
                           radius: 25.0,
-                          backgroundImage: escuela.logo !=null? NetworkImage("$IMAGEN_ESCUELA${escuela.logo}"): AssetImage('assets/img/FETACHI50.png'),// escuela.logo?? NetworkImage(escuela.logo),
+                          backgroundImage: (escuela.logo !=null && escuela.logo != "")? NetworkImage("$IMAGEN_ESCUELA${escuela.logo}"): AssetImage('assets/no-image.png'),// escuela.logo?? NetworkImage(escuela.logo),
                           backgroundColor: Colors.black,
                         ),
                         title: Text('${ escuela.nombre }'),
@@ -296,6 +296,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
       floatingActionButton: 
               (_prefs.perfil == "Admin" || _prefs.perfil == "Maestro") ?
                   FloatingActionButton(
+                    elevation: 1,
                     onPressed: () {
                       UserForRegisterModel model = new UserForRegisterModel();
                         Navigator.push(

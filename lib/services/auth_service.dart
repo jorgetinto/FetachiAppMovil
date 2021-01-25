@@ -47,6 +47,38 @@ class AuthServices {
     }    
   } 
   
+  Future<bool> refreshToken() async {
+    try {
+
+        final tokenData = {
+          'token'   : _prefs.token,
+        };
+
+        final resp = await http.post (
+                                  urlBase + "/Auth/refreshtoken",
+                                  headers: {"Content-Type": "application/json"},
+                                  body: json.encode(tokenData)
+                            );
+
+        Map<String, dynamic> decodedResp = json.decode(resp.body);
+
+        if (resp.statusCode == 200) {
+          if (decodedResp.containsKey('token')) {
+            Map<String, dynamic> decodedToken = JwtDecoder.decode(decodedResp['token']);
+            _prefs.token                      =  decodedResp['token'];
+            _prefs.uid                        =  decodedToken["nameid"];
+            _prefs.perfil                     =  decodedToken["role"];
+            
+            return true;
+          }
+        }         
+        return false;
+
+    } on SocketException {
+     return false;
+    }    
+  } 
+
   Future<Map<String, dynamic>> signOut() async {
 
     _prefs.token = null;

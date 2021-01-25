@@ -84,9 +84,9 @@ class UserPerfilServices {
       } 
   }
 
-  Future<String> upload(File imageFile, bool esUsuario) async {   
+  Future<String> upload(File imageFile, bool esUsuario, int idUsuario) async {   
 
-      final url = '$urlBase/Upload/$esUsuario';
+      final url = '$urlBase/Upload/$esUsuario/$idUsuario';
       Map<String, String> headers = { "Authorization": "Bearer ${_prefs.token}"};
 
       var request = http.MultipartRequest('POST', Uri.parse(url));

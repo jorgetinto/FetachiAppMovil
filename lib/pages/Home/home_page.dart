@@ -2,8 +2,8 @@
 import 'package:fetachiappmovil/pages/Auth/login_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detallePupiloHome_page.dart';
-import 'DetalleHome/detalleApoderadoHome_page.dart';
-import 'DetalleHome/detalleContactoHome_page.dart';
+import '../DetalleHome/detalleApoderadoHome_page.dart';
+import '../DetalleHome/detalleContactoHome_page.dart';
 
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/helpers/widget/Menu_widget.dart';

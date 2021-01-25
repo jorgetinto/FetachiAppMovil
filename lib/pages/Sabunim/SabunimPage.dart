@@ -3,7 +3,7 @@ import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
 import 'package:fetachiappmovil/pages/Usuarios/usuariosAdd_page.dart';
-import 'package:fetachiappmovil/pages/home_page.dart';
+import 'package:fetachiappmovil/pages/Home/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -340,6 +340,7 @@ class _SabunimPageState extends State<SabunimPage> {
             ),
             
       floatingActionButton: FloatingActionButton(
+        elevation: 1,
         onPressed: () {
             Navigator.push(
                   context,

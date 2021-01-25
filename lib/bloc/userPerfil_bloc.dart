@@ -18,8 +18,8 @@ class UserPerfilBloc {
     _userPerfilController.add(user);    
   }
 
-    Future<String> upload(File foto, bool esUsuario) async {
-    String fotoUrl = await _userPefilService.upload(foto, esUsuario);
+  Future<String> upload(File foto, bool esUsuario, int idUsuario) async {
+    String fotoUrl = await _userPefilService.upload(foto, esUsuario, idUsuario);
     return fotoUrl;
   }
 }

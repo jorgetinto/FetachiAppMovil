@@ -1,5 +1,5 @@
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
-import 'package:fetachiappmovil/pages/home_page.dart';
+import 'package:fetachiappmovil/pages/Home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:sk_onboarding_screen/sk_onboarding_model.dart';
 

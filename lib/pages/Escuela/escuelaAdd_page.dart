@@ -571,7 +571,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
 
           if (foto != null) {
            // escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
-            await userService.upload(foto, false).then((value) => {
+            await userService.upload(foto, false, escuelaModel.idEscuela ).then((value) => {
               if (value != null) escuelaModel.logo = value 
             });
           }

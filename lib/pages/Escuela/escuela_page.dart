@@ -4,7 +4,7 @@ import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario
 import 'package:fetachiappmovil/models/escuelaPorIdInstructor_model.dart';
 import 'package:fetachiappmovil/models/escuela_model.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuelaAdd_page.dart';
-import 'package:fetachiappmovil/pages/home_page.dart';
+import 'package:fetachiappmovil/pages/Home/home_page.dart';
 import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 
@@ -154,7 +154,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
                  ListTile(
                         leading: CircleAvatar(
                           radius: 25.0,
-                          backgroundImage: escuela.logo !=null? NetworkImage("$IMAGEN_ESCUELA${escuela?.logo}"): AssetImage('assets/img/FETACHI50.png'),// escuela.logo?? NetworkImage(escuela.logo),
+                          backgroundImage: (escuela.logo !=null && escuela.logo != "")? NetworkImage("$IMAGEN_ESCUELA${escuela?.logo}"): AssetImage('assets/no-image.png'),// escuela.logo?? NetworkImage(escuela.logo),
                           backgroundColor: Colors.black,
                         ),
                         title: Text('${ escuela.nombre }'),
@@ -341,6 +341,7 @@ class _EscuelaPageState extends State<EscuelaPage> {
             ),
 
       floatingActionButton: FloatingActionButton(
+        elevation: 1,
         onPressed: () {
          EscuelaModel model = new EscuelaModel();
          model.estado = true;        

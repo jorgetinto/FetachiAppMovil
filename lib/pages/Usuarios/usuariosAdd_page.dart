@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
@@ -42,6 +43,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   GradoServices             gradoProvider       = new GradoServices();
   EscuelaPorIdInstructorModel escuelaInstructor = new EscuelaPorIdInstructorModel();
   UserForRegisterModel      userData            = new UserForRegisterModel();
+  DateTime selectedDate    = new DateTime.now();
 
   Future<List<DropDownModel>>   selectTipoUsuario;
   Future<List<DropDownModel>>   selectGrado;
@@ -67,10 +69,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
   @override
   void dispose() {
-    userData          = new UserForRegisterModel();
-    userModel         = new UserForRegisterModel(); 
+    userData          = null;
+    userModel         = null; 
+    selectApoderado   = null;
+    _fechaValida      = true;
     _loading          = true;  
     _isVisible        = true;  
+    selectedDate      = new DateTime.now();
     super.dispose();
   }
   
@@ -83,7 +88,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
         userData          = ModalRoute.of(context).settings.arguments;   
         userBloc          = ProviderBloc.userPefilBloc(context);         
         selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
-        selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario();  
+        selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario();
 
         if (userData != null)
             userModel = userData;
@@ -91,8 +96,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
         if (userModel.estado == null)
             userModel.estado = true;
 
-          if(userModel.idEscuela != null)
-            selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);       
+        if(userModel.idEscuela != null && userModel.fechaDeNacimiento != null){
+            if(int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) >= 5 && int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 18)
+              selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);  
+            else 
+              selectApoderado = null;
+                 
+        }
 
         if(userModel.role =="Estudiante" || userModel.role =="Instructor" || userModel.role =="Maestro"){
           Future.delayed(Duration.zero,(){
@@ -503,7 +513,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
     Widget _inputFechaNacimiento() {
 
-      DateTime selectedDate = (userModel.fechaDeNacimiento != null)
+      selectedDate = (userModel.fechaDeNacimiento != null)
                                 ? DateTime.parse(userModel.fechaDeNacimiento.toString()) 
                                 : new DateTime.now() ;
 
@@ -522,10 +532,11 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                           setState(() {
 
                             userModel.fechaDeNacimiento = date.toString();
+                            selectApoderado = null;
+                            _fechaValida = true;
 
                             if(int.parse(calculateAge(date.toString())) >= 5){
                               if(int.parse(calculateAge(date.toString())) <= 18){
-                                if(userModel.idEscuela != null)
                                   selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);
                               }else{
                                 selectApoderado = null;
@@ -631,7 +642,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           formKey.currentState.save();
 
           if (foto != null) {
-            userModel.imagen = await userBloc.upload(foto, true);
+            userModel.imagen = await userBloc.upload(foto, true, userModel.id);
           }
 
           if(userModel != null) {
