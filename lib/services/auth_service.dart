@@ -84,6 +84,7 @@ class AuthServices {
     _prefs.token = null;
     _prefs.uid   = null;
     _prefs.perfil = null;
+    _prefs.idExamen = null;
     return {'ok': true};
   }
 }

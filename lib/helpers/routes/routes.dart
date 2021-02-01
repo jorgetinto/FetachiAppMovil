@@ -1,6 +1,7 @@
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/pages/Escuela/escuela_page.dart';
 import 'package:fetachiappmovil/pages/Examen/examen_page.dart';
+import 'package:fetachiappmovil/pages/Examinar/Seleccionar_Examen_page.dart';
 import 'package:fetachiappmovil/pages/Sabunim/SabunimPage.dart';
 import 'package:fetachiappmovil/pages/Usuarios/escuelasAsociadas_page.dart';
 import 'package:fetachiappmovil/pages/Home/home_page.dart';
@@ -39,7 +40,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
             Route(Icons.school,                     'Escuelas',           EscuelaPage()),
             Route(Icons.supervised_user_circle,     'Usuarios',           EscuelasAsociadas()),
             Route(Icons.note_add,                   'Examen',             ExamenPage()),
-            Route(Icons.check,                      'Examinar',           EscuelasAsociadas()),
+            Route(Icons.check,                      'Examinar',           SeleccionarExamenPage()),
             Route(Icons.lock,                       'Cambiar Contraseña', Resetpassword()),            
         ];          
     }
@@ -50,7 +51,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
             Route(Icons.supervised_user_circle,     'Usuarios',           EscuelasAsociadas()),
             Route(Icons.supervised_user_circle,     'Sabonim',            SabunimPage()),
             Route(Icons.note_add,                   'Examen',             ExamenPage()),
-            Route(Icons.check,                      'Examinar',           EscuelasAsociadas()),
+            Route(Icons.check,                      'Examinar',           SeleccionarExamenPage()),
             Route(Icons.lock,                       'Cambiar Contraseña', Resetpassword()),            
         ];          
     }

@@ -284,7 +284,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                 border: OutlineInputBorder()
               ),
               //label: 'Fecha de nacimiento',  
-          lastDate: DateTime(2020),
+          lastDate: DateTime(2100),
         ),
       );
   }

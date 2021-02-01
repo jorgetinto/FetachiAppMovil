@@ -20,6 +20,7 @@ class ExamenModel {
         this.nombreMaestro,
         this.idZona,
         this.nombreZona,
+        this.idRegion,
         this.estado,
     });
 
@@ -33,11 +34,12 @@ class ExamenModel {
     String nombreMaestro;
     int idZona;
     String nombreZona;
+    String idRegion;
     bool estado;
 
     factory ExamenModel.fromJson(Map<String, dynamic> json) => ExamenModel(
         idExamen: json["idExamen"],
-        fecha: DateTime.parse(json["fecha"]),
+        fecha: json["fecha"] != null ?  DateTime.parse(json["fecha"]): null,
         nombre: json["nombre"],
         direcion: json["direcion"],
         idComuna: json["idComuna"],
@@ -46,6 +48,7 @@ class ExamenModel {
         nombreMaestro: json["nombreMaestro"],
         idZona: json["idZona"],
         nombreZona: json["nombreZona"],
+        idRegion: json["idRegion"],
         estado: json["estado"],
     );
 
@@ -60,6 +63,7 @@ class ExamenModel {
         "nombreMaestro": nombreMaestro,
         "idZona": idZona,
         "nombreZona": nombreZona,
+        "idRegion":idRegion,
         "estado": estado,
     };
 }

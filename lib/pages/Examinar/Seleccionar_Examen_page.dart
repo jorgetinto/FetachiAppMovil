@@ -1,19 +1,20 @@
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/examen_model.dart';
-import 'package:fetachiappmovil/pages/Examen/examenAdd_page.dart';
+import 'package:fetachiappmovil/pages/Examinar/Seleccionar_Estudiante_page.dart';
 import 'package:fetachiappmovil/pages/Home/home_page.dart';
 import 'package:fetachiappmovil/services/examen_service.dart';
 import 'package:flutter/material.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 
 
-class ExamenPage extends StatefulWidget {
+class SeleccionarExamenPage extends StatefulWidget {
 
   @override
-  _ExamenPageState createState() => _ExamenPageState();
+  _SeleccionarExamenPageState createState() => _SeleccionarExamenPageState();
 }
 
-class _ExamenPageState extends State<ExamenPage> {
-
+class _SeleccionarExamenPageState extends State<SeleccionarExamenPage> {
+  
   GlobalKey<ScaffoldState>    scaffoldKey             = new GlobalKey<ScaffoldState>();
   TextEditingController       controller              = new TextEditingController();
   ExamenServices              examenProvider          = new ExamenServices();
@@ -21,18 +22,20 @@ class _ExamenPageState extends State<ExamenPage> {
   List<ExamenModel>           listaResultado          = new  List<ExamenModel>();
   List<ExamenModel>           listaResultadocopia     = new  List<ExamenModel>();
   Future<List<ExamenModel>>   examenLista;
+  PreferenciasUsuario _pref = new PreferenciasUsuario();
   String searchString = "";
   bool _loading = true;
 
   @override
   void initState() {
-      new Future.delayed(new Duration(milliseconds: 900), () {
+      new Future.delayed(new Duration(milliseconds: 1200), () {
         setState(() {
             _loading = false;         
         });
       }); 
 
       setState(() {
+          _pref.idExamen  = null;
           listaResultado  = null;
           examenLista     = examenProvider.getAllExamenByIdMaestroAsync();
           examenLista.then((value) => {
@@ -53,7 +56,7 @@ class _ExamenPageState extends State<ExamenPage> {
             MaterialPageRoute(builder: (context) => HomePage()),
         ),
       ),
-      title: Text('Examen'),
+      title: Text('Examinar'),
       backgroundColor: Colors.black,      
     );
   }
@@ -72,68 +75,9 @@ class _ExamenPageState extends State<ExamenPage> {
       });
     }
 
-    Widget _crearItem(BuildContext context, ExamenModel examen ) {
+     Widget _crearItem(BuildContext context, ExamenModel examen ) {
 
-      return  (examen != null)? Dismissible(
-          key: UniqueKey(),
-          background: Container(
-              color: Colors.blueAccent,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              alignment: AlignmentDirectional.centerStart,
-              child: Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
-            ),
-          secondaryBackground: Container(
-              color: Colors.red,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              alignment: AlignmentDirectional.centerEnd,
-              child: Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
-          ),
-
-        confirmDismiss: (DismissDirection direction) async {
-          if (direction == DismissDirection.endToStart) {
-            return await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text("Atención!"),
-                  content: const Text("Esta seguro que desea desactivar este examen?"),
-                  actions: <Widget>[
-                    FlatButton(
-                      onPressed: () {
-                          examenProvider.deleteExamen(examen.idExamen);
-                          return Navigator.of(context).pop(true);
-                        },
-                      child: const Text("ELIMINAR")
-                    ),
-                    FlatButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text("CANCEL"),
-                    ),
-                  ],
-                );
-              },
-            );
-          }else{
-            final examenJson = examenModelToJson(examen);
-            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ExamenAddPage(),
-                              settings: RouteSettings(
-                                arguments: examenModelFromJson(examenJson),
-                              ),
-                            ),
-                          );  
-            return false;
-          }
-        },          
-          child: Card(
+      return Card(
             child: Column(
               children: <Widget>[
                  ListTile(
@@ -152,14 +96,23 @@ class _ExamenPageState extends State<ExamenPage> {
                                 ),
                               ),
                             ),                          
-                       trailing: Icon(Icons.more_vert),
-                            
-                        isThreeLine: true,
-                      ),
+                        trailing: Icon(Icons.arrow_forward_ios),                            
+                        isThreeLine: true,                      
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SeleccionarEstudiantePage(),
+                              settings: RouteSettings(
+                               arguments: examen,
+                              ),
+                            ),
+                          );
+                        },
+                  ),                      
               ],
             ),
-          )
-        ): Container(height: 0, width: 0,);
+          ); 
     }
 
     Widget _search(){
@@ -275,7 +228,7 @@ class _ExamenPageState extends State<ExamenPage> {
                     children: [
                       _search(),
                       SizedBox(height: 10.0),
-                      utils.buildTitle("Examenes"),
+                      utils.buildTitle("Seleccione un examen"),
                       _featuredListHorizontal()
                     ],
                   ),
@@ -290,25 +243,6 @@ class _ExamenPageState extends State<ExamenPage> {
               ),
             ),
           ),
-
-      floatingActionButton: FloatingActionButton(
-        elevation: 1,
-        onPressed: () {
-         ExamenModel model = new ExamenModel();
-         model.estado = true; 
-         Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExamenAddPage(),
-                        settings: RouteSettings(
-                          arguments: model
-                        ),
-                      ),
-                    ); 
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.redAccent,
-      ),
     );
   }
 }

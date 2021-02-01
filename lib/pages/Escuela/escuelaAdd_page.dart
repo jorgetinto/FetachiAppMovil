@@ -492,7 +492,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
               if (!snapshot.hasData)
                 return CircularProgressIndicator();
               
-                  return Focus(
+              return Focus(
                         focusNode: _node,
                         onFocusChange: (bool focus) {
                           setState((){});

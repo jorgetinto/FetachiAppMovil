@@ -1,26 +1,42 @@
+import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
+import 'package:fetachiappmovil/models/detalle_examen_model.dart';
 import 'package:fetachiappmovil/models/examen_model.dart';
-import 'package:fetachiappmovil/pages/Examen/examenAdd_page.dart';
-import 'package:fetachiappmovil/pages/Home/home_page.dart';
+import 'package:fetachiappmovil/models/usuarioExamen_model.dart';
+import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
+import 'package:fetachiappmovil/pages/Examinar/DetalleExamen_page.dart';
+import 'package:fetachiappmovil/pages/Examinar/Seleccionar_Examen_page.dart';
+import 'package:fetachiappmovil/services/detalle_examen_model.dart';
 import 'package:fetachiappmovil/services/examen_service.dart';
-import 'package:flutter/material.dart';
+import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;
 
+import 'package:flutter/material.dart';
 
-class ExamenPage extends StatefulWidget {
+
+class SeleccionarEstudiantePage extends StatefulWidget {
 
   @override
-  _ExamenPageState createState() => _ExamenPageState();
+  _SeleccionarEstudiantePageState createState() => _SeleccionarEstudiantePageState();
 }
 
-class _ExamenPageState extends State<ExamenPage> {
+class _SeleccionarEstudiantePageState extends State<SeleccionarEstudiantePage> {
 
   GlobalKey<ScaffoldState>    scaffoldKey             = new GlobalKey<ScaffoldState>();
   TextEditingController       controller              = new TextEditingController();
   ExamenServices              examenProvider          = new ExamenServices();
-  List<ExamenModel>           listaResultadoOriginal  = new  List<ExamenModel>();
-  List<ExamenModel>           listaResultado          = new  List<ExamenModel>();
-  List<ExamenModel>           listaResultadocopia     = new  List<ExamenModel>();
-  Future<List<ExamenModel>>   examenLista;
+  UsuarioServices             usuarioProvider         = new UsuarioServices();
+  DetalleExamenService        detalleExamenProvider   = new DetalleExamenService();
+  PreferenciasUsuario         _pref                   = new PreferenciasUsuario();
+  List<UsuarioExamenModel>    listaResultadoOriginal  = new  List<UsuarioExamenModel>();
+  List<UsuarioExamenModel>    listaResultado          = new  List<UsuarioExamenModel>();
+  List<UsuarioExamenModel>    listaResultadocopia     = new  List<UsuarioExamenModel>();
+  ExamenModel                 userData                = new ExamenModel();
+  DetalleExamenModel          dataDetalleExamen       = new DetalleExamenModel();
+  int idExamen;
+  Future<DetalleExamenModel> detalle;
+  ExamenModel detalleExamen;
+
+  Future<List<UsuarioExamenModel>>   examenLista;
   String searchString = "";
   bool _loading = true;
 
@@ -28,32 +44,41 @@ class _ExamenPageState extends State<ExamenPage> {
   void initState() {
       new Future.delayed(new Duration(milliseconds: 900), () {
         setState(() {
-            _loading = false;         
+            _loading = false; 
+
+          if (idExamen != null) {
+            listaResultado  = null;
+            examenLista     = usuarioProvider.getUsuarioParaExaminar(idExamen);
+            examenLista.then((value) => {
+                if (value != null)  listaResultadoOriginal.addAll(value)
+            });
+
+            examenProvider.getExamenById(idExamen).then((value) => {
+                if (value != null) detalleExamen = value
+            });    
+          }
         });
       }); 
-
-      setState(() {
-          listaResultado  = null;
-          examenLista     = examenProvider.getAllExamenByIdMaestroAsync();
-          examenLista.then((value) => {
-            if (value != null)  listaResultadoOriginal.addAll(value)
-          });
-      });
-
     super.initState();
   }
 
   AppBar _appBar(BuildContext context) {
+
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.white),
         onPressed: () => 
-        Navigator.push (
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-        ),
+        Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SeleccionarExamenPage(),
+                    settings: RouteSettings(
+                      arguments: detalleExamen,
+                    ),
+                  ),
+                )
       ),
-      title: Text('Examen'),
+      title: Text('Examinar'),
       backgroundColor: Colors.black,      
     );
   }
@@ -61,105 +86,25 @@ class _ExamenPageState extends State<ExamenPage> {
   @override
   Widget build(BuildContext context) {
 
+    setState(() {
+        detalleExamen  = ModalRoute.of(context).settings.arguments;
+        if (detalleExamen != null) {
+           _pref.idExamen = detalleExamen.idExamen;
+            idExamen      = detalleExamen.idExamen;
+        }else{
+          idExamen      =  _pref.idExamen;
+        }
+    });
+
     Future<Null> _handleRefresh() async {
       await Future.delayed(Duration(seconds: 1), () {
           setState(() {
-            examenLista = examenProvider.getAllExamenByIdMaestroAsync(); 
+            examenLista = usuarioProvider.getUsuarioParaExaminar(idExamen); 
             examenLista.then((value) => {
               if (value != null)  listaResultadoOriginal.addAll(value)
             });   
           });
       });
-    }
-
-    Widget _crearItem(BuildContext context, ExamenModel examen ) {
-
-      return  (examen != null)? Dismissible(
-          key: UniqueKey(),
-          background: Container(
-              color: Colors.blueAccent,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              alignment: AlignmentDirectional.centerStart,
-              child: Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
-            ),
-          secondaryBackground: Container(
-              color: Colors.red,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              alignment: AlignmentDirectional.centerEnd,
-              child: Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
-          ),
-
-        confirmDismiss: (DismissDirection direction) async {
-          if (direction == DismissDirection.endToStart) {
-            return await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text("Atención!"),
-                  content: const Text("Esta seguro que desea desactivar este examen?"),
-                  actions: <Widget>[
-                    FlatButton(
-                      onPressed: () {
-                          examenProvider.deleteExamen(examen.idExamen);
-                          return Navigator.of(context).pop(true);
-                        },
-                      child: const Text("ELIMINAR")
-                    ),
-                    FlatButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text("CANCEL"),
-                    ),
-                  ],
-                );
-              },
-            );
-          }else{
-            final examenJson = examenModelToJson(examen);
-            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ExamenAddPage(),
-                              settings: RouteSettings(
-                                arguments: examenModelFromJson(examenJson),
-                              ),
-                            ),
-                          );  
-            return false;
-          }
-        },          
-          child: Card(
-            child: Column(
-              children: <Widget>[
-                 ListTile(
-                        leading: Icon(Icons.star),
-                        title: Text('${ examen.nombre }'),
-                        subtitle: Container(
-                              width: 350.0,
-                              padding: new EdgeInsets.only(right: 13.0),
-                              child: new Text(
-                                'Dir: ${ examen.direcion } \nComuna: ${ examen.nombreComuna }',
-                                overflow: TextOverflow.ellipsis,
-                                style: new TextStyle(
-                                  fontSize: 14.0,
-                                  fontFamily: 'Roboto',
-                                  color: Colors.black45,
-                                ),
-                              ),
-                            ),                          
-                       trailing: Icon(Icons.more_vert),
-                            
-                        isThreeLine: true,
-                      ),
-              ],
-            ),
-          )
-        ): Container(height: 0, width: 0,);
     }
 
     Widget _search(){
@@ -171,13 +116,13 @@ class _ExamenPageState extends State<ExamenPage> {
                       title: new TextField(
                         controller: controller,
                         decoration: new InputDecoration(
-                        hintText: 'Buscar examen', border: InputBorder.none),
+                        hintText: 'Buscar estudiante', border: InputBorder.none),
                         onChanged: (value) {
                             setState((){
                               if (value.length >= 3){
                                 searchString = value;
-                                listaResultadocopia = new List<ExamenModel>();
-                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.nombre.toLowerCase().contains(searchString.toLowerCase()))).toList();
+                                listaResultadocopia = new List<UsuarioExamenModel>();
+                                listaResultadocopia = listaResultadoOriginal.where((u) => (u.folio == int.parse(searchString))).toList();
 
                                 if (listaResultadocopia.length > 0)
                                     listaResultado = listaResultadocopia;
@@ -203,6 +148,63 @@ class _ExamenPageState extends State<ExamenPage> {
                 );
     }
 
+    Widget _crearItem(BuildContext context, UsuarioExamenModel examen, int identificadorExamen ) {
+
+      return Card(
+            child: Column(
+              children: <Widget>[
+                 ListTile(
+                        leading: Text('Folio \n${examen.folio}'),
+                        title: Text('${ examen.nombres }',
+                         overflow: TextOverflow.ellipsis,
+                            style: new TextStyle(
+                              fontSize: 14.0,
+                              fontFamily: 'Roboto',
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        subtitle: Container(
+                              width: 350.0,
+                              padding: new EdgeInsets.only(right: 13.0),
+                              child: new Text(
+                                'Escuela: ${ examen.escuela } \nGrado Actual: ${ examen.gradoActual }',
+                                overflow: TextOverflow.ellipsis,
+                                style: new TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: 'Roboto',
+                                  color: Colors.black45,
+                                ),
+                              ),
+                            ),                          
+                        trailing: Icon(Icons.arrow_forward_ios),                            
+                        isThreeLine: true,                      
+                        onTap: () {
+
+                        setState(() {
+                            
+                            final detalleExamenP =detalleExamenProvider
+                              .getDetalleExamenByIdExamenYIdEstudianteAsync(examen.idExamen, examen.folio );
+                              
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetalleExamenPage(),
+                                settings: RouteSettings(
+                                  arguments: detalleExamenP,
+                                ),
+                              ),
+                            );
+                          
+                        });
+
+
+                        },
+                  ),                      
+              ],
+            ),
+          ); 
+    }
+
     Widget _featuredListHorizontal()  {   
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 10.0),
@@ -210,7 +212,7 @@ class _ExamenPageState extends State<ExamenPage> {
         height: MediaQuery.of(context).copyWith().size.height / 1.4,
         child: FutureBuilder(
           future: examenLista,
-          builder: (BuildContext context, AsyncSnapshot<List<ExamenModel>> listData) {
+          builder: (BuildContext context, AsyncSnapshot<List<UsuarioExamenModel>> listData) {
             if (!listData.hasData) {
               new Future.delayed(const Duration(seconds : 2));
               return Center(child: Text("Sin Información"));
@@ -233,7 +235,7 @@ class _ExamenPageState extends State<ExamenPage> {
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: <Widget>[                                        
-                                     _crearItem(context, listData.data[position])
+                                     _crearItem(context, listData.data[position], idExamen)
                                     ],
                                   );
                                 },
@@ -247,7 +249,7 @@ class _ExamenPageState extends State<ExamenPage> {
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: <Widget>[       
-                                      _crearItem(context, listaResultado[position])
+                                      _crearItem(context, listaResultado[position], idExamen)
                                     ],
                                   );
                                 },
@@ -258,11 +260,11 @@ class _ExamenPageState extends State<ExamenPage> {
                       SizedBox(height: 40.0),
                   ],                  
                 );
-            }
-          },
-        ),   
-      ); 
-    }
+             }
+           },
+         ),   
+       ); 
+     }
 
     return Scaffold(
       key: scaffoldKey,
@@ -275,7 +277,7 @@ class _ExamenPageState extends State<ExamenPage> {
                     children: [
                       _search(),
                       SizedBox(height: 10.0),
-                      utils.buildTitle("Examenes"),
+                      utils.buildTitle("Seleccione un estudiante"),
                       _featuredListHorizontal()
                     ],
                   ),
@@ -290,25 +292,6 @@ class _ExamenPageState extends State<ExamenPage> {
               ),
             ),
           ),
-
-      floatingActionButton: FloatingActionButton(
-        elevation: 1,
-        onPressed: () {
-         ExamenModel model = new ExamenModel();
-         model.estado = true; 
-         Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExamenAddPage(),
-                        settings: RouteSettings(
-                          arguments: model
-                        ),
-                      ),
-                    ); 
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.redAccent,
-      ),
     );
   }
 }

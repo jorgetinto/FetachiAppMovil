@@ -4,6 +4,7 @@ import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/userForRegister_model.dart';
+import 'package:fetachiappmovil/models/usuarioExamen_model.dart';
 import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -148,6 +149,27 @@ class UsuarioServices {
       return new List<UsuarioPorIdEscuelaModel>();
   }
  
+  Future<List<UsuarioExamenModel>>  getUsuarioParaExaminar(int idExamen)  async {  
+
+      final url = '$urlBase/Usuario/GetUsuarioParaExaminar/$idExamen';
+
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${_prefs.token}',
+      });
+
+      if (response.statusCode == 200) {
+        final items = json.decode(response.body).cast<Map<String, dynamic>>();
+
+        List<UsuarioExamenModel> listOfUsers = items.map<UsuarioExamenModel>((json) {
+          return UsuarioExamenModel.fromJson(json);
+        }).toList();
+
+        return listOfUsers;
+      } 
+      return new List<UsuarioExamenModel>();
+  }
 
   Future<Map<String, dynamic>> crearUsuario(UserForRegisterModel user) async {    
 

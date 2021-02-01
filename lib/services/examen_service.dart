@@ -29,6 +29,20 @@ class ExamenServices {
     return List<ExamenModel>();
   }
 
+
+  Future<ExamenModel>  getExamenById(int id)  async {    
+    final url = '$urlBase/Examen/GetExamenByIdAsync/$id';
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    });
+
+    final respModel = examenModelFromJson(response.body.toString());
+    return respModel;
+  }
+
   Future<bool> deleteExamen(int idExamen) async { 
     final url       = '$urlBase/Examen/$idExamen';
     bool respuesta  = false;
@@ -46,4 +60,40 @@ class ExamenServices {
     return respuesta;
   }
 
+  Future<bool> createExamen(ExamenModel examen) async { 
+    bool respuesta  = false;
+    final url       = '$urlBase/Examen/';
+    final response  = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    },
+    body: examenModelToJson(examen));  
+
+    if (response.statusCode == 200) {
+       respuesta = true;
+     }
+
+    return respuesta;
+  }
+
+  Future<bool> updateExamen(ExamenModel examen) async { 
+
+    bool respuesta  = false;
+    final url       = '$urlBase/Examen/${examen.idExamen}';
+
+    final response  = await http.put(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${_prefs.token}',
+    },
+    body: examenModelToJson(examen));  
+
+
+   if (response.statusCode == 204) {
+       respuesta = true;
+     }
+
+    return respuesta;
+  }
 }

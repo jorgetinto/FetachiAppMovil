@@ -42,12 +42,11 @@ class PreferenciasUsuario {
     _prefs.setString('role', value);
   } 
 
-  // GET y SET de la última página
-  get ultimaPagina {
-    return _prefs.getString('ultimaPagina') ?? 'login';
+   get idExamen {
+    return _prefs.getInt('idExamen') ?? '';
   }
 
-  set ultimaPagina( String value ) {
-    _prefs.setString('ultimaPagina', value);
-  }
+  set idExamen( int value ) {
+    _prefs.setInt('idExamen', value);
+  } 
 }
