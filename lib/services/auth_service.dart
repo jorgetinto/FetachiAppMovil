@@ -74,7 +74,7 @@ class AuthServices {
         }         
         return false;
 
-    } on SocketException {
+    } on Exception catch (_) {
      return false;
     }    
   } 

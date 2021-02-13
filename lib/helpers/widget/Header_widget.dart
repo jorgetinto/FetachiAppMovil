@@ -49,7 +49,6 @@ class _HeaderWavePainter extends CustomPainter{
   bool shouldRepaint(CustomPainter oldDelegate) {
       return true;
   }
-
 }
 
 class HeaderWaveGradient extends StatelessWidget {
@@ -68,7 +67,6 @@ class HeaderWaveGradient extends StatelessWidget {
 }
 
 class _HeaderWaveGradientPainter extends CustomPainter{
-  
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -114,5 +112,4 @@ class _HeaderWaveGradientPainter extends CustomPainter{
   bool shouldRepaint(CustomPainter oldDelegate) {
       return true;
   }
-
 }

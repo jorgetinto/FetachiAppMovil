@@ -1,6 +1,6 @@
 library constants;
 
-const String _ip    = "http://192.168.0.9:5001";
+const String _ip    = "http://192.168.0.6:5001";
 const String API_URL= "$_ip/api";
 
 // const String API_URL= "http://192.168.0.10:5001/api";

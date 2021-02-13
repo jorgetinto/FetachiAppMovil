@@ -1,6 +1,7 @@
 
 import 'package:fetachiappmovil/pages/Auth/login_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
+import 'package:fetachiappmovil/pages/DetalleHome/detalleGradoHome_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detallePupiloHome_page.dart';
 import '../DetalleHome/detalleApoderadoHome_page.dart';
 import '../DetalleHome/detalleContactoHome_page.dart';
@@ -182,6 +183,8 @@ class _HomePageState extends State<HomePage> {
                                 company: "Cinturon ${snapshot.data.grado?.nombre}",
                                 position: "${snapshot.data.grado.numGup?? snapshot.data.grado?.numDan?? "N/A"} ${(snapshot.data.grado.numGup != null)? "° gup": "° Dan"}",
                                 duration: "",
+                                page: DetalleGradoHomePage(),
+                                parametros: snapshot.data.folio
                               ),  
                   ],
                 ) : Container(height: 0, width: 0,);

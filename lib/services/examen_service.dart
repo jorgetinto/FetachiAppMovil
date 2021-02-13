@@ -29,7 +29,6 @@ class ExamenServices {
     return List<ExamenModel>();
   }
 
-
   Future<ExamenModel>  getExamenById(int id)  async {    
     final url = '$urlBase/Examen/GetExamenByIdAsync/$id';
 

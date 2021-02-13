@@ -4,7 +4,7 @@ import 'package:fetachiappmovil/models/detalle_examen_model.dart';
 import 'package:fetachiappmovil/models/dropdown_model.dart';
 import 'package:fetachiappmovil/models/examen_model.dart';
 import 'package:fetachiappmovil/pages/Examinar/Seleccionar_Estudiante_page.dart';
-import 'package:fetachiappmovil/services/detalle_examen_model.dart';
+import 'package:fetachiappmovil/services/detalle_examen_service.dart';
 import 'package:fetachiappmovil/services/examen_service.dart';
 import 'package:fetachiappmovil/services/grado_service.dart';
 
@@ -31,10 +31,8 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
   UsuarioServices           usuario          = new UsuarioServices();
   Future<DetalleExamenModel> userData;
   DetalleExamenModel model;
-  Future<ExamenModel> detalle;
-  
+  Future<ExamenModel> detalle;  
   int idExamen;
-
   Future<List<DropDownModel>>   selectGrado;
   Future<List<DropDownModel>>   maestros;
 
@@ -48,11 +46,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             _loading = false;         
         });
       }); 
-    
-    selectGrado = gradoProvider.getAllGrados();
-    maestros      = usuario.getUsuariosMaestros();   
     super.initState();
-
   }
 
   AppBar _appBar(BuildContext context) {  
@@ -74,7 +68,9 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-        userData              = ModalRoute.of(context).settings.arguments;
+        userData      = ModalRoute.of(context).settings.arguments;
+        selectGrado   = gradoProvider.getAllGrados();
+        maestros      = usuario.getUsuariosMaestros();   
     });  
 
     Widget _inputNombre(DetalleExamenModel model) {
@@ -148,7 +144,9 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
 
     Widget _inputFecha(DetalleExamenModel model) {
 
-      DateTime selectedDate = model.fecha;
+      DateTime selectedDate = (model.fecha != null)
+                                ? DateTime.parse(model.fecha.toString()) 
+                                : new DateTime.now() ;
 
       return Padding(
         padding: EdgeInsets.only(top: 10.0),
@@ -307,7 +305,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                             FocusScope.of(context).requestFocus(_node);
                           },
                       child: DropdownButtonFormField<String>(
-                      value: 2.toString(),//model.idExaminador?.toString()?? null,
+                      value:  null,
                       decoration: InputDecoration(
                         labelText: 'Maestro',
                         border: OutlineInputBorder(),                                      
@@ -332,7 +330,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
       );
   }
 
-  Widget _dropdrownGradoAscenso(DetalleExamenModel model){
+  Widget _dropdrownGrado(DetalleExamenModel model){
 
       return  (selectGrado != null)?
       Container(
@@ -355,7 +353,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                         FocusScope.of(context).requestFocus(_node);
                       },
                       child: DropdownButtonFormField<String>(
-                      value: model.idGradoAscenso?.toString()?? null,
+                      value: model.idGradoActual?.toString()?? null,
                       decoration: InputDecoration(
                         labelText: 'Grado Ascenso',
                         border: OutlineInputBorder(),                                      
@@ -395,7 +393,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                   },
                 ),
                 SizedBox(height: 12.0,),
-                 Text('Estado : ${ (model.estado == null)? 'Aprobado':  (model.estado)? 'Aprobado': 'No Aprobado'}', style: TextStyle(
+                 Text('Estado : ${ (model.estado == null)? 'Aprobado':  (model.estado)? 'Aprobado': 'Rechazado'}', style: TextStyle(
                   color: Colors.black,
                   fontSize: 15.0
                 ),)
@@ -515,10 +513,10 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                               ],
                             ),
                             _inputObservacion(snapshot.data),
-                            _dropdrownGradoAscenso(snapshot.data),
+                            _dropdrownGrado(snapshot.data),
                             _dropdrownMaestro(snapshot.data),
-                            _switchEstado(snapshot.data),
-                            _crearBoton(snapshot.data)
+                          _switchEstado(snapshot.data),
+                           _crearBoton(snapshot.data)
                           ]
                         )
                       )

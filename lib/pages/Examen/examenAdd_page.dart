@@ -405,8 +405,9 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
 
     Widget _inputFecha() {
 
-      DateTime selectedDate = examenModel.fecha;
-
+      DateTime selectedDate = (examenModel.fecha != null)
+                                ? DateTime.parse(examenModel.fecha.toString()) 
+                                : new DateTime.now() ;
       return Padding(
         padding: EdgeInsets.only(top: 10.0),
         child: DateTimeField(

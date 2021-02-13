@@ -2,10 +2,9 @@ import 'package:fetachiappmovil/helpers/preferencias_usuario/preferenciasUsuario
 import 'package:fetachiappmovil/models/detalle_examen_model.dart';
 import 'package:fetachiappmovil/models/examen_model.dart';
 import 'package:fetachiappmovil/models/usuarioExamen_model.dart';
-import 'package:fetachiappmovil/models/usuarioPorIdEscuela_model.dart';
 import 'package:fetachiappmovil/pages/Examinar/DetalleExamen_page.dart';
 import 'package:fetachiappmovil/pages/Examinar/Seleccionar_Examen_page.dart';
-import 'package:fetachiappmovil/services/detalle_examen_model.dart';
+import 'package:fetachiappmovil/services/detalle_examen_service.dart';
 import 'package:fetachiappmovil/services/examen_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:fetachiappmovil/helpers/utils.dart' as utils;

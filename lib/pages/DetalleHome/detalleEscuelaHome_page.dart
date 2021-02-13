@@ -312,6 +312,7 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
   EscuelaPorIdInstructorModel userData;
   String searchString = "";
   final scaffoldKey                   = new GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
        Future.delayed(Duration.zero,(){
@@ -328,7 +329,6 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
     
     super.initState();
   }
-
  
   @override
   Widget build(BuildContext context) {
@@ -526,7 +526,6 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
           ]
         ),
       ),     
-   );
-   
+   ); 
   }
 }
