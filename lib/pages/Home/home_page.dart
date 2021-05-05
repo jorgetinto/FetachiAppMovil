@@ -17,7 +17,7 @@ import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
+//import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -313,7 +313,7 @@ class _HomePageState extends State<HomePage> {
               InkWell( child: Text("+569 ${snapshot.data.fono}",style: TextStyle(fontSize: 16.0),),
                         onTap: () {                           
                           if (snapshot.data?.fono != null && snapshot.data.fono.isNotEmpty){
-                            FlutterOpenWhatsapp.sendSingleMessage("+569 ${snapshot.data?.fono}", "Hello");
+                            //FlutterOpenWhatsapp.sendSingleMessage("+569 ${snapshot.data?.fono}", "Hello");
                           }else {
                             showToast(context, 'Número invalido'); 
                           }

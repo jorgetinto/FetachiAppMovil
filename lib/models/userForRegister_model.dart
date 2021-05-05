@@ -43,7 +43,7 @@ class UserForRegisterModel {
     String phoneNumber;
     String direccion;
     String idComuna;
-    String statusCard;
+    int statusCard;
     int folio;
     String imagen;
     int idInfoContacto;

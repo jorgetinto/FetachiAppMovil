@@ -1,4 +1,4 @@
-package com.example.fetachiappmovil
+package com.jorgepino.fetachiappmovil
 
 import io.flutter.embedding.android.FlutterActivity
 

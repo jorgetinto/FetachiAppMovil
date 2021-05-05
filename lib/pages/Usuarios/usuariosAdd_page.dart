@@ -120,6 +120,8 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
     });
 
+
+
    /// Crop Image
   _cropImage(filePath) async {
     File croppedImage = await ImageCropper.cropImage(
@@ -630,25 +632,30 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     }
 
     void _submit() async {
+
       if (!formKey.currentState.validate()) {
         return;
       }else { 
 
-         if (!_fechaValida && int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 5) {
-           return  showToast(context,'Campo de fecha de nacimiento invalida!');       
-         }
-
+          if (!_fechaValida && int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 5) {
+            return  showToast(context,'Campo de fecha de nacimiento invalida!');       
+          }
 
           formKey.currentState.save();
 
           if (foto != null) {
             userModel.imagen = await userBloc.upload(foto, true, userModel.id);
           }
+          
+          showAlertDialog(context);
 
           if(userModel != null) {
+
             if (userModel.id == null || userModel.id == 0){
-              userModel.id = 0;
-              Map info = await usuarioProvider.crearUsuario(userModel);
+                
+                userModel.id = 0;
+                
+                Map info = await usuarioProvider.crearUsuario(userModel);
 
                   if (info['ok']) {
                     showToast(context,'Usuario creado de forma exitosa!');                   
@@ -668,14 +675,14 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                    }else {
                         escuelaInstructor.idEscuela = userModel.idEscuela;
                         Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UsuariosPage(),
-                                  settings: RouteSettings(
-                                    arguments: escuelaInstructor,
-                                  ),
-                                ),
-                              );  
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UsuariosPage(),
+                            settings: RouteSettings(
+                              arguments: escuelaInstructor,
+                            ),
+                          ),
+                        );  
                     }
 
                   } else {

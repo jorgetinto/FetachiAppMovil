@@ -22,13 +22,14 @@ class DetalleExamenPage extends StatefulWidget {
 
 class _DetalleExamenPageState extends State<DetalleExamenPage> {
 
-  final      formKey            = new GlobalKey<FormState>();
+  final      formKey            = new GlobalKey<FormState>();  
   GlobalKey<ScaffoldState>  scaffoldKey        = new GlobalKey<ScaffoldState>();
   FocusNode                 _node              = new FocusNode();
-  ExamenServices            examenProvider      = new ExamenServices();
+  
+  ExamenServices            examenProvider     = new ExamenServices();
   GradoServices             gradoProvider      = new GradoServices();
-  DetalleExamenService      detalleProvider   = new DetalleExamenService();
-  UsuarioServices           usuario          = new UsuarioServices();
+  DetalleExamenService      detalleProvider    = new DetalleExamenService();
+  UsuarioServices           usuario            = new UsuarioServices();
   Future<DetalleExamenModel> userData;
   DetalleExamenModel model;
   Future<ExamenModel> detalle;  
@@ -182,7 +183,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             border: OutlineInputBorder(),                        
           ),         
           validator: (value){
-            if (value == null || value.isEmpty){
+            if (value == null || value.isEmpty || value.trim() == "0.0"){
               return 'Campo requerido';
             } else {
               return null;
@@ -205,7 +206,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             border: OutlineInputBorder(),                        
           ),          
           validator: (value){
-            if (value == null || value.isEmpty){
+            if (value == null || value.isEmpty || value.trim() == "0.0"){
               return 'Campo requerido';
             } else {
               return null;
@@ -228,7 +229,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             border: OutlineInputBorder(),                        
           ),
           validator: (value){
-            if (value == null || value.isEmpty){
+            if (value == null || value.isEmpty || value.trim() == "0.0"){
               return 'Campo requerido';
             } else {
               return null;
@@ -251,7 +252,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             border: OutlineInputBorder(),                        
           ),         
           validator: (value){
-            if (value == null || value.isEmpty){
+            if (value == null || value.isEmpty || value.trim() == "0.0"){
               return 'Campo requerido';
             } else {
               return null;
@@ -317,6 +318,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                           value: maestro.id.toString(),                          
                         )
                       ).toList(),
+                      validator: (value) => value == null ? 'Campo requerido' : null,
                       onChanged:(value) {
                         setState(() {
                             model.idExaminador = int.parse(value);             
@@ -348,28 +350,29 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                         onFocusChange: (bool focus) {
                           setState((){});
                         },
-                      child: Listener(
-                      onPointerDown: (_) {
-                        FocusScope.of(context).requestFocus(_node);
-                      },
-                      child: DropdownButtonFormField<String>(
-                      value: model.idGradoActual?.toString()?? null,
-                      decoration: InputDecoration(
-                        labelText: 'Grado Ascenso',
-                        border: OutlineInputBorder(),                                      
-                      ),
-                      isDense: true,
-                      isExpanded: true,
-                      items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
-                          child: Text(tipo.nombre),
-                          value:  tipo.id.toString()               
-                        )
-                      ).toList(),
-                      onChanged:(value) {
-                        setState(() {   
-                          model.idGradoAscenso = int.parse(value); 
-                        });
-                      },
+                        child: Listener(
+                        onPointerDown: (_) {
+                          FocusScope.of(context).requestFocus(_node);
+                        },
+                        child: DropdownButtonFormField<String>(
+                        value: model.idGradoActual?.toString()?? null,
+                        decoration: InputDecoration(
+                          labelText: 'Grado Ascenso',
+                          border: OutlineInputBorder(),                                      
+                        ),
+                        isDense: true,
+                        isExpanded: true,
+                        items: snapshot.data.map((tipo) => DropdownMenuItem<String>(
+                            child: Text(tipo.nombre),
+                            value:  tipo.id.toString()               
+                          )
+                        ).toList(),
+                        validator: (value) => int.parse(value) == model.idGradoActual ? 'Campo requerido' : null,
+                        onChanged:(value) {
+                          setState(() {   
+                            model.idGradoAscenso = int.parse(value); 
+                          });
+                        },
                     ),
                   ),
                 );
@@ -403,7 +406,9 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
 
   void _submit(DetalleExamenModel model) async {
 
-     if (formKey.currentState.validate()) {
+      if (!formKey.currentState.validate()) {
+        return;
+      }else {
 
           scaffoldKey.currentState.showSnackBar(
             new SnackBar(duration: new Duration(seconds: 40), content:
@@ -515,7 +520,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                             _inputObservacion(snapshot.data),
                             _dropdrownGrado(snapshot.data),
                             _dropdrownMaestro(snapshot.data),
-                          _switchEstado(snapshot.data),
+                            _switchEstado(snapshot.data),
                            _crearBoton(snapshot.data)
                           ]
                         )

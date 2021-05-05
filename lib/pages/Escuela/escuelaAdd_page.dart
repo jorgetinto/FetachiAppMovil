@@ -31,6 +31,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
 
     GlobalKey<FormState>      formKey          = new GlobalKey<FormState>();
     GlobalKey<ScaffoldState>  scaffoldKey      = new GlobalKey<ScaffoldState>();
+    bool                      _autoValidate    = false;
 
     File                      foto;
     EscuelaServices           escuelaProvider  = new EscuelaServices();
@@ -216,16 +217,16 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               labelText: "Nombre",
-              border: OutlineInputBorder(),                        
+              border: OutlineInputBorder(),                   
             ),
-            onSaved: (value) => escuelaModel.nombre = value,
             validator: (value){
-              if (value == null) {
+              if (value == null || value.isEmpty){
                 return 'Campo requerido';
               } else {
                 return null;
               }
             },
+            onSaved: (value) => escuelaModel.nombre = value,
           ),
         );
     }
@@ -242,7 +243,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
         ),
         onSaved: (value) => escuelaModel.direccion = value,
         validator: (value){
-          if (value == null) {
+          if (value == null || value.isEmpty){
             return 'Campo requerido';
           } else {
             return null;
@@ -286,6 +287,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                                     value: countyState.codRegion,                          
                                   )
                                 ).toList(),
+                                validator: (value) => value == null ? 'Campo requerido' : null,
                                 onChanged:(value) {
                                   setState(() {
                                     escuelaModel.idComuna = null;
@@ -421,6 +423,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                           value: countyState.idZona.toString(),                          
                         )
                       ).toList(),
+                      validator: (value) => value == null ? 'Campo requerido' : null,
                       onChanged:(value) {
                         setState(() {
                             escuelaModel.idZona = int.parse(value);             
@@ -468,6 +471,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                             value: instructores.id.toString(),                          
                           )
                         ).toList(),
+                        validator: (value) => value == null ? 'Campo requerido' : null,
                         onChanged:(value) {
                           setState(() {
                               escuelaModel.idInstructor = int.parse(value);             
@@ -514,6 +518,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                           value: maestro.id.toString(),                          
                         )
                       ).toList(),
+                      validator: (value) => value == null ? 'Campo requerido' : null,
                       onChanged:(value) {
                         setState(() {
                             escuelaModel.idMaestro = int.parse(value);             
@@ -553,24 +558,18 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
     }
 
   void _submit() async {
-      if (!formKey.currentState.validate()) {
+     if (!formKey.currentState.validate()) {
+        setState(() {
+          _autoValidate = true;
+        });
         return;
       }else {
-          scaffoldKey.currentState.showSnackBar(
-            new SnackBar(duration: new Duration(seconds: 40), content:
-              new Row(
-                children: <Widget>[
-                  new CircularProgressIndicator(),
-                  new Text("    Guardando cambios...")
-                ],
-              ),
-            )
-          );
+
+          showAlertDialog(context);
 
           formKey.currentState.save();
 
           if (foto != null) {
-           // escuelaModel.logo = await escuelaBloc.subirFoto(foto, escuelaModel.logoOriginal);
             await userService.upload(foto, false, escuelaModel.idEscuela ).then((value) => {
               if (value != null) escuelaModel.logo = value 
             });
@@ -620,6 +619,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
           Padding(padding: EdgeInsets.all(15.0),
           child: Form(
               key: formKey,
+              autovalidate: _autoValidate,
               child: Column(
                 children: <Widget>[
                   Center(

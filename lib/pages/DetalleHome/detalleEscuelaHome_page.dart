@@ -9,7 +9,7 @@ import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 import '../Home/home_page.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
+//import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
@@ -271,7 +271,7 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
                       child: Text("+569 ${widget.escuelaDetalle?.fonoInstructor??'Sin Informacion'}",style: TextStyle(fontSize: 16.0),),
                       onTap: () {                           
                         if (widget.escuelaDetalle?.fonoInstructor != null && widget.escuelaDetalle.fonoInstructor.isNotEmpty){
-                          FlutterOpenWhatsapp.sendSingleMessage("+569 ${widget.escuelaDetalle?.fonoInstructor}", "Hello");
+                         // FlutterOpenWhatsapp.sendSingleMessage("+569 ${widget.escuelaDetalle?.fonoInstructor}", "Hello");
                         }else {
                           showToast(context, 'Número invalido'); 
                         }
@@ -384,7 +384,7 @@ class _InternalContactosEscuelaHomeState extends State<InternalContactosEscuelaH
                         isThreeLine: true,
                         onTap: () {
                             if (usuario?.fono != null && usuario.fono.isNotEmpty){
-                              FlutterOpenWhatsapp.sendSingleMessage("+569 ${usuario?.fono}", "Hello");
+                             // FlutterOpenWhatsapp.sendSingleMessage("+569 ${usuario?.fono}", "Hello");
                             }else {
                               scaffoldKey.currentState.showSnackBar(
                                   new SnackBar(duration: new Duration(seconds: 2), content:

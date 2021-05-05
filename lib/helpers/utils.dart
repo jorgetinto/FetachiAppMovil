@@ -171,3 +171,19 @@ import 'package:toast/toast.dart';
 
     ListItem(this.value, this.name);
   }
+
+  showAlertDialog(BuildContext context){
+      AlertDialog alert=AlertDialog(
+        content: new Row(
+            children: [
+               CircularProgressIndicator(),
+               Container(margin: EdgeInsets.only(left: 5),child:Text(" Cargando..." )),
+            ],),
+      );
+      showDialog(barrierDismissible: false,
+        context:context,
+        builder:(BuildContext context){
+          return alert;
+        },
+      );
+    }
