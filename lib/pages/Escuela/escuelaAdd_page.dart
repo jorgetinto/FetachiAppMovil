@@ -55,7 +55,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
 
   @override
   void initState() {
-     new Future.delayed(new Duration(milliseconds: 900), () {
+     new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });

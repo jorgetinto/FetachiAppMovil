@@ -53,7 +53,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   void initState() {
-      new Future.delayed(new Duration(milliseconds: 900), () {
+      new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });
@@ -163,9 +163,10 @@ class _UsuariosPageState extends State<UsuariosPage> {
                         leading: CircleAvatar(
                           radius: 25.0,
                           backgroundImage: (usuario.imagen !=null && usuario.imagen != "")
-                                ? NetworkImage("$IMAGEN_USUARIO${usuario.imagen}")
+                                ? (NetworkImage("$IMAGEN_USUARIO${usuario.imagen}") != null)?(NetworkImage("$IMAGEN_USUARIO${usuario.imagen}")): AssetImage('assets/no-image.png')
                                 : AssetImage('assets/no-image.png'),
                           backgroundColor: Colors.black,
+                          
                         ),
                        title: 
                         Container(

@@ -48,7 +48,7 @@ class _EscuelasAsociadasState extends State<EscuelasAsociadas> {
 
   @override
   void initState() {
-      new Future.delayed(new Duration(milliseconds: 900), () {
+      new Future.delayed(new Duration(milliseconds: 150), () {
         setState(() {
             _loading = false;         
         });

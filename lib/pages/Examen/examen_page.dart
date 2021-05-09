@@ -26,7 +26,7 @@ class _ExamenPageState extends State<ExamenPage> {
 
   @override
   void initState() {
-      new Future.delayed(new Duration(milliseconds: 900), () {
+      new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });

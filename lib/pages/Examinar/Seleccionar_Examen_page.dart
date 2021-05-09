@@ -28,7 +28,7 @@ class _SeleccionarExamenPageState extends State<SeleccionarExamenPage> {
 
   @override
   void initState() {
-      new Future.delayed(new Duration(milliseconds: 1200), () {
+      new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });

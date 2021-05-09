@@ -43,7 +43,8 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   GradoServices             gradoProvider       = new GradoServices();
   EscuelaPorIdInstructorModel escuelaInstructor = new EscuelaPorIdInstructorModel();
   UserForRegisterModel      userData            = new UserForRegisterModel();
-  DateTime selectedDate    = new DateTime.now();
+  DateTime                  selectedDate        = new DateTime.now();
+  bool                      _autoValidate       = false;
 
   Future<List<DropDownModel>>   selectTipoUsuario;
   Future<List<DropDownModel>>   selectGrado;
@@ -59,11 +60,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
   @override
   void initState() {
-     new Future.delayed(new Duration(milliseconds: 900), () {
+     new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });
       }); 
+
+   
     super.initState();
   }
 
@@ -77,6 +80,15 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     _isVisible        = true;  
     selectedDate      = new DateTime.now();
     super.dispose();
+  }
+
+  String validateUserName(String value) {
+      Pattern pattern = r'^[a-zA-Z0-9\.]*$';
+      RegExp regex = new RegExp(pattern);
+      if (!regex.hasMatch(value))
+        return 'Nombre de usuario Invalido';
+      else
+        return null;
   }
   
   @override
@@ -114,16 +126,15 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           _isVisible = false;
         }else {
           _isVisible = true;
-        }  
+        }
 
-        controller =  new MaskedTextController(text: userModel?.rut, mask: '00.000.000-@');
-
+        controller      =  new MaskedTextController(text: userModel?.rut, mask: '00.000.000-@', );
     });
 
 
 
    /// Crop Image
-  _cropImage(filePath) async {
+    _cropImage(filePath) async {
     File croppedImage = await ImageCropper.cropImage(
       sourcePath: filePath,
       maxWidth: 600,
@@ -277,6 +288,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
 
                           });
                         },
+                        validator: (value){
+                          if (value == null) {
+                            return 'Campo requerido';
+                          } else {
+                            return null;
+                          }
+                        },
                     ),
                       ),
                   ),
@@ -326,6 +344,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         setState(() {   
                           userModel.idGradoActual = int.parse(value); 
                         });
+                      },
+                      validator: (value){
+                        if (value == null) {
+                          return 'Campo requerido';
+                        } else {
+                          return null;
+                        }
                       },
                     ),
                   ),
@@ -385,6 +410,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                               }       
                           });
                         },
+                        validator: (value){
+                          if (value == null) {
+                            return 'Campo requerido';
+                          } else {
+                            return null;
+                          }
+                        },
                       ),
                     ),
                   );
@@ -407,9 +439,19 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             ),
             onSaved: (value) => userModel.userName = value.trim(),
             validator: (value){
-              if (value == null) {
+              if (value.isEmpty || value == null) {
                 return 'Campo requerido';
               } else {
+
+                String mensaje = validateUserName(value);
+                if (mensaje != null && mensaje.isNotEmpty) {
+                   return mensaje;
+                }
+
+                if(value.trim().toUpperCase().contains("Ñ")){
+                  return "El nombre de usuario no puede contener la letra Ñ";
+                }
+
                 return null;
               }
             },
@@ -429,7 +471,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             ),
             onSaved: (value) => userModel.nombres = value.trim(),
             validator: (value){
-              if (value == null) {
+              if (value.isEmpty || value == null) {
                 return 'Campo requerido';
               } else {
                 return null;
@@ -451,7 +493,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           ),
           onSaved: (value) => userModel.apellidoPaterno = value.trim(),
           validator: (value){
-            if (value == null) {
+           if (value.isEmpty || value == null) {
               return 'Campo requerido';
             } else {
               return null;
@@ -473,7 +515,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           ),
           onSaved: (value) => userModel.apellidoMaterno = value.trim(),
           validator: (value){
-            if (value == null) {
+            if (value.isEmpty || value == null) {
               return 'Campo requerido';
             } else {
               return null;
@@ -488,13 +530,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: TextFormField(
-        controller:  controller,
+         controller:  controller,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           labelText: 'Rut',
           border: OutlineInputBorder(),
         ),
-        onSaved: (value) => userModel.rut = value,
+        onSaved: (value) => userModel.rut = value,       
         validator: (value){
 
           RutHelper rutHelp = new RutHelper();
@@ -502,11 +544,16 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           if (value.isEmpty || value == null) {
             return 'Campo requerido';
           } else {
-            if (rutHelp.check(value)){
-              return null;
-            } else {
-              return 'Rut Invalido';
-            }          
+
+            if(value.length < 9){
+              return 'Los rut menores de 10 millones deben agregar un 0 al inicio';
+            }else{
+              if (rutHelp.check(value)){
+                return null;
+              } else {
+                return 'Rut Invalido';
+              }  
+            }                    
           }
         },
       ),
@@ -551,9 +598,9 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                         decoration: InputDecoration(
                           labelText: 'Fecha de nacimiento',
                           border: OutlineInputBorder()
-                        ),  
-                   
+                        ), 
                     lastDate: DateTime(2101),
+                    
                     
                 ),
         )
@@ -600,6 +647,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                           userModel.idApoderado = int.parse(value); 
                         });
                       },
+                       validator: (value){
+                        if (value == null) {
+                          return 'Campo requerido';
+                        } else {
+                          return null;
+                        }
+                      },
                     ),
                   ),
                 );
@@ -634,7 +688,10 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     void _submit() async {
 
       if (!formKey.currentState.validate()) {
-        return;
+         setState(() {
+          _autoValidate = true;
+          return;
+        });
       }else { 
 
           if (!_fechaValida && int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 5) {
@@ -758,6 +815,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           Padding(padding: EdgeInsets.all(15.0),
           child: Form(
               key: formKey,
+              autovalidate: _autoValidate,
               child: Column(
                 children: <Widget>[
                   Center(
@@ -769,11 +827,11 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
                   _dropdrownTipoUsuario(),
                   _dropdrownEscuela(),
                   _inputUserName(),
+                  _inputRut(),
                   _inputNombre(), 
                   _inputApellidoPaterno(),
                   _inputApellidoMaterno(),
                   _inputFechaNacimiento(),
-                  _inputRut(),
                   _dropdrownGrado(),
                   _dropdrownApoderado(),
                   _switchEstado(),                 

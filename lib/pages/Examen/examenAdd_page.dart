@@ -32,6 +32,7 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
   ZonaServices              zona             = new ZonaServices();
   UsuarioServices           usuario          = new UsuarioServices();
   ExamenServices            examenProvider   = new ExamenServices();
+  bool                      _autoValidate       = false;
 
   Future<List<RegionModel>>     region;
   Future<List<ComunaModel>>     comuna;
@@ -43,7 +44,7 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
 
   @override
   void initState() {
-      new Future.delayed(new Duration(milliseconds: 900), () {
+      new Future.delayed(new Duration(milliseconds: 1500), () {
           setState(() {
               _loading = false;         
           });
@@ -142,12 +143,12 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
             ),
             onSaved: (value) => examenModel.nombre = value,
             validator: (value){
-              if (value == null) {
-                return 'Campo requerido';
-              } else {
-                return null;
-              }
-            },
+                if (value.isEmpty || value == null) {
+                  return 'Campo requerido';
+                } else {
+                  return null;
+                }
+              },
           ),
         );
     }
@@ -190,6 +191,13 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
                             examenModel.idMaestro = int.parse(value);             
                         });
                       },
+                      validator: (value){
+                          if (value == null) {
+                            return 'Campo requerido';
+                          } else {
+                            return null;
+                          }
+                        },
                     ),
                   ),
                 );                      
@@ -210,12 +218,12 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
         ),
         onSaved: (value) => examenModel.direcion = value,
         validator: (value){
-          if (value == null) {
-            return 'Campo requerido';
-          } else {
-            return null;
-          }
-        },
+              if (value.isEmpty || value == null) {
+                return 'Campo requerido';
+              } else {
+                return null;
+              }
+            },
       ),
     );
   }
@@ -259,6 +267,13 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
                                     examenModel.idComuna = null;
                                     comuna = comunaRegion.getAllComunaByIdRegion(value);                    
                                   });
+                                },
+                                validator: (value){
+                                  if (value == null) {
+                                    return 'Campo requerido';
+                                  } else {
+                                    return null;
+                                  }
                                 },
                             ),
                     ),
@@ -317,6 +332,13 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
                               examenModel.idComuna = value;                     
                             });
                           },
+                          validator: (value){
+                            if (value.isEmpty || value == null) {
+                              return 'Campo requerido';
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
                     ),
                 );
@@ -346,6 +368,13 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
                               setState(() {
                                 examenModel.idComuna = value;                     
                               });
+                            },
+                            validator: (value){
+                              if (value.isEmpty || value == null) {
+                                return 'Campo requerido';
+                              } else {
+                                return null;
+                              }
                             },
                           ),
                         ),
@@ -394,6 +423,13 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
                             examenModel.idZona = int.parse(value);             
                         });
                       },
+                      validator: (value){
+                        if (value == null) {
+                          return 'Campo requerido';
+                        } else {
+                          return null;
+                        }
+                      },
                     ),
                   ),
                 );
@@ -431,7 +467,10 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
     void _submit() async {
 
       if (!formKey.currentState.validate()) {
-        return;
+           setState(() {
+            _autoValidate = true;
+            return;
+          });
       }else {
           scaffoldKey.currentState.showSnackBar(
             new SnackBar(duration: new Duration(seconds: 40), content:
@@ -490,6 +529,7 @@ class _ExamenAddPageState extends State<ExamenAddPage> {
           Padding(padding: EdgeInsets.all(15.0),
           child: Form(
               key: formKey,
+              autovalidate: _autoValidate,
               child: Column(
                 children: <Widget>[
                  SizedBox(height: 20.0),

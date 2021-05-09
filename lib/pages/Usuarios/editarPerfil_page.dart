@@ -46,11 +46,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   Future<List<ComunaModel>> comuna;
   Future<List<ComunaModel>> comunaContacto;
 
-  bool  _loading = true; 
+  bool  _loading            = true; 
+  bool  _autoValidate       = false;
 
   @override
   void initState() {
-     new Future.delayed(new Duration(milliseconds: 900), () {
+     new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });
@@ -63,6 +64,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
           _loading = true;  
     super.dispose();
   }
+
 
   AppBar _appBar(BuildContext context) {
     return AppBar(
@@ -179,7 +181,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => usePerfilModel.nombres = value.trim(),
         validator: (value){
-          if (value == null) {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -201,7 +203,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => usePerfilModel.apellidoPaterno = value.trim(),
         validator: (value){
-          if (value == null) {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -223,7 +225,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => usePerfilModel.apellidoMaterno = value.trim(),
         validator: (value){
-          if (value == null) {
+           if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -239,6 +241,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       child: TextFormField(
         initialValue: usePerfilModel.rut,
         textCapitalization: TextCapitalization.sentences,
+        //enabled: false, 
         decoration: InputDecoration(
           labelText: 'Rut',
           border: OutlineInputBorder(),
@@ -252,11 +255,15 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
             return 'Campo requerido';
           } else {
 
-            if (rutHelp.check(value)){
-              return null;
-            } else {
-              return 'Rut Invalido';
-            }          
+            if(value.length < 9){
+              return 'Los rut menores de 10 millones deben agregar un 0 al inicio';
+            }else{
+              if (rutHelp.check(value)){
+                return null;
+              } else {
+                return 'Rut Invalido';
+              }  
+            }                    
           }
         },
       ),
@@ -305,7 +312,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => usePerfilModel.fono = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           }
           if (value.trim().length != 8) {
@@ -346,7 +353,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => usePerfilModel.direccion = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+           if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -370,7 +377,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
             ),
             onSaved: (value) => usePerfilModel?.statusCard = int.parse(value),
             validator: (value){
-              if (value == null) {
+             if (value.isEmpty || value == null){
                 return 'Campo requerido';
               } else {
                 return null;
@@ -412,6 +419,13 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                     comuna = comunaRegion.getAllComunaByIdRegion(value);                    
                   });
                 },
+                validator: (value){
+                  if (value.isEmpty || value == null){
+                      return 'Campo requerido';
+                    } else {
+                      return null;
+                    }
+                  },
               );
             }),
         ),
@@ -491,7 +505,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => contactoEntity.nombre = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -513,7 +527,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => contactoEntity.apellidoPaterno = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -535,7 +549,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => contactoEntity.apellidoMaterno = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -557,7 +571,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => contactoEntity.direccion = value.trim(),
         validator: (value){
-          if (value == null || value.trim() == "") {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
             return null;
@@ -583,7 +597,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => contactoEntity.fono = value.trim(),
         validator: (value){
-         if (value == null || value.trim() == "") {
+        if (value.isEmpty || value == null){
             return 'Campo requerido';
           }
           if (value.trim().length != 8) {
@@ -608,7 +622,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         ),
         onSaved: (value) => contactoEntity.email = value.trim(),
         validator: (value) {
-          if (value == null || value.trim() == "") {
+          if (value.isEmpty || value == null){
             return 'Campo requerido';
           } else {
            return  validar.isEmail(value) ? null : "Campo requerido";
@@ -739,7 +753,10 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
   void _submit(UserPerfilModel user) async {
      if (!formKey.currentState.validate()) {
-       return;
+        setState(() {
+          _autoValidate = true;
+          return;
+        });
      }else {
         formKey.currentState.save();
 
@@ -778,6 +795,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
      }
   }
 
+
+
     @override
   Widget build(BuildContext context) {
 
@@ -800,6 +819,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
         if (contactoEntity.idRegion != null)
             comunaContacto      = comunaRegion.getAllComunaByIdRegion(contactoEntity.idRegion);
+
     });
 
     return Scaffold(
@@ -812,6 +832,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
           Padding(padding: EdgeInsets.all(15.0),
           child: Form(
               key: formKey,
+              autovalidate: _autoValidate,
               child: Column(
                 children: <Widget>[
                   Center(

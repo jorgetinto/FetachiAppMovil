@@ -36,13 +36,14 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
   int idExamen;
   Future<List<DropDownModel>>   selectGrado;
   Future<List<DropDownModel>>   maestros;
+  bool                      _autoValidate       = false;
 
   DateTime selectedDate    = new DateTime.now();
   bool _loading = true;
 
   @override
   void initState() {
-     new Future.delayed(new Duration(milliseconds: 900), () {
+     new Future.delayed(new Duration(milliseconds: 1500), () {
         setState(() {
             _loading = false;         
         });
@@ -86,13 +87,13 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             border: OutlineInputBorder(),                        
           ),
           onSaved: (value) => model.nombreEstudiante = value.trim(),
-          validator: (value){
-            if (value == null || value.isEmpty){
-              return 'Campo requerido';
-            } else {
-              return null;
-            }
-          },
+           validator: (value){
+                if (value.isEmpty || value == null) {
+                  return 'Campo requerido';
+                } else {
+                  return null;
+                }
+              },
         ),
       );
     }
@@ -110,12 +111,12 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
           ),
           onSaved: (value) => model.nombreInstructor = value.trim(),
           validator: (value){
-           if (value == null || value.isEmpty){
-              return 'Campo requerido';
-            } else {
-              return null;
-            }
-          },
+                if (value.isEmpty || value == null) {
+                  return 'Campo requerido';
+                } else {
+                  return null;
+                }
+              },
         ),
       );
     }
@@ -132,13 +133,13 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
             border: OutlineInputBorder(),                        
           ),
           onSaved: (value) => model.nombreGradoActual = value.trim(),
-          validator: (value){
-             if (value == null || value.isEmpty){
-              return 'Campo requerido';
-            } else {
-              return null;
-            }
-          },
+           validator: (value){
+                if (value.isEmpty || value == null) {
+                  return 'Campo requerido';
+                } else {
+                  return null;
+                }
+              },
         ),
       );
     }
@@ -367,7 +368,17 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                             value:  tipo.id.toString()               
                           )
                         ).toList(),
-                        validator: (value) => int.parse(value) == model.idGradoActual ? 'Campo requerido' : null,
+                        validator: (value) {   
+                          if(value == null){
+                            return 'Campo requerido';
+                          }else {
+                            if(int.parse(value) == model.idGradoActual){
+                              return 'Debe seleccionar un grado distinto al actual';
+                            }else{
+                              return null;
+                            }
+                          }
+                        },
                         onChanged:(value) {
                           setState(() {   
                             model.idGradoAscenso = int.parse(value); 
@@ -407,7 +418,10 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
   void _submit(DetalleExamenModel model) async {
 
       if (!formKey.currentState.validate()) {
-        return;
+       setState(() {
+            _autoValidate = true;
+            return;
+          });
       }else {
 
           scaffoldKey.currentState.showSnackBar(
@@ -473,6 +487,7 @@ class _DetalleExamenPageState extends State<DetalleExamenPage> {
                   return Padding(padding: EdgeInsets.all(15.0),
                     child: Form(
                         key: formKey,
+                        autovalidate: _autoValidate,
                         child: Column(
                           children: <Widget>[                   
                             SizedBox(height: 20.0),

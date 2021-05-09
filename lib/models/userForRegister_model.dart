@@ -65,7 +65,7 @@ class UserForRegisterModel {
         phoneNumber: json["phoneNumber"]??"",
         direccion: json["direccion"]??"",
         idComuna: json["idComuna"]??"",
-        statusCard: json["statusCard"]??"",
+        statusCard: json["statusCard"]??0,
         folio: json["folio"]??"",
         imagen: json["imagen"]??"",
         idInfoContacto: json["idInfoContacto"],

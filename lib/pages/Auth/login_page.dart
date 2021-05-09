@@ -1,9 +1,11 @@
 
 import 'package:fetachiappmovil/bloc/login_bloc.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
+import 'package:fetachiappmovil/helpers/constants.dart';
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/helpers/widget/Header_widget.dart';
 import 'package:fetachiappmovil/pages/Onboarding/onboarding_page.dart';
+import 'package:fetachiappmovil/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,6 +17,39 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final authService                           = new AuthServices();
+  bool _isButtonDisabled = false;
+
+  @override
+  void initState() {
+    this.version();
+    super.initState();
+  }
+
+  void version() async {
+    String _version         = VERSION_APP;
+    final authService       = new AuthServices();    
+    final versionAPI        = await authService.getVersion();
+
+    if (_version.compareTo(versionAPI.version) != 0 ) {      
+
+        _isButtonDisabled = false;  
+        _scaffoldKey.currentState.showSnackBar(
+                new SnackBar(duration: new Duration(milliseconds: 5000), content:
+                  new Row(
+                    children: <Widget>[
+                      new CircularProgressIndicator(),
+                      new Text('  Versión de aplicación desactualizada')
+                    ],
+                  ),
+                )
+              );
+    } else {
+      setState(() {
+         _isButtonDisabled  = true;
+      });
+    }
+  }
 
   Widget _crearFondo(BuildContext context) {
 
@@ -75,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                  SizedBox(height: 20.0,),
                 _crearBotton(bloc),
                  SizedBox(height: 20.0,),
-                 Text('Versión: 1.0.0')
+                 Text((_isButtonDisabled)?'Versión: $VERSION_APP Actalizada':'Versión $VERSION_APP Desactualizada'),
               ],
             ),
           ),
@@ -147,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
           elevation: 0.0,
           color: Colors.redAccent,
           textColor: Colors.white,
-          onPressed: snapshot.hasData ? () => _login(bloc, context) : null
+          onPressed: (!_isButtonDisabled)? null: snapshot.hasData ? () => _login(bloc, context) : null
         );
       }
     );
@@ -184,14 +219,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
- Widget build(BuildContext context) {  
+ Widget build(BuildContext context) { 
     return Scaffold(
       key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           _crearFondo(context),
-          _loginForm(context),
-
+          _loginForm(context)
         ],
       )
     );

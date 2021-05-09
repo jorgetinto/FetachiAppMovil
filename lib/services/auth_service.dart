@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:fetachiappmovil/models/version_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -78,6 +79,18 @@ class AuthServices {
      return false;
     }    
   } 
+
+  Future<VersionModel>  getVersion()  async {    
+    final url = '$urlBase/Version/';
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+
+    final respModel = versionModelFromJson(response.body.toString());
+    return respModel;
+  }
 
   Future<Map<String, dynamic>> signOut() async {
 
