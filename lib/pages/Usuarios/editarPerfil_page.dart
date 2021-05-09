@@ -18,9 +18,11 @@ import 'package:fetachiappmovil/services/comunaRegion_service.dart';
 import 'package:fetachiappmovil/services/userPerfil_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 
 class EditarPerfilPage extends StatefulWidget {
@@ -38,6 +40,11 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   UserPerfilModel usePerfilModel      = new UserPerfilModel();
   ComunaRegionServices comunaRegion   = new ComunaRegionServices();
   InformacionContacto contactoEntity  = new InformacionContacto();
+
+  var controllerTel;
+  var controllerTelContacto;
+  MaskTextInputFormatter maskFormatter;
+
 
   File foto;
   File croppedImage;
@@ -300,23 +307,20 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
     return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: TextFormField(
-        initialValue: usePerfilModel.fono,
+        controller: controllerTel,
         textCapitalization: TextCapitalization.sentences,
-        keyboardType: TextInputType.number,
+        keyboardType: TextInputType.phone,
             inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
+               maskFormatter
             ],
         decoration: InputDecoration(
           labelText: 'Celular',
           border: OutlineInputBorder(),
         ),
-        onSaved: (value) => usePerfilModel.fono = value.trim(),
+        onSaved: (value) => usePerfilModel.fono = value.trim().replaceAll('(+', '').replaceAll(')', '').replaceAll(' ', ''),
         validator: (value){
           if (value.isEmpty || value == null){
             return 'Campo requerido';
-          }
-          if (value.trim().length != 8) {
-            return 'Número no valido';           
           }else {
             return null;
           }
@@ -331,6 +335,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       child: TextFormField(
         initialValue: usePerfilModel.email,
         textCapitalization: TextCapitalization.sentences,
+         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: 'Email',
           border: OutlineInputBorder(),
@@ -420,7 +425,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                   });
                 },
                 validator: (value){
-                  if (value.isEmpty || value == null){
+                  if (value == null){
                       return 'Campo requerido';
                     } else {
                       return null;
@@ -585,23 +590,20 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
     return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: TextFormField(
-        initialValue: contactoEntity.fono,
+        controller: controllerTelContacto,
         textCapitalization: TextCapitalization.sentences,
          keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
+                maskFormatter
             ],
         decoration: InputDecoration(
           labelText: 'Celular',
           border: OutlineInputBorder(),
         ),
-        onSaved: (value) => contactoEntity.fono = value.trim(),
+        onSaved: (value) => contactoEntity.fono = value.trim().replaceAll('(+', '').replaceAll(')', '').replaceAll(' ', ''),
         validator: (value){
         if (value.isEmpty || value == null){
             return 'Campo requerido';
-          }
-          if (value.trim().length != 8) {
-            return 'Número no valido';           
           }else {
             return null;
           }
@@ -615,6 +617,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       padding: EdgeInsets.only(top: 10.0),
       child: TextFormField(
         initialValue: contactoEntity.email,
+        keyboardType: TextInputType.emailAddress,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -795,9 +798,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
      }
   }
 
-
-
-    @override
+  @override
   Widget build(BuildContext context) {
 
     userPerfilBloc = ProviderBloc.userPefilBloc(context);
@@ -820,6 +821,19 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         if (contactoEntity.idRegion != null)
             comunaContacto      = comunaRegion.getAllComunaByIdRegion(contactoEntity.idRegion);
 
+        maskFormatter           = new MaskTextInputFormatter(mask: '(+56 9) ########', filter: { "#": RegExp(r'[0-9]') });
+
+        if(userData?.fono == null)
+            controllerTel   = TextEditingController(text:  (userData?.fono != null && userData?.fono != "")?userData?.fono: "(+56 9)");
+        else
+            controllerTel   = new MaskedTextController(text: (userData?.fono != null && userData?.fono != "")?userData?.fono: "569 ", mask: '(+56 0) 00000000');
+
+        if(contactoEntity?.fono == null)
+            controllerTelContacto   = TextEditingController(text:  (contactoEntity?.fono != null && contactoEntity?.fono != "")?contactoEntity?.fono: "(+56 9)");
+        else
+            controllerTelContacto   = new MaskedTextController(text: (contactoEntity?.fono != null && contactoEntity?.fono != "")?contactoEntity?.fono: "569 ", mask: '(+56 0) 00000000');
+
+       // controllerTelContacto   = TextEditingController(text:  (contactoEntity?.fono != null && contactoEntity?.fono != "")?userData?.fono: "(+56 9)");
     });
 
     return Scaffold(

@@ -310,7 +310,7 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(width: 10.0),             
 
-              InkWell( child: Text("+569 ${snapshot.data.fono}",style: TextStyle(fontSize: 16.0),),
+              InkWell( child: Text("+${snapshot.data.fono}",style: TextStyle(fontSize: 16.0),),
                         onTap: () {                           
                           if (snapshot.data?.fono != null && snapshot.data.fono.isNotEmpty){
                             //FlutterOpenWhatsapp.sendSingleMessage("+569 ${snapshot.data?.fono}", "Hello");
@@ -335,7 +335,7 @@ class _HomePageState extends State<HomePage> {
 
                     _buildExperienceRow(
                                 company: " ${snapshot.data.informacionContacto?.nombre} ${snapshot.data.informacionContacto?.apellidoPaterno}",
-                                position: "+569 ${snapshot.data.informacionContacto?.fono}",
+                                position: "+${snapshot.data.informacionContacto?.fono}",
                                 duration: "",
                                 page: DetalleContactoHomePage(),
                                 parametros: snapshot.data.informacionContacto

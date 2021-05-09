@@ -268,7 +268,7 @@ class _InternalDetalleEscuelaHomeState extends State<InternalDetalleEscuelaHome>
               SizedBox(width: 10.0),             
 
                InkWell(
-                      child: Text("+569 ${widget.escuelaDetalle?.fonoInstructor??'Sin Informacion'}",style: TextStyle(fontSize: 16.0),),
+                      child: Text("+${widget.escuelaDetalle?.fonoInstructor??'Sin Informacion'}",style: TextStyle(fontSize: 16.0),),
                       onTap: () {                           
                         if (widget.escuelaDetalle?.fonoInstructor != null && widget.escuelaDetalle.fonoInstructor.isNotEmpty){
                          // FlutterOpenWhatsapp.sendSingleMessage("+569 ${widget.escuelaDetalle?.fonoInstructor}", "Hello");

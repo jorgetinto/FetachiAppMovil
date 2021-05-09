@@ -51,9 +51,9 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   Future<List<DropDownModel>>   selectApoderado;
   Future<List<DropDownModel>>   selectEscuela;
   MaskedTextController controller;
-
   
 
+  
   bool _isVisible = true;
   bool _loading = true;
   bool _fechaValida = false;
@@ -128,7 +128,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
           _isVisible = true;
         }
 
-        controller      =  new MaskedTextController(text: userModel?.rut, mask: '00.000.000-@', );
+        controller      =  new MaskedTextController(text: userModel?.rut, mask: '00.000.000-@', );       
     });
 
 
