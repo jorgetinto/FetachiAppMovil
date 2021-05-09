@@ -3,6 +3,7 @@ import 'package:fetachiappmovil/pages/Auth/login_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleEscuelaHome_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detalleGradoHome_page.dart';
 import 'package:fetachiappmovil/pages/DetalleHome/detallePupiloHome_page.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import '../DetalleHome/detalleApoderadoHome_page.dart';
 import '../DetalleHome/detalleContactoHome_page.dart';
 
@@ -313,7 +314,7 @@ class _HomePageState extends State<HomePage> {
               InkWell( child: Text("+${snapshot.data.fono}",style: TextStyle(fontSize: 16.0),),
                         onTap: () {                           
                           if (snapshot.data?.fono != null && snapshot.data.fono.isNotEmpty){
-                            //FlutterOpenWhatsapp.sendSingleMessage("+569 ${snapshot.data?.fono}", "Hello");
+                            FlutterOpenWhatsapp.sendSingleMessage("+${snapshot.data?.fono}", "Hola");
                           }else {
                             showToast(context, 'Número invalido'); 
                           }

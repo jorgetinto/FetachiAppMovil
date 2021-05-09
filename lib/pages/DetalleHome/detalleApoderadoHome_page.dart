@@ -3,7 +3,7 @@ import 'package:fetachiappmovil/models/userPerfil_model.dart';
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 
 import 'package:flutter/material.dart';
-//import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
 
 class DetalleApoderadoHomePage extends StatefulWidget {
@@ -161,7 +161,7 @@ class _DetalleApoderadoHomePageState extends State<DetalleApoderadoHomePage> {
                           child: Text( "+${userData?.fono??'Sin Información'}",style: TextStyle(fontSize: 16.0),),
                           onTap: () {                           
                             if (userData?.fono != null && userData.fono.isNotEmpty){
-                              //FlutterOpenWhatsapp.sendSingleMessage("+569 ${userData?.fono}", "Hello");
+                              FlutterOpenWhatsapp.sendSingleMessage("+${userData?.fono}", "Hola");
                             }else {
                               showToast(context, 'Número invalido'); 
                             }

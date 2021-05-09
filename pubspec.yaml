@@ -43,7 +43,7 @@ dependencies:
   http: ^0.12.2
   jwt_decoder: ^1.0.3
   badges: ^1.1.4
-  # flutter_open_whatsapp:
+  flutter_open_whatsapp: ^0.1.2
   flutter_masked_text: ^0.8.0
   mask_text_input_formatter: ^1.2.1
 
