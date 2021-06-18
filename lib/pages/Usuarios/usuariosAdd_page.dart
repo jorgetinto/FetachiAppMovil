@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:dart_rut_validator/dart_rut_validator.dart';
 import 'package:date_field/date_field.dart';
 import 'package:fetachiappmovil/bloc/provider_bloc.dart';
 import 'package:fetachiappmovil/bloc/userPerfil_bloc.dart';
@@ -17,7 +18,6 @@ import 'package:fetachiappmovil/services/escuela_service.dart';
 import 'package:fetachiappmovil/services/grado_service.dart';
 import 'package:fetachiappmovil/services/usuario_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -50,9 +50,8 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   Future<List<DropDownModel>>   selectGrado;
   Future<List<DropDownModel>>   selectApoderado;
   Future<List<DropDownModel>>   selectEscuela;
-  MaskedTextController controller;
-  
-
+ 
+  TextEditingController _rutController = TextEditingController();
   
   bool _isVisible = true;
   bool _loading = true;
@@ -66,7 +65,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
         });
       }); 
 
-   
+     _rutController.clear();
+     
+     _node.addListener(() {
+       setState(() {
+        RUTValidator.formatFromTextController(_rutController);         
+       });
+    });
     super.initState();
   }
 
@@ -79,8 +84,11 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     _loading          = true;  
     _isVisible        = true;  
     selectedDate      = new DateTime.now();
+    _node..dispose();
     super.dispose();
   }
+
+
 
   String validateUserName(String value) {
       Pattern pattern = r'^[a-zA-Z0-9\.]*$';
@@ -94,11 +102,13 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   @override
   Widget build(BuildContext context) {
 
+    userData          = new UserForRegisterModel();
+    userModel         = new UserForRegisterModel();        
+    userData          = ModalRoute.of(context).settings.arguments;   
+    userBloc          = ProviderBloc.userPefilBloc(context);        
+
     setState(() {
-        userData          = new UserForRegisterModel();
-        userModel         = new UserForRegisterModel();        
-        userData          = ModalRoute.of(context).settings.arguments;   
-        userBloc          = ProviderBloc.userPefilBloc(context);         
+        
         selectTipoUsuario = usuarioProvider.getTipoUsuarioPorIdUsuario();
         selectEscuela     = escuelaProvider.getEscuelaPorIdUsuario();
 
@@ -112,8 +122,7 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
             if(int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) >= 5 && int.parse(calculateAge(userModel.fechaDeNacimiento.toString())) <= 18)
               selectApoderado   = usuarioProvider.getApoderadosByIdEscuela(userModel.idEscuela);  
             else 
-              selectApoderado = null;
-                 
+              selectApoderado = null;                 
         }
 
         if(userModel.role =="Estudiante" || userModel.role =="Instructor" || userModel.role =="Maestro"){
@@ -127,8 +136,6 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
         }else {
           _isVisible = true;
         }
-
-        controller      =  new MaskedTextController(text: userModel?.rut, mask: '00.000.000-@', );       
     });
 
 
@@ -526,16 +533,16 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
     }
 
     Widget _inputRut() { 
-
     return Padding(
       padding: EdgeInsets.only(top: 10.0),
       child: TextFormField(
-         controller:  controller,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           labelText: 'Rut',
           border: OutlineInputBorder(),
         ),
+       controller:_rutController,	    
+        onEditingComplete: () =>  RUTValidator.formatFromTextController(_rutController),
         onSaved: (value) => userModel.rut = value,       
         validator: (value){
 
