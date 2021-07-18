@@ -345,6 +345,122 @@ class _HomePageState extends State<HomePage> {
                 ) : Container(height: 0, width: 0,);
     }
 
+   Widget _membresia(AsyncSnapshot<UserPerfilModel> snapshot) {
+
+    if (snapshot.data.usuarioMembresia != null) {
+
+      DateTime pagoMembresiaMas12Meses  = snapshot?.data?.usuarioMembresia?.fechaPago?.add(Duration(days: 365));
+      DateTime pagoMembresiaMas10Meses  = snapshot?.data?.usuarioMembresia?.fechaPago?.add(Duration(days: 305));
+      DateTime hoy      = DateTime.now();
+      String estado     = "Vencida";
+      Color colorBG     = Colors.red[800];
+      Color colorTXT    = Colors.white;
+      IconData icono    = Icons.highlight_off;
+
+      if(pagoMembresiaMas12Meses.compareTo(hoy) > 0){
+        if(pagoMembresiaMas10Meses.compareTo(hoy) < 0){
+          estado = "Pronto a vencer";
+          colorBG = Colors.yellow[200];
+          colorTXT = Colors.black87;
+          icono = Icons.info_outline;
+        }else{
+          estado = "AL día";
+          colorBG = Colors.grey.shade200;
+          colorTXT = Colors.black54;
+          icono    = Icons.check_circle_outline;
+        }
+      }
+
+      return Container(
+          margin: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
+          width: double.infinity,
+          decoration: BoxDecoration(color: colorBG),
+          child: Row(
+            children: [
+              /*3*/
+              SizedBox.fromSize(              
+                size: Size.fromRadius(25),
+                child: FittedBox(                
+                  child: Icon(icono, color: colorTXT,),
+                ),
+              ),
+              Expanded(
+                /*1*/
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    /*2*/
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        'Estado Membresia: $estado',
+                        style: TextStyle(
+                          color: colorTXT,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Fecha ultimo pago: ${snapshot?.data?.usuarioMembresia?.fechaPagoTxt}',
+                      style: TextStyle(
+                        color: colorTXT,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+            ],
+          ),
+        );
+    }else{
+      
+      return Container(
+          margin: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
+          width: double.infinity,
+          decoration: BoxDecoration(color: Colors.grey.shade200),
+          child: Row(
+            children: [
+              /*3*/
+              SizedBox.fromSize(              
+                size: Size.fromRadius(25),
+                child: FittedBox(                
+                  child: Icon(Icons.info_outline),
+                ),
+              ),
+              Expanded(
+                /*1*/
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    /*2*/
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        'Estado Membresia: Sin Informar',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Fecha ultimo pago: ${(snapshot?.data?.usuarioMembresia?.fechaPagoTxt) ?? 'N/A'}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+            ],
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -366,7 +482,9 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(height: 10.0,),
                     utils.buildHeader(context, snapshot, true),
                     utils.division(),
+                    _membresia(snapshot),
                     _iconoEstrellas(snapshot),
+                    utils.division(),
                     _dojang(snapshot),
                     _gradoActual(snapshot),
                     _apoderado(snapshot),

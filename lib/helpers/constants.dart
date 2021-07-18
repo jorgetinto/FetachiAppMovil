@@ -6,4 +6,4 @@ const String storage = "https://fetachistorage.blob.core.windows.net";
 
 const String IMAGEN_USUARIO = "$storage/usuarios/";
 const String IMAGEN_ESCUELA = "$storage/escuelas/";
-const String VERSION_APP     = "1.1.0";
+const String VERSION_APP     = "1.1.1";

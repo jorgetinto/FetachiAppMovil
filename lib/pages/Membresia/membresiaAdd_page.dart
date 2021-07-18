@@ -2,7 +2,6 @@
 import 'package:fetachiappmovil/helpers/routes/routes.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/membresia_model.dart';
-import 'package:fetachiappmovil/pages/Examen/examen_page.dart';
 import 'package:fetachiappmovil/pages/Membresia/membresia_page.dart';
 import 'package:fetachiappmovil/services/membresia_service.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,6 @@ class _MembresiaAddPageState extends State<MembresiaAddPage> {
 
   GlobalKey<FormState>      formKey          = new GlobalKey<FormState>();
   GlobalKey<ScaffoldState>  scaffoldKey      = new GlobalKey<ScaffoldState>();
-  FocusNode                 _node            = new FocusNode();
 
   MembresiaModel            membresiaModel      = new MembresiaModel();
   MembresiaServices         membresiaProvider   = new MembresiaServices();

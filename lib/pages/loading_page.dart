@@ -1,40 +1,33 @@
-import 'package:fetachiappmovil/pages/Auth/login_page.dart';
-import 'package:fetachiappmovil/pages/Home/home_page.dart';
+import 'dart:async';
+
+import 'package:fetachiappmovil/models/version_model.dart';
 import 'package:fetachiappmovil/services/auth_service.dart';
 import 'package:flutter/material.dart';
-
 import 'package:fetachiappmovil/helpers/constants.dart' as Constants;
 
+import 'Auth/login_page.dart';
+import 'Home/home_page.dart';
 
-class LoadingPage extends StatelessWidget {
+class LoadingPage extends StatefulWidget {
 
+  @override
+  _LoadingPageState createState() => _LoadingPageState();
+}
 
- final String _version    = Constants.VERSION_APP;
+class _LoadingPageState extends State<LoadingPage> {
 
- @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-        future: checkLoginState(context),
-        builder: ( context, snapshot) {
-         return Container(
-              padding: EdgeInsets.symmetric(vertical: 200.0),
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue[900]),
-                ),
-              ),
-            );
-        },
-        
-      ),
-   );
+  final String _version                       = Constants.VERSION_APP;
+  final authService                           = new AuthServices();
+  VersionModel versionAPI                     = new VersionModel();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();    
+
+  @override
+  void initState() {
+    super.initState();   
+    asyncInitState();
   }
 
-  Future checkLoginState( BuildContext context ) async {
-
-    final authService       = new AuthServices();
-    
+  void asyncInitState() async {    
     final versionAPI = await authService.getVersion();
 
     if (_version.compareTo(versionAPI.version) == 0 ) {
@@ -42,30 +35,51 @@ class LoadingPage extends StatelessWidget {
         final autenticado = await authService.refreshToken();
     
           if ( autenticado ) {
-            Navigator.pushReplacement(
-              context, 
-              PageRouteBuilder(
-                pageBuilder: ( _, __, ___ ) => HomePage(),
-                transitionDuration: Duration(milliseconds: 0)
-              )
-            );
+            Timer.run(() {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            });
           } else {
-            Navigator.pushReplacement(
-              context, 
-              PageRouteBuilder(
-                pageBuilder: ( _, __, ___ ) => LoginPage(),
-                transitionDuration: Duration(milliseconds: 0)
-              )
-            );
+              Timer.run(() {
+                Navigator.pushReplacement(
+                              context, 
+                              PageRouteBuilder(
+                                pageBuilder: ( _, __, ___ ) => LoginPage(),
+                                transitionDuration: Duration(milliseconds: 0)
+                              )
+                            );
+              });
           }
     }else{
-           Navigator.pushReplacement(
-              context, 
-              PageRouteBuilder(
-                pageBuilder: ( _, __, ___ ) => LoginPage(),
-                transitionDuration: Duration(milliseconds: 0)
+       Timer.run(() {
+              Navigator.pushReplacement(
+                context, 
+                PageRouteBuilder(
+                  pageBuilder: ( _, __, ___ ) => LoginPage(),
+                  transitionDuration: Duration(milliseconds: 0)
+                )
+              );
+          });         
+      }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      body: Center(
+        child:  Container(
+                padding: EdgeInsets.symmetric(vertical: 200.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue[900]),
+                  ),
+                ),
               )
-            );
-    }
+      ),
+   );
   }
 }

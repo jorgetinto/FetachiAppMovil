@@ -39,6 +39,7 @@ class UserPerfilModel {
         this.apoderado,
         this.pupilos,
         this.informacionContacto,
+        this.usuarioMembresia,
         this.estado,
     });
 
@@ -67,6 +68,7 @@ class UserPerfilModel {
     Apoderado apoderado;
     List<Apoderado> pupilos;
     InformacionContacto informacionContacto;
+    MembresiaModel usuarioMembresia;
     bool estado;
 
     factory UserPerfilModel.fromJson(Map<String, dynamic> json) => UserPerfilModel(
@@ -77,12 +79,10 @@ class UserPerfilModel {
         apellidoMaterno: json["apellidoMaterno"],
         fechaDeNacimiento: json["fechaDeNacimiento"],
         direccion: json["direccion"],
-
         idComuna: json["idComuna"],
         comuna: json["comuna"],
         idRegion: json["idRegion"],
         region: json["region"],
-
         statusCard: json["statusCard"],
         folio: json["folio"],
         imagen: json["imagen"],
@@ -97,6 +97,7 @@ class UserPerfilModel {
         apoderado: (json["apoderado"] != null)? Apoderado.fromJson(json["apoderado"]): null,
         pupilos: (json["pupilos"] != null)? List<Apoderado>.from(json["pupilos"].map((x) => Apoderado.fromJson(x))): null,
         informacionContacto: (json["informacionContacto"] != null)? InformacionContacto.fromJson(json["informacionContacto"]): null,
+        usuarioMembresia: (json["usuarioMembresia"] != null)? MembresiaModel.fromJson(json["usuarioMembresia"]): null,
         estado: json["estado"],
     );
 
@@ -126,6 +127,7 @@ class UserPerfilModel {
         "apoderado": (apoderado != null)? apoderado.toJson(): null,
         "pupilos": (pupilos != null)?  List<dynamic>.from(pupilos.map((x) => x.toJson())): null,
         "informacionContacto": (informacionContacto != null)? informacionContacto.toJson(): null,
+        "usuarioMembresia": (usuarioMembresia != null)? usuarioMembresia.toJson(): null,
         "estado": estado,
     };
 }
@@ -392,6 +394,42 @@ class InformacionContacto {
         "comuna": comuna,
         "idRegion": idRegion,
         "region": region,
+        "estado": estado,
+    };
+}
+
+class MembresiaModel {
+    MembresiaModel({
+        this.id,
+        this.idUsuario,
+        this.idMembresia,
+        this.fechaPago,
+        this.fechaPagoTxt,
+        this.estado,
+    });
+
+    int id;
+    int idUsuario;
+    int idMembresia;
+    DateTime fechaPago;
+    String fechaPagoTxt;
+    bool estado;
+
+    factory MembresiaModel.fromJson(Map<String, dynamic> json) => MembresiaModel(
+        id: json["id"],
+        idUsuario: json["idUsuario"],
+        idMembresia: json["idMembresia"],
+        fechaPago: DateTime.parse(json["fechaPago"]),
+        fechaPagoTxt: json["fechaPagoTxt"],
+        estado: json["estado"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "idUsuario": idUsuario,
+        "idMembresia": idMembresia,
+        "fechaPago": fechaPago.toIso8601String(),
+        "fechaPagoTxt": fechaPagoTxt,
         "estado": estado,
     };
 }
