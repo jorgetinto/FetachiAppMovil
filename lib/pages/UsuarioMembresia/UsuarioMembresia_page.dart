@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart';
 import 'package:fetachiappmovil/helpers/utils.dart';
 import 'package:fetachiappmovil/models/UserLessMembresia_model.dart';
 import 'package:fetachiappmovil/models/UsuarioMembresia_model.dart';
@@ -25,6 +24,11 @@ class _UsuarioMembresiaPageState extends State<UsuarioMembresiaPage> {
   List<UserLessMembresiaModel>        listaResultado          = new  List<UserLessMembresiaModel>();
   List<UserLessMembresiaModel>        listaResultadocopia     = new  List<UserLessMembresiaModel>();
   Future<List<UserLessMembresiaModel>>   membresiaLista;
+
+  DateTime hoy      = DateTime.now();
+  Color colorBG;
+  IconData icono;
+  String estado;
   
   String searchString = "";
   bool _loading = true;
@@ -42,8 +46,7 @@ class _UsuarioMembresiaPageState extends State<UsuarioMembresiaPage> {
           membresiaLista    = usuarioProvider.getUsuarioTieneMembresiaByIdMestro();
           membresiaLista.then((value) => {
             if (value != null)  listaResultadoOriginal.addAll(value)
-          });
-        
+          });     
       });
 
     super.initState();
@@ -79,6 +82,25 @@ class _UsuarioMembresiaPageState extends State<UsuarioMembresiaPage> {
     }
 
     Widget _crearItem(BuildContext context, UserLessMembresiaModel membresia ) {
+
+      DateTime pagoMembresiaMas12Meses  = membresia.fechaMembresia.add(Duration(days: 365));
+      DateTime pagoMembresiaMas10Meses  = membresia.fechaMembresia.add(Duration(days: 305));
+
+      colorBG     = Colors.red[800];
+      icono    = Icons.highlight_off;
+      estado     = "Vencida";
+
+        if(pagoMembresiaMas12Meses.compareTo(hoy) > 0){
+          if(pagoMembresiaMas10Meses.compareTo(hoy) < 0){
+            colorBG   = Colors.yellow[800];
+            icono     = Icons.info_outline;
+            estado    = "Por Vencer";
+          }else{
+            colorBG  = Colors.green;
+            icono    = Icons.check_circle_outline;
+            estado   = "OK";
+          }
+        }
 
       return  (membresia != null)? Dismissible(
           key: UniqueKey(),
@@ -178,19 +200,10 @@ class _UsuarioMembresiaPageState extends State<UsuarioMembresiaPage> {
                               ),
                             ),                          
                       trailing:
-                            Column(
-                              children: [
-                                Badge(
-                                    toAnimate: false,
-                                    shape: BadgeShape.square,
-                                    badgeColor: (membresia.estadoMembresia)? Colors.blue[900]: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(8),
-                                    badgeContent: Text((membresia.estadoMembresia)?' ACTIVO ':' INACTIVO ', style: 
-                                                        TextStyle(fontSize: 10.0,
-                                                            fontFamily: 'Roboto',
-                                                            color: Colors.white
-                                                      )),
-                                  ),
+                            Column( // Replace with a Row for horizontal icon + text
+                              children: <Widget>[
+                                Icon(icono, color: colorBG, size: 35.0,),
+                                Text(estado, style: TextStyle( fontSize: 11),)
                               ],
                             ),
                         isThreeLine: true,
@@ -333,15 +346,10 @@ class _UsuarioMembresiaPageState extends State<UsuarioMembresiaPage> {
         floatingActionButton: FloatingActionButton(
           elevation: 1,
           onPressed: () {
-            // UsuarioMembresiaModel model = new UsuarioMembresiaModel();
-            // model.estado = true; 
             Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => UsuarioMembresiaEstudiantePage(),
-                            // settings: RouteSettings(
-                            //   arguments: model
-                            // ),
                           ),
                         ); 
             },
