@@ -89,7 +89,6 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
   }
 
 
-
   String validateUserName(String value) {
       Pattern pattern = r'^[a-zA-Z0-9\.]*$';
       RegExp regex = new RegExp(pattern);
@@ -136,6 +135,8 @@ class _UsuariosAddPageState extends State<UsuariosAddPage> {
         }else {
           _isVisible = true;
         }
+
+        _rutController.text = userModel.rut;
     });
 
 
