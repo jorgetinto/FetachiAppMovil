@@ -68,9 +68,9 @@ import 'package:toast/toast.dart';
   Widget buildHeader(BuildContext context, AsyncSnapshot<UserPerfilModel> snapshot, bool tipoFoto){
 
   return Row(
+   mainAxisAlignment: MainAxisAlignment.start,
     children: [
         SizedBox(width: 20.0,),
-
         Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
@@ -89,7 +89,7 @@ import 'package:toast/toast.dart';
                 ),         
 
                 Positioned(
-                  left: 50.0,
+                  left: 30.0,
                   right: 0.0,
                   bottom: 0.0, 
                   top: 50.0,
@@ -117,49 +117,50 @@ import 'package:toast/toast.dart';
         ),
 
        SizedBox(width: 10.0,),
-
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-                  Container(
-                          width: (!tipoFoto)? 180.0: 250.0,
-                          padding: new EdgeInsets.only(right: 13.0),
-                          child: new Text(
-                            '${snapshot.data.nombres} ${snapshot.data.apellidoPaterno} ${snapshot.data.apellidoMaterno}',
-                            overflow: TextOverflow.ellipsis,
-                            style: new TextStyle(
-                              fontSize: 14.0,
-                              fontFamily: 'Roboto',
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-
-                      SizedBox(height: 5.0,),
-                      Text("Rut: ${snapshot.data.rut}", style: TextStyle(fontSize: 13.0),),
-                      SizedBox(height: 5.0,),
-                      Text("Folio: ${snapshot.data.folio}", style: TextStyle(fontSize: 13.0),), 
-                      SizedBox(height: 5.0,),
-                       Text("Status Card: ${snapshot.data.statusCard?? "N/A"}", style: TextStyle(fontSize: 13.0),), 
-                      SizedBox(height: 5.0,),
-                      Row(
-                        children: [
-                          FaIcon(FontAwesomeIcons.map, size: 10.0, color: Colors.black54,),
-                          SizedBox(height: 10.0,),
-                            Container(
-                              width: (!tipoFoto)? 180.0: 250.0,
-                              padding: new EdgeInsets.only(right: 13.0),
-                              child: new Text(
-                                " ${snapshot.data.direccion}, ${snapshot.data.comuna?? " "}",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 14.0)
+        Expanded(
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                    Container(
+                            width: (!tipoFoto)? 170.0: 230.0,
+                            //padding: new EdgeInsets.only(right: 10.0),
+                            child: new Text(
+                              '${snapshot.data.nombres} ${snapshot.data.apellidoPaterno} ${snapshot.data.apellidoMaterno}',
+                              overflow: TextOverflow.ellipsis,
+                              style: new TextStyle(
+                                fontSize: 14.0,
+                                fontFamily: 'Roboto',
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                        ],
-                      )
-                      
-                    ],
+                          ),
+
+                        SizedBox(height: 5.0,),
+                        Text("Rut: ${snapshot.data.rut}", style: TextStyle(fontSize: 13.0),),
+                        SizedBox(height: 5.0,),
+                        Text("Folio: ${snapshot.data.folio}", style: TextStyle(fontSize: 13.0),), 
+                        SizedBox(height: 5.0,),
+                         Text("Status Card: ${snapshot.data.statusCard?? "N/A"}", style: TextStyle(fontSize: 13.0),), 
+                        SizedBox(height: 5.0,),
+                        Row(
+                          children: [
+                            FaIcon(FontAwesomeIcons.map, size: 10.0, color: Colors.black54,),
+                            SizedBox(height: 10.0,),
+                              Container(
+                                width: (!tipoFoto)? 170.0: 230.0,
+                                padding: new EdgeInsets.only(right: 13.0),
+                                child: new Text(
+                                  " ${snapshot.data.direccion}, ${snapshot.data.comuna?? " "}",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 14.0)
+                                ),
+                              ),
+                          ],
+                        )
+                        
+                      ],
+          ),
         ),
       ],
     );

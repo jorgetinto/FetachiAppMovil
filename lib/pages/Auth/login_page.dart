@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                  SizedBox(height: 20.0,),
                 _crearBotton(bloc),
                  SizedBox(height: 20.0,),
-                 Text((_isButtonDisabled)?'Versión: $VERSION_APP Actualizada':'Versión $VERSION_APP Desactualizada'),
+                 Text((_isButtonDisabled)?'Versión: $VERSION_APP Actualizada':'Versión $VERSION_APP Desactualizada, \n Favor actualizar desde play store'),
               ],
             ),
           ),

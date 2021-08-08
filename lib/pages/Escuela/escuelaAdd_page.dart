@@ -291,6 +291,7 @@ class _EscuelaAddPageState extends State<EscuelaAddPage> {
                                 onChanged:(value) {
                                   setState(() {
                                     escuelaModel.idComuna = null;
+                                    escuelaModel.idRegion = value;
                                     comuna = comunaRegion.getAllComunaByIdRegion(value);                    
                                   });
                                 },

@@ -155,60 +155,75 @@ class _UsuariosPageState extends State<UsuariosPage> {
                           );  
             return false;
           }
-        },          
-          child: Card(
-            child: Column(
-              children: <Widget>[
-                 ListTile(
+        },    
+        child: Row(
+            children: <Widget>[
+              Flexible(
+                child: Card(
+                  child: Wrap(
+                   children: [
+                     ListTile(
                         leading: CircleAvatar(
-                          radius: 25.0,
+                          radius: 23.0,
                           backgroundImage: (usuario.imagen !=null && usuario.imagen != "")
                                 ? (NetworkImage("$IMAGEN_USUARIO${usuario.imagen}") != null)?(NetworkImage("$IMAGEN_USUARIO${usuario.imagen}")): AssetImage('assets/no-image.png')
                                 : AssetImage('assets/no-image.png'),
                           backgroundColor: Colors.black,
                           
                         ),
-                       title: 
+                        title: 
                         Container(
-                          width: 80.0,
-                          padding: new EdgeInsets.only(right: 13.0),
+                          // width: 80.0,
+                          padding: new EdgeInsets.only(right: 12.0),
                           child: new Text(
                             '${ usuario.folio } - ${ usuario.nombres } ',
                             overflow: TextOverflow.ellipsis,
                             style: new TextStyle(
-                              fontSize: 14.0,
+                              fontSize: 13.0,
                               fontFamily: 'Roboto',
                               color: Colors.black54,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),                       
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ), 
+
+                        subtitle: Row(                          
                           children: [
-                            Text(' ${ usuario.gradoActual??'N/A' }') ,
-                            Text('|') ,
-                            Text(' ${ usuario.perfil??'N/A' }') ,
-                            Text('|') ,
-                            Badge(
-                                toAnimate: false,
-                                shape: BadgeShape.square,
-                                badgeColor: (usuario.estado)? Colors.blue[900]: Colors.redAccent,
-                                borderRadius: BorderRadius.circular(8),
-                                badgeContent: Text((usuario.estado)?'Activo':'Inactivo', style: 
-                                                    TextStyle(fontSize: 10.0,
-                                                        fontFamily: 'Roboto',
-                                                        color: Colors.white
-                                                  )),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(' ${ usuario.gradoActual??'N/A' }',  style: new TextStyle(fontSize: 11.0, fontFamily: 'Roboto', ),) ,
+                                  Text('|') ,
+                                  Text(' ${ usuario.perfil??'N/A' }',  style: new TextStyle(fontSize: 11.0, fontFamily: 'Roboto', ),) ,
+                                  Text('|') ,
+                                  Badge(
+                                      toAnimate: false,
+                                      shape: BadgeShape.square,
+                                      badgeColor: (usuario.estado)? Colors.blue[900]: Colors.redAccent,
+                                      borderRadius: BorderRadius.circular(8),
+                                      badgeContent: Text((usuario.estado)?'Activo':'Inactivo', style: 
+                                                          TextStyle(fontSize: 10.0,
+                                                              fontFamily: 'Roboto',
+                                                              color: Colors.white
+                                                        )),
+                                    ),
+                                ],
                               ),
-                              
-                        ],), 
+                            ),
+                        ],),  
                         trailing: Icon(Icons.more_vert),
                         isThreeLine: true,
-                      ),
-              ],
-            ),
-          )
+
+
+                      )
+                   ],
+                  ),
+                ),
+              ),
+            ],
+          ),      
+        
         ); 
     }
 
